@@ -3,11 +3,21 @@ import { StatusBar } from "expo-status-bar";
 import { Text, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
+import { validateToken } from "@/api/authorize/login";
+import { useAppDispatch } from "@/store/hooks";
+import { userLogin } from "@/store/slices/userSlice";
 
 export default function Welcome() {
-    const handleButton = () => {
-        // router.replace("(auth)");
-        router.push("unauth/login");
+    const dispatch = useAppDispatch()
+    const handleButton = async () => {
+        const response = await validateToken();
+        if (response.status) {
+            dispatch(userLogin(response.data))
+            router.replace("auth");
+        }
+
+        else
+            router.push("unauth/login");
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -23,6 +33,13 @@ export default function Welcome() {
                         onPress={() => handleButton()}
                     >
                         <Text>Continue with ...</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.button}
+                        onPress={() => { router.push("unauth/register"); }}
+                    >
+                        <Text>register</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
