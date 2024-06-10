@@ -27,7 +27,7 @@ export default function Welcome() {
                 }}
             >
                 <View style={styles.container}>
-                    <Text>Work Flow Sync</Text>
+                    <Text>Workflow Sync</Text>
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => handleButton()}

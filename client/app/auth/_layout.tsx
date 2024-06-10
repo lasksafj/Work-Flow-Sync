@@ -32,6 +32,15 @@ export default function TabLayout() {
           ),
         }}
       />
-    </Tabs>
+      <Tabs.Screen
+        name="home"
+        options={{
+          title: 'Dashboard',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+          ),
+        }}
+      />
+  </Tabs>
   );
 }
