@@ -2,8 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import UserProfile
 from django.db import transaction
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenVerifySerializer
-from rest_framework_simplejwt.backends import TokenBackend
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -40,20 +39,21 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data.update(extra_data)
         return data
 
-class CustomTokenVerifySerializer(TokenVerifySerializer):
-    def validate(self, attrs):
-        # The default result (access/refresh tokens)
-        data = super().validate(attrs)
-        token = attrs['token']
+# Another way to verify
+# class CustomTokenVerifySerializer(TokenVerifySerializer):
+#     def validate(self, attrs):
+#         # The default result (access/refresh tokens)
+#         data = super().validate(attrs)
+#         token = attrs['token']
         
-        backend = TokenBackend(algorithm='HS256')
-        token_data = backend.decode(token, verify=False)
+#         backend = TokenBackend(algorithm='HS256')
+#         token_data = backend.decode(token, verify=False)
 
-        user = User.objects.get(id=token_data['user_id'])
-        profile = UserSerializer(user).data['profile']
-        # Custom data you want to include
-        extra_data = {
-            'profile': profile
-        }
-        data.update(extra_data)
-        return data
+#         user = User.objects.get(id=token_data['user_id'])
+#         profile = UserSerializer(user).data['profile']
+#         # Custom data you want to include
+#         extra_data = {
+#             'profile': profile
+#         }
+#         data.update(extra_data)
+#         return data

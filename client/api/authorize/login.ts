@@ -45,7 +45,11 @@ const validateToken = async () => {
     }
 
     try {
-        const response = await axios.post(hostDomain + '/api/token/verify/', { token: access });
+        const response = await axios.post(
+            hostDomain + '/api/token/verify/',
+            {},
+            { headers: { Authorization: `Bearer ${access}` } }
+        );
         return response;  // Access token is still valid
     } catch (err) {
         console.log('validateToken errrr', err);
@@ -55,7 +59,12 @@ const validateToken = async () => {
             return { status: false, data: null };
         }
         try {
-            return await axios.post(hostDomain + '/api/token/verify/', { token: newToken.access });
+            // return await axios.post(hostDomain + '/api/token/verify/', { token: newToken.access });
+            return await axios.post(
+                hostDomain + '/api/token/verify/',
+                {},
+                { headers: { Authorization: `Bearer ${newToken.access}` } }
+            );
         }
         catch (err) {
             console.log('validateToken retry errrr', err);

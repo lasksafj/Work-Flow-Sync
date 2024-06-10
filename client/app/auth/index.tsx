@@ -10,13 +10,29 @@ import { useAppDispatch } from '@/store/hooks';
 import { userLogout } from '@/store/slices/userSlice';
 import { router } from 'expo-router';
 import { logout } from '@/api/authorize/login';
+import api from '@/api/api';
 
 export default function HomeScreen() {
 
   const user = useAppSelector((state: RootState) => state.user)
   const dispatch = useAppDispatch()
 
-  // console.log('index auth', user);
+  // console.log('HomeScreen', user);
+
+  try {
+    api.get('/api/some_view/123987/')
+      .then((res) => {
+        console.log('api get -----', res);
+      })
+      .catch(err => {
+        console.log('api err----', err);
+
+      })
+  }
+  catch (err) {
+    console.log(err);
+  }
+
 
 
   return (
