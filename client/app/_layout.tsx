@@ -34,7 +34,7 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={{ flex: 1 }}>
         <ThemeProvider value={DefaultTheme}>
           <Stack>
             <Stack.Screen name='index' options={{ headerShown: false }} />
@@ -50,19 +50,3 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 20,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#3498db',
-    padding: 10,
-    borderRadius: 5,
-  },
-});
