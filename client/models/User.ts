@@ -1,10 +1,9 @@
 export interface User {
-    username: string | undefined;
-    last_name: string | undefined;
-    first_name: string | undefined;
+    lastName: string | undefined;
+    firstName: string | undefined;
     email: string | undefined;
-    phone_number: string | undefined;
-    date_of_birth: string | undefined
+    phoneNumber: string | undefined;
+    dateOfBirth: Date | undefined
 }
 
 export interface Jwt {

@@ -5,6 +5,7 @@ export default function UnauthLayout() {
     return (
         <Stack>
             <Stack.Screen name='login' />
+            <Stack.Screen name='register' />
         </Stack>
     )
 }
