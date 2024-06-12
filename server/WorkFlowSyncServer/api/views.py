@@ -25,7 +25,7 @@ class LoginView(TokenObtainPairView):
 #     serializer_class = CustomTokenVerifySerializer
 
 @api_view(['POST'])
-@authentication_classes([JWTAuthentication])
+# @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def verify_view(request):
     user = UserSerializer(request.user).data
@@ -34,7 +34,7 @@ def verify_view(request):
 # ----------------------------------------------------------------
 
 @api_view(['GET'])
-@authentication_classes([JWTAuthentication])
+# @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 def some_view(request, number):
     # Your view logic here
