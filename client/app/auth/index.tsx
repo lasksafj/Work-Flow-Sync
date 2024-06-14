@@ -22,10 +22,10 @@ export default function HomeScreen() {
   try {
     api.get('/api/some_view/123987/')
       .then((res) => {
-        console.log('api get -----', res);
+        console.log('index api get -----', res);
       })
       .catch(err => {
-        console.log('api err----', err);
+        console.log('index api err----', err);
 
       })
   }

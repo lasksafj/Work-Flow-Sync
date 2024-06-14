@@ -33,7 +33,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="home"
+        name="schedule"
+        options={{
+          title: 'Schedule',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="dashboard"
         options={{
           title: 'Dashboard',
           tabBarIcon: ({ color, focused }) => (
@@ -41,6 +50,6 @@ export default function TabLayout() {
           ),
         }}
       />
-  </Tabs>
+    </Tabs>
   );
 }
