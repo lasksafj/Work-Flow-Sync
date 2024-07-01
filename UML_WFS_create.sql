@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-06-26 01:46:06.18
+-- Last modification date: 2024-06-28 02:08:41.162
 
 -- tables
 -- Table: AvailableTime
@@ -113,7 +113,7 @@ CREATE TABLE TimeSheet (
 
 -- Table: User
 CREATE TABLE "User" (
-    id int  NOT NULL,
+    id serial  NOT NULL,
     email varchar(120)  NOT NULL,
     password varchar(80)  NOT NULL,
     last_name varchar(80)  NOT NULL,
