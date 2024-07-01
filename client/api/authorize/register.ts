@@ -7,17 +7,14 @@ import { hostDomain } from '@/config/config'
 const register = async (user: User, password: any) => {
     try {
         let response = await axios.post(
-            hostDomain + '/api/register/',
+            hostDomain + '/api/user/register/',
             {
-                username: user.email,
+                email: user.email,
                 password: password,
-                profile: {
-                    email: user.email,
-                    first_name: user.firstName,
-                    last_name: user.lastName,
-                    phone_number: user.phoneNumber,
-                    date_of_birth: user.dateOfBirth
-                }
+                firstName: user.firstName,
+                lastName: user.lastName,
+                phoneNumber: user.phoneNumber,
+                dateOfBirth: user.dateOfBirth
             }
         );
         return response;

@@ -7,9 +7,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const loginLocal = async (email: string, password: string) => {
     try {
         let response = await axios.post(
-            hostDomain + '/api/token/',
+            hostDomain + '/api/user/login',
             {
-                username: email,
+                email: email,
                 password: password
             }
         );
@@ -26,7 +26,7 @@ const loginLocal = async (email: string, password: string) => {
 const getNewAccessToken = async () => {
     try {
         let refresh = await AsyncStorage.getItem('refreshToken');
-        const response = await axios.post(hostDomain + '/api/token/refresh/', { refresh: refresh });
+        const response = await axios.post(hostDomain + '/api/user/refresh-token/', { refresh: refresh });
         await AsyncStorage.setItem('accessToken', response.data.access);
         await AsyncStorage.setItem('refreshToken', response.data.refresh);
         return response.data;
@@ -46,28 +46,27 @@ const validateToken = async () => {
 
     try {
         const response = await axios.post(
-            hostDomain + '/api/token/verify/',
+            hostDomain + '/api/user/verify/',
             {},
             { headers: { Authorization: `Bearer ${access}` } }
         );
         return response;  // Access token is still valid
     } catch (err) {
-        console.log('validateToken errrr', err);
+        console.log('validateToken ERROR', err);
         // Access token is not valid, try to refresh it
         const newToken = await getNewAccessToken();
         if (newToken == null) {
             return { status: false, data: null };
         }
         try {
-            // return await axios.post(hostDomain + '/api/token/verify/', { token: newToken.access });
             return await axios.post(
-                hostDomain + '/api/token/verify/',
+                hostDomain + '/api/user/verify/',
                 {},
                 { headers: { Authorization: `Bearer ${newToken.access}` } }
             );
         }
         catch (err) {
-            console.log('validateToken retry errrr', err);
+            console.log('validateToken retry ERROR', err);
             return { status: false, data: null };
         }
     }

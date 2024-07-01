@@ -1,7 +1,7 @@
 import { hostDomain } from "@/config/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { validateToken } from "./authorize/login";
+import { getNewAccessToken, validateToken } from "./authorize/login";
 
 const api = axios.create({
     baseURL: hostDomain,
@@ -31,8 +31,8 @@ api.interceptors.response.use(
         // If the response has an error status code
         if (error.response && error.response.status === 401) {
             // Handle unauthorized access
-            const res = await validateToken();
-            if (res.status) {
+            const res = await getNewAccessToken();
+            if (res) {
                 // originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
                 return api(originalRequest);
             }

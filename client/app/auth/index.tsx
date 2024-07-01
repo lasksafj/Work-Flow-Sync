@@ -20,7 +20,7 @@ export default function HomeScreen() {
   // console.log('HomeScreen', user);
 
   try {
-    api.get('/api/some_view/123987/')
+    api.get('/api/user/protected?number=123987/')
       .then((res) => {
         console.log('index api get -----', res);
       })

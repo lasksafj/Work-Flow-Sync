@@ -1,0 +1,41 @@
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+    "email": "aaa",
+    "password": "aaa"
+}
+
+###
+POST http://localhost:3000/api/user/refresh-token
+Content-Type: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzE5MzY0NTA4LCJleHAiOjE3MTkzNjQ1MTh9.Fs1v_CSYzPYeiSDrZXRaEL205q41TM8PQ6bk1wTH8Ao"
+}
+
+###
+POST http://localhost:3000/api/user/register
+Content-Type: application/json
+
+{
+    "email": "fff@gmail.com", 
+    "password": "aaa", 
+    "lastName": "aaa", 
+    "firstName": "aaa", 
+    "phoneNumber": "111", 
+    "dateOfBirth": "11-11-1111"
+}
+###
+POST http://http://127.0.0.1:8000/api/token/verify/
+Content-Type: application/json
+Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE5NjgyNjQ5LCJpYXQiOjE3MTk2ODI2MzksImp0aSI6IjE5NTFlN2YxYmYxNTRiZjg5NTFiMDhhZTJhMTU1MTM5IiwidXNlcl9pZCI6MX0.rZlcmWNLNkunQ_A2-6bbnz4cwpxBeY83HpQs4N1GbFM"
+
+{
+    "email": "fff@gmail.com", 
+    "password": "aaa", 
+    "lastName": "aaa", 
+    "firstName": "aaa", 
+    "phoneNumber": "111", 
+    "dateOfBirth": "11-11-1111"
+}

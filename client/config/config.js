@@ -1,5 +1,5 @@
 
-const hostDomain = 'http://127.0.0.1:8000'
+const hostDomain = 'http://127.0.0.1:3000'
 
 module.exports = {
     hostDomain
