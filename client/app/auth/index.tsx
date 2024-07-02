@@ -9,8 +9,8 @@ import { useAppSelector } from '@/store/hooks';
 import { useAppDispatch } from '@/store/hooks';
 import { userLogout } from '@/store/slices/userSlice';
 import { router } from 'expo-router';
-import { logout } from '@/api/authorize/login';
-import api from '@/api/api';
+import { logout } from '@/apis/authorize/login';
+import api from '@/apis/api';
 
 export default function HomeScreen() {
 
@@ -20,9 +20,9 @@ export default function HomeScreen() {
   // console.log('HomeScreen', user);
 
   try {
-    api.get('/api/user/protected?number=123987/')
+    api.get('/api/user/protected?number=123987')
       .then((res) => {
-        console.log('index api get -----', res);
+        console.log('index api get -----', res.data);
       })
       .catch(err => {
         console.log('index api err----', err);

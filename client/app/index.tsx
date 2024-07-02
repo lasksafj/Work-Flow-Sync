@@ -1,24 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import { Text, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { validateToken } from "@/api/authorize/login";
+import { validateToken } from "@/apis/authorize/login";
 import { useAppDispatch } from "@/store/hooks";
 import { userLogin } from "@/store/slices/userSlice";
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Welcome() {
     const dispatch = useAppDispatch()
     const handleButton = async () => {
-        const response = await validateToken();
-        if (response.status) {
-            dispatch(userLogin(response.data))
-            router.replace("auth");
-        }
-
-        else
-            router.push("unauth/login");
+        router.push("unauth/login");
     }
+
+    useEffect(() => {
+        console.log('START APP');
+
+        async function prepare() {
+            // await new Promise(resolve => setTimeout(resolve, 2000));
+            const response = await validateToken();
+
+            if (response.status) {
+                dispatch(userLogin(response.data));
+                router.replace("auth");
+            }
+            await SplashScreen.hideAsync();
+        }
+        prepare();
+
+    }, []);
+
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView

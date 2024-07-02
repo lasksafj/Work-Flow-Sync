@@ -3,8 +3,8 @@ import { View, TextInput, Button, Text, StyleSheet, Alert, Platform, ActivityInd
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { register } from '@/api/authorize/register';
-import { loginLocal } from '@/api/authorize/login';
+import { register } from '@/apis/authorize/register';
+import { loginLocal } from '@/apis/authorize/login';
 import { router } from 'expo-router';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
@@ -26,6 +26,11 @@ const RegisterScreen = () => {
     const { control, handleSubmit, formState: { errors }, setValue } = useForm({
         resolver: yupResolver(schema),
         defaultValues: {
+            email: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
             dateOfBirth: new Date('2000-12-12'),
         }
 

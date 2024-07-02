@@ -8,7 +8,7 @@ exports.registerUser = async (userData) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     // console.log(userData);
     const result = await db.query(
-        'INSERT INTO "User" (email, password, last_name, first_name, phone_number, date_of_birth) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        'INSERT INTO users (email, password, last_name, first_name, phone_number, date_of_birth) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
         [email, hashedPassword, lastName, firstName, phoneNumber, dateOfBirth]
     );
     return result.rows[0];
@@ -16,7 +16,7 @@ exports.registerUser = async (userData) => {
 
 exports.loginUser = async (userData) => {
     const { email, password } = userData;
-    const result = await db.query('SELECT * FROM "User" WHERE email = $1', [email]);
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
     if (!user) throw new Error('User not found');
 
@@ -40,7 +40,7 @@ exports.refreshToken = async (token) => {
     // console.log('refresh', token);
     const decoded = verifyRefreshToken(token);
     // console.log('decoded', decoded);
-    const result = await db.query('SELECT * FROM "User" WHERE id = $1', [decoded.id]);
+    const result = await db.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
     const user = result.rows[0];
     // console.log(user);
     if (!user) throw new Error('Invalid refresh token');
@@ -56,7 +56,7 @@ exports.refreshToken = async (token) => {
 
 exports.verifyUser = async (accessToken) => {
     const decoded = verifyAccessToken(accessToken);
-    const result = await db.query('SELECT * FROM "User" WHERE id = $1', [decoded.id]);
+    const result = await db.query('SELECT * FROM users WHERE id = $1', [decoded.id]);
     const user = result.rows[0];
     if (!user) throw new Error('Invalid access token');
 

@@ -1,21 +1,22 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import api from '@/api/api';
+import api from '@/apis/api';
 
 const DashboardScreen = () => {
   try {
-    api.get('/api/some_view/123987/')
+    api.get('/api/user/protected?number=123987')
       .then((res) => {
-        console.log('dash board api get -----', res);
+        console.log('index api get -----', res.data);
       })
       .catch(err => {
-        console.log('dash board api err----', err);
+        console.log('index api err----', err);
 
       })
   }
   catch (err) {
     console.log(err);
   }
+
   return (
     <View>
       <Text>dashboard</Text>

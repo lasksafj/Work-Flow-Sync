@@ -1,118 +1,119 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-06-28 02:08:41.162
+-- Last modification date: 2024-07-02 00:30:28.18
 
 -- tables
--- Table: AvailableTime
-CREATE TABLE AvailableTime (
-    id int  NOT NULL,
+-- Table: availabletimes
+CREATE TABLE availabletimes (
     start_time date  NOT NULL,
     end_time date  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT AvailableTime_pk PRIMARY KEY (id)
+    CONSTRAINT availabletimes_pk PRIMARY KEY (emp_id,end_time,start_time)
 );
 
--- Table: Employee
-CREATE TABLE Employee (
-    id int  NOT NULL,
+-- Table: employees
+CREATE TABLE employees (
+    id serial  NOT NULL,
+    employee_number int  NOT NULL,
     pay_rate decimal(3,2)  NOT NULL,
-    org_id int  NOT NULL,
     role_name varchar(80)  NOT NULL,
     user_id int  NOT NULL,
-    CONSTRAINT Employee_pk PRIMARY KEY (id)
+    org_abbreviation varchar(10)  NOT NULL,
+    CONSTRAINT Employee_uk_01 UNIQUE (employee_number, user_id, org_abbreviation) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT employees_pk PRIMARY KEY (id)
 );
 
--- Table: Feedback
-CREATE TABLE Feedback (
-    id int  NOT NULL,
+-- Table: feedbacks
+CREATE TABLE feedbacks (
     content varchar(500)  NOT NULL,
     created_date date  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT Feedback_pk PRIMARY KEY (id)
+    CONSTRAINT feedbacks_pk PRIMARY KEY (created_date,emp_id)
 );
 
--- Table: Group
-CREATE TABLE "Group" (
-    id int  NOT NULL,
+-- Table: groups
+CREATE TABLE groups (
+    id serial  NOT NULL,
     name varchar(80)  NOT NULL,
     created_at date  NOT NULL,
-    CONSTRAINT Group_pk PRIMARY KEY (id)
+    CONSTRAINT groups_pk PRIMARY KEY (id)
 );
 
--- Table: Message
-CREATE TABLE Message (
-    id int  NOT NULL,
+-- Table: messagegroups
+CREATE TABLE messagegroups (
+    group_id int  NOT NULL,
+    mes_id int  NOT NULL,
+    CONSTRAINT messagegroups_pk PRIMARY KEY (group_id,mes_id)
+);
+
+-- Table: messages
+CREATE TABLE messages (
+    id serial  NOT NULL,
     content varchar(500)  NOT NULL,
     create_time date  NOT NULL,
     user_id int  NOT NULL,
-    CONSTRAINT Message_pk PRIMARY KEY (id)
+    CONSTRAINT Message_uk_01 UNIQUE (user_id, create_time) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT messages_pk PRIMARY KEY (id)
 );
 
--- Table: MessageGroup
-CREATE TABLE MessageGroup (
-    group_id int  NOT NULL,
-    mes_id int  NOT NULL,
-    CONSTRAINT MessageGroup_pk PRIMARY KEY (group_id,mes_id)
-);
-
--- Table: Notification
-CREATE TABLE Notification (
-    id int  NOT NULL,
+-- Table: notifications
+CREATE TABLE notifications (
     content int  NOT NULL,
+    created_date date  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT Notification_pk PRIMARY KEY (id)
+    CONSTRAINT notifications_pk PRIMARY KEY (created_date,emp_id)
 );
 
--- Table: Organization
-CREATE TABLE Organization (
-    id int  NOT NULL,
+-- Table: organizations
+CREATE TABLE organizations (
+    abbreviation varchar(10)  NOT NULL,
     name varchar(80)  NOT NULL,
     address varchar(200)  NOT NULL,
-    CONSTRAINT Organization_pk PRIMARY KEY (id)
+    CONSTRAINT Organization_uk_01 UNIQUE (name, address) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT organizations_pk PRIMARY KEY (abbreviation)
 );
 
--- Table: Participant
-CREATE TABLE Participant (
+-- Table: participants
+CREATE TABLE participants (
     joined_at date  NOT NULL,
     user_id int  NOT NULL,
     group_id int  NOT NULL,
-    CONSTRAINT Participant_pk PRIMARY KEY (user_id,group_id)
+    CONSTRAINT participants_pk PRIMARY KEY (user_id,group_id)
 );
 
--- Table: Role
-CREATE TABLE Role (
+-- Table: roles
+CREATE TABLE roles (
     name varchar(80)  NOT NULL,
     description varchar(200)  NOT NULL,
-    CONSTRAINT Role_pk PRIMARY KEY (name)
+    CONSTRAINT roles_pk PRIMARY KEY (name)
 );
 
--- Table: Schedule
-CREATE TABLE Schedule (
-    id int  NOT NULL,
+-- Table: schedules
+CREATE TABLE schedules (
     start_time date  NOT NULL,
     end_time date  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT Schedule_pk PRIMARY KEY (id)
+    CONSTRAINT schedules_pk PRIMARY KEY (end_time,start_time)
 );
 
--- Table: Status
-CREATE TABLE Status (
+-- Table: statuses
+CREATE TABLE statuses (
     is_seen boolean  NOT NULL,
     mes_id int  NOT NULL,
     user_id int  NOT NULL,
     group_id int  NOT NULL,
-    CONSTRAINT Status_pk PRIMARY KEY (group_id,user_id,mes_id)
+    CONSTRAINT statuses_pk PRIMARY KEY (group_id,user_id,mes_id)
 );
 
--- Table: TimeSheet
-CREATE TABLE TimeSheet (
+-- Table: timesheets
+CREATE TABLE timesheets (
     clock_in date  NOT NULL,
     clock_out date  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT TimeSheet_pk PRIMARY KEY (clock_in,clock_out)
+    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out)
 );
 
--- Table: User
-CREATE TABLE "User" (
+-- Table: users
+CREATE TABLE users (
     id serial  NOT NULL,
     email varchar(120)  NOT NULL,
     password varchar(80)  NOT NULL,
@@ -120,126 +121,128 @@ CREATE TABLE "User" (
     first_name varchar(80)  NOT NULL,
     phone_number varchar(10)  NOT NULL,
     date_of_birth date  NOT NULL,
-    CONSTRAINT User_pk PRIMARY KEY (id)
+    CONSTRAINT User_uk_01 UNIQUE (email) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT User_uk_02 UNIQUE (phone_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT users_pk PRIMARY KEY (id)
 );
 
 -- foreign keys
--- Reference: AvailableTime_Employee (table: AvailableTime)
-ALTER TABLE AvailableTime ADD CONSTRAINT AvailableTime_Employee
+-- Reference: AvailableTime_Employee (table: availabletimes)
+ALTER TABLE availabletimes ADD CONSTRAINT AvailableTime_Employee
     FOREIGN KEY (emp_id)
-    REFERENCES Employee (id)  
+    REFERENCES employees (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Employee_Organization (table: Employee)
-ALTER TABLE Employee ADD CONSTRAINT Employee_Organization
-    FOREIGN KEY (org_id)
-    REFERENCES Organization (id)  
+-- Reference: Employee_Organization (table: employees)
+ALTER TABLE employees ADD CONSTRAINT Employee_Organization
+    FOREIGN KEY (org_abbreviation)
+    REFERENCES organizations (abbreviation)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Employee_Role (table: Employee)
-ALTER TABLE Employee ADD CONSTRAINT Employee_Role
+-- Reference: Employee_Role (table: employees)
+ALTER TABLE employees ADD CONSTRAINT Employee_Role
     FOREIGN KEY (role_name)
-    REFERENCES Role (name)  
+    REFERENCES roles (name)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Employee_User (table: Employee)
-ALTER TABLE Employee ADD CONSTRAINT Employee_User
+-- Reference: Employee_User (table: employees)
+ALTER TABLE employees ADD CONSTRAINT Employee_User
     FOREIGN KEY (user_id)
-    REFERENCES "User" (id)  
+    REFERENCES users (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Feedback_Employee (table: Feedback)
-ALTER TABLE Feedback ADD CONSTRAINT Feedback_Employee
+-- Reference: Feedback_Employee (table: feedbacks)
+ALTER TABLE feedbacks ADD CONSTRAINT Feedback_Employee
     FOREIGN KEY (emp_id)
-    REFERENCES Employee (id)  
+    REFERENCES employees (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: MessageGroup_Group (table: MessageGroup)
-ALTER TABLE MessageGroup ADD CONSTRAINT MessageGroup_Group
+-- Reference: MessageGroup_Group (table: messagegroups)
+ALTER TABLE messagegroups ADD CONSTRAINT MessageGroup_Group
     FOREIGN KEY (group_id)
-    REFERENCES "Group" (id)  
+    REFERENCES groups (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: MessageGroup_Message (table: MessageGroup)
-ALTER TABLE MessageGroup ADD CONSTRAINT MessageGroup_Message
+-- Reference: MessageGroup_Message (table: messagegroups)
+ALTER TABLE messagegroups ADD CONSTRAINT MessageGroup_Message
     FOREIGN KEY (mes_id)
-    REFERENCES Message (id)  
+    REFERENCES messages (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Message_User (table: Message)
-ALTER TABLE Message ADD CONSTRAINT Message_User
+-- Reference: Message_User (table: messages)
+ALTER TABLE messages ADD CONSTRAINT Message_User
     FOREIGN KEY (user_id)
-    REFERENCES "User" (id)  
+    REFERENCES users (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Notification_Employee (table: Notification)
-ALTER TABLE Notification ADD CONSTRAINT Notification_Employee
+-- Reference: Notification_Employee (table: notifications)
+ALTER TABLE notifications ADD CONSTRAINT Notification_Employee
     FOREIGN KEY (emp_id)
-    REFERENCES Employee (id)  
+    REFERENCES employees (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Participant_Group (table: Participant)
-ALTER TABLE Participant ADD CONSTRAINT Participant_Group
+-- Reference: Participant_Group (table: participants)
+ALTER TABLE participants ADD CONSTRAINT Participant_Group
     FOREIGN KEY (group_id)
-    REFERENCES "Group" (id)  
+    REFERENCES groups (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Participant_User (table: Participant)
-ALTER TABLE Participant ADD CONSTRAINT Participant_User
+-- Reference: Participant_User (table: participants)
+ALTER TABLE participants ADD CONSTRAINT Participant_User
     FOREIGN KEY (user_id)
-    REFERENCES "User" (id)  
+    REFERENCES users (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Schedule_Employee (table: Schedule)
-ALTER TABLE Schedule ADD CONSTRAINT Schedule_Employee
+-- Reference: Schedule_Employee (table: schedules)
+ALTER TABLE schedules ADD CONSTRAINT Schedule_Employee
     FOREIGN KEY (emp_id)
-    REFERENCES Employee (id)  
+    REFERENCES employees (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Status_Message (table: Status)
-ALTER TABLE Status ADD CONSTRAINT Status_Message
+-- Reference: Status_Message (table: statuses)
+ALTER TABLE statuses ADD CONSTRAINT Status_Message
     FOREIGN KEY (mes_id)
-    REFERENCES Message (id)  
+    REFERENCES messages (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: Status_Participant (table: Status)
-ALTER TABLE Status ADD CONSTRAINT Status_Participant
+-- Reference: Status_Participant (table: statuses)
+ALTER TABLE statuses ADD CONSTRAINT Status_Participant
     FOREIGN KEY (user_id, group_id)
-    REFERENCES Participant (user_id, group_id)  
+    REFERENCES participants (user_id, group_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
 
--- Reference: TimeSheet_Employee (table: TimeSheet)
-ALTER TABLE TimeSheet ADD CONSTRAINT TimeSheet_Employee
+-- Reference: TimeSheet_Employee (table: timesheets)
+ALTER TABLE timesheets ADD CONSTRAINT TimeSheet_Employee
     FOREIGN KEY (emp_id)
-    REFERENCES Employee (id)  
+    REFERENCES employees (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;

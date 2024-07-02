@@ -31,7 +31,7 @@ const getNewAccessToken = async () => {
         await AsyncStorage.setItem('refreshToken', response.data.refresh);
         return response.data;
     } catch (error) {
-        console.error('getNewAccessToken:', error);
+        console.log('getNewAccessToken:', error);
         return null;
     }
 };
@@ -54,6 +54,8 @@ const validateToken = async () => {
     } catch (err) {
         console.log('validateToken ERROR', err);
         // Access token is not valid, try to refresh it
+        console.log('validateToken: try to refresh Token');
+
         const newToken = await getNewAccessToken();
         if (newToken == null) {
             return { status: false, data: null };

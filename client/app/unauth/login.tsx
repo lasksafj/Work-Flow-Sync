@@ -1,7 +1,7 @@
 import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
 import { router } from 'expo-router';
-import { loginLocal } from '@/api/authorize/login';
+import { loginLocal } from '@/apis/authorize/login';
 import { userLogin } from '@/store/slices/userSlice';
 import { useAppDispatch } from '@/store/hooks';
 
@@ -33,13 +33,13 @@ const Login = () => {
         <View style={styles.container}>
             <Text style={styles.text}>login</Text>
             <TextInput
-                style={{ padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10 }}
+                style={styles.textInput}
                 placeholder="Email"
                 value={email}
                 onChangeText={setEmail}
             />
             <TextInput
-                style={{ padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10 }}
+                style={styles.textInput}
                 placeholder="Password"
                 value={password}
                 onChangeText={setPassword}
@@ -61,6 +61,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    textInput: {
+        padding: 10,
+        borderWidth: 1,
+        borderRadius: 5,
+        marginBottom: 10,
+        width: 200
     },
     text: {
         fontSize: 20,
