@@ -3,6 +3,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 3000;
 
@@ -22,17 +23,16 @@ const requestLogger = (req, res, next) => {
 
     res.on('finish', () => {
         if (res.statusCode >= 400) {
-            console.log(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode} - Response: ${responseBody}`);
+            logger.error(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode} - Response: ${responseBody}`);
         }
         else {
-            console.log(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode}`);
+            logger.info(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode}`);
         }
     });
 
     next();
 };
 app.use(requestLogger);
-
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
