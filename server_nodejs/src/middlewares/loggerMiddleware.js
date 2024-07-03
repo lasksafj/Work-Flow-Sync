@@ -15,7 +15,7 @@ const requestLogger = (req, res, next) => {
             logger.error(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode} - Response: ${responseBody}`);
         }
         else {
-            logger.info(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode}`);
+            logger.info(`${new Date().toLocaleString()} - ${req.method} ${req.url} - Status: ${res.statusCode} - ${res.statusMessage}`);
         }
     });
 
