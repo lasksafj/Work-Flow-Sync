@@ -3,25 +3,25 @@ import React from 'react'
 import api from '@/apis/api';
 
 const DashboardScreen = () => {
-  try {
-    api.get('/api/user/protected?number=123987')
-      .then((res) => {
-        console.log('index api get -----', res.data);
-      })
-      .catch(err => {
-        console.log('index api err----', err);
+    try {
+        api.get('/api/user/protected?number=123987')
+            .then((res) => {
+                console.log('index api get -----', res.data);
+            })
+            .catch(err => {
+                console.log('index api err----', err);
 
-      })
-  }
-  catch (err) {
-    console.log(err);
-  }
+            })
+    }
+    catch (err) {
+        console.log(err);
+    }
 
-  return (
-    <View>
-      <Text>dashboard</Text>
-    </View>
-  )
+    return (
+        <View>
+            <Text>dashboard</Text>
+        </View>
+    )
 }
 
 export default DashboardScreen

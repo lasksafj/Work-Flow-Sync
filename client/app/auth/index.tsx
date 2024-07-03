@@ -17,7 +17,7 @@ export default function HomeScreen() {
     const user = useAppSelector((state: RootState) => state.user)
     const dispatch = useAppDispatch()
 
-    // console.log('HomeScreen', user);
+    console.log('HomeScreen', user);
 
     try {
         api.get('/api/user/protected?number=123987')

@@ -21,10 +21,10 @@ const userSlice = createSlice({
         userLogin: (state, action) => {
             state.profile = {
                 email: action.payload.profile.email,
-                lastName: action.payload.profile.last_name,
-                firstName: action.payload.profile.first_name,
-                phoneNumber: action.payload.profile.phone_number,
-                dateOfBirth: action.payload.profile.date_of_birth
+                lastName: action.payload.profile.lastName,
+                firstName: action.payload.profile.firstName,
+                phoneNumber: action.payload.profile.phoneNumber,
+                dateOfBirth: action.payload.profile.dateOfBirth
             };
             state.accessToken = action.payload.accessToken;
         },

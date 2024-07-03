@@ -18,7 +18,7 @@ const Login = () => {
             let response = await loginLocal(email, password);
             // console.log('login screen', response);
 
-            if (response.status == 200) {
+            if (response.status) {
                 dispatch(userLogin(response.data))
                 router.push('auth');
             }
