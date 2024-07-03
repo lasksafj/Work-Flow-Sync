@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert, Platform, ActivityIndicator } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Alert, Platform, ActivityIndicator, ScrollView } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -72,113 +72,115 @@ const RegisterScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Controller
-                control={control}
-                name="email"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        placeholder="Email"
-                    />
+        <ScrollView>
+            <View style={styles.container}>
+                <Controller
+                    control={control}
+                    name="email"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Email"
+                        />
+                    )}
+                />
+                {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
+
+                <Controller
+                    control={control}
+                    name="password"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Password"
+                            secureTextEntry
+                        />
+                    )}
+                />
+                {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
+
+                <Controller
+                    control={control}
+                    name="firstName"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="First Name"
+                        />
+                    )}
+                />
+                {errors.firstName && <Text style={styles.errorText}>{errors.firstName.message}</Text>}
+
+                <Controller
+                    control={control}
+                    name="lastName"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Last Name"
+                        />
+                    )}
+                />
+                {errors.lastName && <Text style={styles.errorText}>{errors.lastName.message}</Text>}
+
+                <Controller
+                    control={control}
+                    name="phoneNumber"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                            style={styles.input}
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                            placeholder="Phone Number"
+                        />
+                    )}
+                />
+                {errors.phoneNumber && <Text style={styles.errorText}>{errors.phoneNumber.message}</Text>}
+
+                <Controller
+                    control={control}
+                    name="dateOfBirth"
+                    render={({ field: { onChange, onBlur, value } }) => (
+                        <View>
+                            <Button title="Choose Date" onPress={() => setShow(true)} />
+                            {show && (
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={date}
+                                    mode="date"
+                                    display="default"
+                                    onChange={onChangeDatePicker}
+                                    maximumDate={new Date()}
+                                />
+                            )}
+                            <Text style={styles.input}>{value ? moment(value).format('YYYY-MM-DD') : 'Select Date'}</Text>
+                        </View>
+                    )}
+                />
+                {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth.message}</Text>}
+
+
+
+                {isLoading ? (
+                    <ActivityIndicator size="small" color="#0000ff" />
+                ) : (
+                    <Button title="Register" onPress={handleSubmit(onSubmit)} />
                 )}
-            />
-            {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
-
-            <Controller
-                control={control}
-                name="password"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        placeholder="Password"
-                        secureTextEntry
-                    />
-                )}
-            />
-            {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
-
-            <Controller
-                control={control}
-                name="firstName"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        placeholder="First Name"
-                    />
-                )}
-            />
-            {errors.firstName && <Text style={styles.errorText}>{errors.firstName.message}</Text>}
-
-            <Controller
-                control={control}
-                name="lastName"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        placeholder="Last Name"
-                    />
-                )}
-            />
-            {errors.lastName && <Text style={styles.errorText}>{errors.lastName.message}</Text>}
-
-            <Controller
-                control={control}
-                name="phoneNumber"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <TextInput
-                        style={styles.input}
-                        onBlur={onBlur}
-                        onChangeText={onChange}
-                        value={value}
-                        placeholder="Phone Number"
-                    />
-                )}
-            />
-            {errors.phoneNumber && <Text style={styles.errorText}>{errors.phoneNumber.message}</Text>}
-
-            <Controller
-                control={control}
-                name="dateOfBirth"
-                render={({ field: { onChange, onBlur, value } }) => (
-                    <View>
-                        <Button title="Choose Date" onPress={() => setShow(true)} />
-                        {show && (
-                            <DateTimePicker
-                                testID="dateTimePicker"
-                                value={date}
-                                mode="date"
-                                display="default"
-                                onChange={onChangeDatePicker}
-                                maximumDate={new Date()}
-                            />
-                        )}
-                        <Text style={styles.input}>{value ? moment(value).format('YYYY-MM-DD') : 'Select Date'}</Text>
-                    </View>
-                )}
-            />
-            {errors.dateOfBirth && <Text style={styles.errorText}>{errors.dateOfBirth.message}</Text>}
-
-
-
-            {isLoading ? (
-                <ActivityIndicator size="small" color="#0000ff" />
-            ) : (
-                <Button title="Register" onPress={handleSubmit(onSubmit)} />
-            )}
-        </View>
+            </View>
+        </ScrollView>
     );
 };
 

@@ -26,7 +26,7 @@ const userSlice = createSlice({
                 phoneNumber: action.payload.profile.phoneNumber,
                 dateOfBirth: action.payload.profile.dateOfBirth
             };
-            state.accessToken = action.payload.accessToken;
+            state.accessToken = action.payload.access;
         },
         userLogout: (state) => {
             state.profile = initUser;
