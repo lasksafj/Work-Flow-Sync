@@ -1,6 +1,5 @@
-
-const hostDomain = 'https://9ac5-204-126-64-99.ngrok-free.app'
+const hostDomain = "https://df7d-204-126-64-99.ngrok-free.app";
 
 module.exports = {
-    hostDomain
+    hostDomain,
 };
