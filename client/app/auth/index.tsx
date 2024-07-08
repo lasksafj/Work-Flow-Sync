@@ -19,19 +19,20 @@ export default function HomeScreen() {
 
     console.log('HomeScreen', user);
 
-    try {
-        api.get('/api/user/protected?number=123987')
-            .then((res) => {
-                console.log('index api get -----', res.data);
-            })
-            .catch(err => {
-                console.log('index api err----', err);
-
-            })
-    }
-    catch (err) {
-        console.log(err);
-    }
+    // Example
+    api.get('/api/user/protected?number=123987')
+        .then((res) => {
+            console.log('index api get -----', res.data);
+        })
+        .catch(err => {
+            console.log('index api err----', err);
+            if (err.unauthorized) {
+                alert('LOGOUT')
+                logout();
+                dispatch(userLogout());
+                router.replace('');
+            }
+        })
 
 
 

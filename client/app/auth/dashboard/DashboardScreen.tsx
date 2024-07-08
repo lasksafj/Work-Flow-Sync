@@ -6,10 +6,10 @@ const DashboardScreen = () => {
     try {
         api.get('/api/user/protected?number=123987')
             .then((res) => {
-                console.log('index api get -----', res.data);
+                console.log('dashboard api get -----', res.data);
             })
             .catch(err => {
-                console.log('index api err----', err);
+                console.log('dashboard api err----', err);
 
             })
     }

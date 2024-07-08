@@ -11,6 +11,10 @@ const api = axios.create({
 api.interceptors.request.use(
     async (config) => {
         const token = await AsyncStorage.getItem('accessToken');
+
+        // config for ngrok: bypass warning page
+        config.headers['ngrok-skip-browser-warning'] = '69420';
+
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -37,6 +41,7 @@ api.interceptors.response.use(
                 return api(originalRequest);
             }
             alert('Unauthorized access. Please log in.');
+            error.unauthorized = true;
         }
         // Return the error to be handled by the calling code
         return Promise.reject(error);
