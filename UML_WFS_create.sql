@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-07-02 00:30:28.18
+-- Last modification date: 2024-07-09 23:12:54.759
 
 -- tables
 -- Table: availabletimes
@@ -14,7 +14,7 @@ CREATE TABLE availabletimes (
 CREATE TABLE employees (
     id serial  NOT NULL,
     employee_number int  NOT NULL,
-    pay_rate decimal(3,2)  NOT NULL,
+    pay_rate decimal(7,2)  NOT NULL,
     role_name varchar(80)  NOT NULL,
     user_id int  NOT NULL,
     org_abbreviation varchar(10)  NOT NULL,
@@ -38,19 +38,13 @@ CREATE TABLE groups (
     CONSTRAINT groups_pk PRIMARY KEY (id)
 );
 
--- Table: messagegroups
-CREATE TABLE messagegroups (
-    group_id int  NOT NULL,
-    mes_id int  NOT NULL,
-    CONSTRAINT messagegroups_pk PRIMARY KEY (group_id,mes_id)
-);
-
 -- Table: messages
 CREATE TABLE messages (
     id serial  NOT NULL,
     content varchar(500)  NOT NULL,
     create_time date  NOT NULL,
     user_id int  NOT NULL,
+    group_id int  NOT NULL,
     CONSTRAINT Message_uk_01 UNIQUE (user_id, create_time) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT messages_pk PRIMARY KEY (id)
 );
@@ -167,22 +161,6 @@ ALTER TABLE feedbacks ADD CONSTRAINT Feedback_Employee
     INITIALLY IMMEDIATE
 ;
 
--- Reference: MessageGroup_Group (table: messagegroups)
-ALTER TABLE messagegroups ADD CONSTRAINT MessageGroup_Group
-    FOREIGN KEY (group_id)
-    REFERENCES groups (id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: MessageGroup_Message (table: messagegroups)
-ALTER TABLE messagegroups ADD CONSTRAINT MessageGroup_Message
-    FOREIGN KEY (mes_id)
-    REFERENCES messages (id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
 -- Reference: Message_User (table: messages)
 ALTER TABLE messages ADD CONSTRAINT Message_User
     FOREIGN KEY (user_id)
@@ -243,6 +221,14 @@ ALTER TABLE statuses ADD CONSTRAINT Status_Participant
 ALTER TABLE timesheets ADD CONSTRAINT TimeSheet_Employee
     FOREIGN KEY (emp_id)
     REFERENCES employees (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: messages_groups (table: messages)
+ALTER TABLE messages ADD CONSTRAINT messages_groups
+    FOREIGN KEY (group_id)
+    REFERENCES groups (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
