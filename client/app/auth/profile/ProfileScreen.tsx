@@ -13,11 +13,23 @@ import { Feather as FeatherIcon } from "@expo/vector-icons";
 import ImageProfile from "./src/ImageProfile";
 import Logout from "./src/Logout";
 import EditProfile from "./src/EditProfile";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
+import { logout } from "@/apis/authorize/login";
+import { userLogout } from "@/store/slices/userSlice";
+import api from "@/apis/api";
 
 const ProfileScreen = () => {
+    api.get("/api/example/example-get?number=999")
+        .then((response) => {
+            alert(response.data.number);
+        })
+        .catch((error) => {
+            alert(error);
+        });
+
     const user = useAppSelector((state: RootState) => state.user);
+    const dispatch = useAppDispatch();
 
     const SECTIONS = [
         {
@@ -86,7 +98,10 @@ const ProfileScreen = () => {
 
     const handleLogout = () => {
         setModalVisible(false);
-        alert("Logged out!");
+        logout();
+        dispatch(userLogout());
+        router.replace("");
+        // alert("Logged out!");
     };
 
     const handleEdit = () => {

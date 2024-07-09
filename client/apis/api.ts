@@ -5,15 +5,15 @@ import { getNewAccessToken, validateToken } from "./authorize/login";
 
 const api = axios.create({
     baseURL: hostDomain,
-    timeout: 5000
+    timeout: 5000,
 });
 
 api.interceptors.request.use(
     async (config) => {
-        const token = await AsyncStorage.getItem('accessToken');
+        const token = await AsyncStorage.getItem("accessToken");
 
         // config for ngrok: bypass warning page
-        config.headers['ngrok-skip-browser-warning'] = '69420';
+        config.headers["ngrok-skip-browser-warning"] = "69420";
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -40,7 +40,7 @@ api.interceptors.response.use(
                 // originalRequest.headers.Authorization = `Bearer ${res.data.access}`;
                 return api(originalRequest);
             }
-            alert('Unauthorized access. Please log in.');
+            alert("Unauthorized access. Please log in.");
             error.unauthorized = true;
         }
         // Return the error to be handled by the calling code

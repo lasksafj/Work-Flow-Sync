@@ -1,0 +1,15 @@
+GET http://localhost:3000/api/example/example-get?number=123
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiaWF0IjoxNzIwNDg5OTQ5LCJleHAiOjE3MjA0OTA1NDl9.1jXoqMt9_kNcDZ3jo3ko9lFhR6xGZt27NbE6C9SnCl0
+
+{
+    
+}
+###
+POST http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+    "email": "abc@gmail.com",
+    "password": "123456"
+}
