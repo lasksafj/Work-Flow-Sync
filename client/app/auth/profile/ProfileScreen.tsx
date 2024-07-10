@@ -20,9 +20,25 @@ import { userLogout } from "@/store/slices/userSlice";
 import api from "@/apis/api";
 
 const ProfileScreen = () => {
-    api.get("/api/example/example-get?number=999")
+    // api.get("/api/example/example-get?number=999")
+    //     .then((response) => {
+    //         alert(response.data.number);
+    //     })
+    //     .catch((error) => {
+    //         alert(error);
+    //     });
+
+    // api.post("/api/example/example-post", { number: 100 })
+    //     .then((response) => {
+    //         alert(response.data.number);
+    //     })
+    //     .catch((error) => {
+    //         alert(error);
+    //     });
+    let org = "ORG1";
+    api.get("/api/profile/profile-get?org=" + org)
         .then((response) => {
-            alert(response.data.number);
+            alert(JSON.stringify(response.data));
         })
         .catch((error) => {
             alert(error);
