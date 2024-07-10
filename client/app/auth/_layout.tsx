@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -38,6 +39,16 @@ export default function TabLayout() {
                     title: 'Dashboard',
                     tabBarIcon: ({ color, focused }) => (
                         <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="earnings"
+                options={{
+                    title: 'Earnings',
+                    tabBarIcon: ({ color, focused }) => (
+                        // <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                        <MaterialIcons name="attach-money" size={24} color="black" />
                     ),
                 }}
             />
