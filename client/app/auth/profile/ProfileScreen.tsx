@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -35,19 +35,11 @@ const ProfileScreen = () => {
     //     .catch((error) => {
     //         alert(error);
     //     });
-    let org = "ORG1";
-    api.get("/api/profile/profile-get?org=" + org)
-        .then((response) => {
-            alert(JSON.stringify(response.data));
-        })
-        .catch((error) => {
-            alert(error);
-        });
 
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
 
-    const SECTIONS = [
+    const [section, setSection] = useState<any[]>([
         {
             header: "Profile Settings",
             items: [
@@ -67,16 +59,41 @@ const ProfileScreen = () => {
         {
             header: "Workplace",
             items: [
-                { id: "namewp", label: "Name", value: "McDonalds" },
-                { id: "address", label: "Address", value: "123 Main St" },
+                { id: "namewp", label: "Name", value: "" },
+                {
+                    id: "address",
+                    label: "Address",
+                    value: "",
+                },
                 {
                     id: "position",
                     label: "Position",
-                    value: "FoodRunner",
+                    value: "",
                 },
             ],
         },
-    ];
+    ]);
+
+    useEffect(() => {
+        let org = "ORG1"; // Example organization ID
+        api.get("/api/profile/profile-get?org=" + org)
+            .then((response) => {
+                const data = response.data;
+                console.log(data);
+                let newSection = [...section];
+                newSection[1].items[0].value = data.orgname;
+                newSection[1].items[1].value = data.address;
+                newSection[1].items[2].value = data.role;
+
+                // console.log(newSection[1].items[0].value);
+
+                setSection(newSection);
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
+
     const LINKSECTIONS = [
         {
             header: "Utilities",
@@ -153,7 +170,7 @@ const ProfileScreen = () => {
             <ScrollView style={styles.container}>
                 <ImageProfile initials={initials} imageUrl={imageUrl} />
 
-                {SECTIONS.map(({ header, items }) => (
+                {section.map(({ header, items }) => (
                     <View style={styles.section} key={header}>
                         <View style={styles.sectionHeader}>
                             <Text style={styles.sectionHeaderText}>
