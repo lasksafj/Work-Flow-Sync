@@ -58,18 +58,18 @@ import React from 'react'
 
 const { width, height } = Dimensions.get('window');
 
-const Tabs = () => {
-    return (
-        <View style={styles.Tab}>
+// const Tabs = () => {
+//     return (
+//         <View style={styles.Tab}>
 
-        </View>
-    )
-}
+//         </View>
+//     )
+// }
 
 const ScheduleScreen = () => {
     return (
         <View>
-            <Text>ScheduleScreen</Text>
+            <Text>ScheduleScreen Page</Text>
         </View>
     )
 }
@@ -83,5 +83,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         alignSelf: 'stretch',
         backgroundColor: '#cccccc',
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })

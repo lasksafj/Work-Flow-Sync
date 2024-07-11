@@ -27,6 +27,7 @@ export default function TabLayout() {
                 name="schedule"
                 options={{
                     title: 'Schedule',
+
                     tabBarIcon: ({ color, focused }) => (
                         <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
                     ),
@@ -34,6 +35,7 @@ export default function TabLayout() {
             />
             <Tabs.Screen
                 name="dashboard"
+                
                 options={{
                     title: 'Dashboard',
                     tabBarIcon: ({ color, focused }) => (

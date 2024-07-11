@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const requestLogger = require('./middlewares/loggerMiddleware');
 const userRoutes = require('./routes/userRoutes');
-
+const scheduleRoutes = require('./routes/userSchedules');
 
 const PORT = process.env.PORT || 3000;
 
@@ -16,6 +16,9 @@ app.use(requestLogger);
 
 // Routes
 app.use('/api/user', userRoutes);
+
+//scheduleRoutes
+scheduleRoutes(app)
 
 // Start the server
 app.listen(PORT, '0.0.0.0', () => {
