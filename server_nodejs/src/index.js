@@ -1,12 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const requestLogger = require("./middlewares/loggerMiddleware");
-const userRoutes = require("./routes/userRoutes");
-const exampleRoutes = require("./routes/exampleRoutes");
-const profileRoutes = require("./routes/profileRoutes");
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const requestLogger = require('./middlewares/loggerMiddleware');
+const userRoutes = require('./routes/userRoutes');
+const earningsRoutes = require('./routes/earningsRoutes'); // Anh
 
 const PORT = process.env.PORT || 3000;
 
@@ -16,9 +15,7 @@ app.use(cors());
 app.use(requestLogger);
 
 // Routes
-app.use("/api/user", userRoutes);
-app.use("/api/example", exampleRoutes);
-app.use("/api/profile", profileRoutes);
+app.use('/api/user', userRoutes);
 
 // Start the server
 app.listen(PORT, "0.0.0.0", () => {
