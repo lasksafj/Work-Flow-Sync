@@ -11,6 +11,7 @@ import { userLogout } from '@/store/slices/userSlice';
 import { router } from 'expo-router';
 import { logout } from '@/apis/authorize/login';
 import api from '@/apis/api';
+import { useEffect } from 'react';
 
 export default function HomeScreen() {
 
@@ -20,19 +21,22 @@ export default function HomeScreen() {
     console.log('HomeScreen', user);
 
     // Example
-    api.get('/api/user/protected?number=123987')
-        .then((res) => {
-            console.log('index api get -----', res.data);
-        })
-        .catch(err => {
-            console.log('index api err----', err);
-            if (err.unauthorized) {
-                alert('LOGOUT')
-                logout();
-                dispatch(userLogout());
-                router.replace('');
-            }
-        })
+    useEffect(() => {
+        api.get('/api/user/protected?number=123987')
+            .then((res) => {
+                console.log('index api get -----', res.data);
+            })
+            .catch(err => {
+                console.log('index api err----', err);
+                if (err.unauthorized) {
+                    alert('LOGOUT');
+                    router.replace('');
+                    logout();
+                    dispatch(userLogout());
+                }
+            })
+    }, []);
+
 
 
 

@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useSegments } from 'expo-router';
 import React from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
@@ -7,12 +7,18 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
     // const colorScheme = useColorScheme();
+    const segments = useSegments();
+    const hide = segments.includes("ChatScreen");
 
     return (
         <Tabs
             screenOptions={{
                 tabBarActiveTintColor: Colors['light'].tint,
                 headerShown: false,
+                tabBarStyle: {
+                    display: hide ? "none" : "flex",
+
+                }
             }}>
             <Tabs.Screen
                 name="index"
@@ -36,6 +42,15 @@ export default function TabLayout() {
                 name="dashboard"
                 options={{
                     title: 'Dashboard',
+                    tabBarIcon: ({ color, focused }) => (
+                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="chat"
+                options={{
+                    title: 'Chat',
                     tabBarIcon: ({ color, focused }) => (
                         <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
                     ),
