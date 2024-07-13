@@ -5,14 +5,14 @@ import { logout } from "@/apis/authorize/login";
 import { userLogout } from "@/store/slices/userSlice";
 
 type LogoutProps = {
-    modalVisible: boolean;
-    setModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+    logOutVisible: boolean;
+    setLogOutVisible: React.Dispatch<React.SetStateAction<boolean>>;
     handleLogout: () => void;
 };
 
 const Logout = ({
-    modalVisible,
-    setModalVisible,
+    logOutVisible,
+    setLogOutVisible,
     handleLogout,
 }: LogoutProps) => {
     function dispatch(arg0: any) {
@@ -23,9 +23,9 @@ const Logout = ({
         <Modal
             animationType="slide"
             transparent={true}
-            visible={modalVisible}
+            visible={logOutVisible}
             onRequestClose={() => {
-                setModalVisible(!modalVisible);
+                setLogOutVisible(!logOutVisible);
             }}
         >
             <View style={styles.modalOverlay}>
@@ -38,7 +38,7 @@ const Logout = ({
                         <Button title="Yes" onPress={handleLogout} />
                         <Button
                             title="No"
-                            onPress={() => setModalVisible(false)}
+                            onPress={() => setLogOutVisible(false)}
                         />
                     </View>
                 </View>

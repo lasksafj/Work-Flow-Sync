@@ -1,90 +1,127 @@
 import React, { useState } from "react";
-import { router, Stack } from "expo-router";
 import {
-    ScrollView,
     Text,
     StyleSheet,
     View,
     TouchableOpacity,
     SafeAreaView,
     Modal,
-    Button,
     TextInput,
 } from "react-native";
-import { Feather as FeatherIcon } from "@expo/vector-icons";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { RootState } from "@/store/store";
+import api from "@/apis/api";
+import { userLogin } from "@/store/slices/userSlice";
 
-const SECTIONS = [
-    {
-        header: "Profile Settings",
-        items: [
-            {
-                id: "name",
-                label: "Name",
-                value: "John Doe",
-                firstname: "John",
-                lastname: "Doe",
-            },
-            { id: "email", label: "Email", value: "abc@gmail.com" },
-            { id: "phone", label: "Phone", value: "1234567890" },
-        ],
-    },
-    {
-        header: "Workplace",
-        items: [
-            { id: "namewp", label: "Name", value: "McDonalds" },
-            { id: "address", label: "Address", value: "123 Main St" },
-            {
-                id: "position",
-                label: "Position",
-                value: "FoodRunner",
-            },
-        ],
-    },
-];
 type EditProps = {
-    editModalVisible: boolean;
-    setEditModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-    handleEdit: () => void;
+    editProfileVisible: boolean;
+    setEditProfileVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+interface Item {
+    id: string;
+    label: string;
+    value: string | undefined;
+}
+
+interface Section {
+    header: string;
+    items: Item[];
+}
+
 const EditProfile = ({
-    editModalVisible,
-    setEditModalVisible,
-    handleEdit,
+    editProfileVisible,
+    setEditProfileVisible,
 }: EditProps) => {
-    const [name, setName] = useState("John Doe");
-    const [email, setEmail] = useState("abc@gmail.com");
-    const [phone, setPhone] = useState("1234567890");
-    const [namewp, setNamewp] = useState("McDonalds");
-    const [address, setAddress] = useState("123 Main St");
-    const [position, setPosition] = useState("FoodRunner");
+    const user = useAppSelector((state: RootState) => state.user);
+    const dispatch = useAppDispatch(); //luu du lieu vao store va refresh app xai du lieu do
+
+    // format date
+    const dateString = user.profile.dateOfBirth;
+    const date = dateString ? new Date(dateString) : undefined;
+    const formatDate = (date?: Date): string => {
+        if (!date) return "";
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Pad month to 2 digits
+        const day = date.getDate().toString().padStart(2, "0"); // Pad day to 2 digits
+        return `${year}-${month}-${day}`;
+    };
+
+    const [section, setSection] = useState<Section[]>([
+        {
+            header: "Profile Settings",
+            items: [
+                {
+                    id: "firstName",
+                    label: "First Name",
+                    value: user.profile.firstName,
+                },
+                {
+                    id: "lastName",
+                    label: "Last Name",
+                    value: user.profile.lastName,
+                },
+                { id: "email", label: "Email", value: user.profile.email },
+                {
+                    id: "phone",
+                    label: "Phone",
+                    value: user.profile.phoneNumber,
+                },
+                {
+                    id: "dateOfBirth",
+                    label: "Date of Birth",
+                    value: formatDate(date),
+                },
+            ],
+        },
+    ]);
+
     return (
         <Modal
             animationType="slide"
             transparent={false}
-            visible={editModalVisible}
+            visible={editProfileVisible}
             onRequestClose={() => {
-                setEditModalVisible(!editModalVisible);
+                setEditProfileVisible(!editProfileVisible);
             }}
         >
             <SafeAreaView style={styles.safeArea}>
                 <View style={styles.header}>
                     <TouchableOpacity
-                        onPress={() => setEditModalVisible(false)}
+                        onPress={() => setEditProfileVisible(false)}
                     >
                         <Text style={styles.title}>Cancel</Text>
                     </TouchableOpacity>
                     <Text style={styles.title}>Edit User</Text>
                     <TouchableOpacity
                         onPress={() => {
-                            alert("Saved!");
+                            setEditProfileVisible(false);
+
+                            api.put("/api/profile/profile-put", {
+                                firstName: section[0].items[0].value,
+                                lastName: section[0].items[1].value,
+                                email: section[0].items[2].value,
+                                phoneNumber: section[0].items[3].value,
+                                dateOfBirth: section[0].items[4].value,
+                            })
+                                .then((res) => {
+                                    console.log("EDIT PROFILE", res.data);
+                                    let data = {
+                                        profile: res.data,
+                                        accessToken: user.accessToken,
+                                    };
+                                    dispatch(userLogin(data));
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                });
                         }}
                     >
                         <Text style={styles.title}>Save</Text>
                     </TouchableOpacity>
                 </View>
 
-                {SECTIONS.map(({ header, items }) => (
+                {section.map(({ header, items }) => (
                     <View style={styles.section} key={header}>
                         <View style={styles.sectionHeader}>
                             <Text style={styles.sectionHeaderText}>
@@ -106,59 +143,32 @@ const EditProfile = ({
                                                 {label}
                                             </Text>
                                             <View style={styles.rowSpacer} />
-                                            {id === "name" ? (
-                                                <TextInput
-                                                    style={styles.rowValue}
-                                                    value={name}
-                                                    onChangeText={(text) =>
-                                                        setName(text)
-                                                    }
-                                                />
-                                            ) : id === "email" ? (
-                                                <TextInput
-                                                    style={styles.rowValue}
-                                                    value={email}
-                                                    onChangeText={(text) =>
-                                                        setEmail(text)
-                                                    }
-                                                />
-                                            ) : id === "phone" ? (
-                                                <TextInput
-                                                    style={styles.rowValue}
-                                                    value={phone}
-                                                    onChangeText={(text) =>
-                                                        setPhone(text)
-                                                    }
-                                                />
-                                            ) : id === "namewp" ? (
-                                                <TextInput
-                                                    style={styles.rowValue}
-                                                    value={namewp}
-                                                    onChangeText={(text) =>
-                                                        setNamewp(text)
-                                                    }
-                                                />
-                                            ) : id === "address" ? (
-                                                <TextInput
-                                                    style={styles.rowValue}
-                                                    value={address}
-                                                    onChangeText={(text) =>
-                                                        setAddress(text)
-                                                    }
-                                                />
-                                            ) : id === "position" ? (
-                                                <TextInput
-                                                    style={styles.rowValue}
-                                                    value={position}
-                                                    onChangeText={(text) =>
-                                                        setPosition(text)
-                                                    }
-                                                />
-                                            ) : (
-                                                <Text style={styles.rowValue}>
-                                                    {value}
-                                                </Text>
-                                            )}
+                                            <TextInput
+                                                style={styles.rowValue}
+                                                value={value}
+                                                onChangeText={(text) => {
+                                                    let updatedSection = [
+                                                        ...section,
+                                                    ];
+                                                    const itemIndex =
+                                                        updatedSection
+                                                            .flatMap(
+                                                                (section) =>
+                                                                    section.items
+                                                            )
+                                                            .findIndex(
+                                                                (item) =>
+                                                                    item.id ===
+                                                                    id
+                                                            );
+                                                    updatedSection.flatMap(
+                                                        (section) =>
+                                                            section.items
+                                                    )[itemIndex].value = text;
+
+                                                    setSection(updatedSection);
+                                                }}
+                                            />
                                         </View>
                                     </TouchableOpacity>
                                 </View>
@@ -170,6 +180,8 @@ const EditProfile = ({
         </Modal>
     );
 };
+
+export default EditProfile;
 
 const styles = StyleSheet.create({
     safeArea: {
@@ -241,5 +253,3 @@ const styles = StyleSheet.create({
         marginRight: 4,
     },
 });
-
-export default EditProfile;

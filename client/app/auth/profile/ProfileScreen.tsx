@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { router, Stack } from "expo-router";
+import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
     ScrollView,
@@ -9,7 +9,6 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
-
 import ImageProfile from "./src/ImageProfile";
 import Logout from "./src/Logout";
 import EditProfile from "./src/EditProfile";
@@ -18,6 +17,17 @@ import { RootState } from "@/store/store";
 import { logout } from "@/apis/authorize/login";
 import { userLogout } from "@/store/slices/userSlice";
 import api from "@/apis/api";
+
+interface Item {
+    id: string;
+    label: string;
+    value: string | undefined;
+}
+
+interface Section {
+    header: string;
+    items: Item[];
+}
 
 const ProfileScreen = () => {
     // api.get("/api/example/example-get?number=999")
@@ -35,11 +45,23 @@ const ProfileScreen = () => {
     //     .catch((error) => {
     //         alert(error);
     //     });
-
+    const router = useRouter();
     const user = useAppSelector((state: RootState) => state.user);
-    const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch(); //luu du lieu vao store va refresh app xai du lieu do
+    // console.log("ProfileScreen", user.profile);
 
-    const [section, setSection] = useState<any[]>([
+    // format date
+    const dateString = user.profile.dateOfBirth;
+    const date = dateString ? new Date(dateString) : undefined;
+    const formatDate = (date?: Date): string => {
+        if (!date) return "";
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Pad month to 2 digits
+        const day = date.getDate().toString().padStart(2, "0"); // Pad day to 2 digits
+        return `${year}-${month}-${day}`;
+    };
+
+    const [section, setSection] = useState<Section[]>([
         {
             header: "Profile Settings",
             items: [
@@ -53,6 +75,11 @@ const ProfileScreen = () => {
                     id: "phone",
                     label: "Phone",
                     value: user.profile.phoneNumber,
+                },
+                {
+                    id: "dateOfBirth",
+                    label: "Date of Birth",
+                    value: formatDate(date),
                 },
             ],
         },
@@ -73,6 +100,11 @@ const ProfileScreen = () => {
             ],
         },
     ]);
+    // console.log("ProfileScreen22222222", section[0].items[0].value);
+    section[0].items[0].value =
+        user.profile.firstName + " " + user.profile.lastName;
+    section[0].items[1].value = user.profile.email;
+    section[0].items[2].value = user.profile.phoneNumber;
 
     useEffect(() => {
         let org = "ORG1"; // Example organization ID
@@ -86,7 +118,6 @@ const ProfileScreen = () => {
                 newSection[1].items[2].value = data.role;
 
                 // console.log(newSection[1].items[0].value);
-
                 setSection(newSection);
             })
             .catch((error) => {
@@ -121,26 +152,23 @@ const ProfileScreen = () => {
     ];
     const imageUrl: string = "https://reactjs.org/logo-og.png";
     // const imageUrl = "";
+
     const initials = `${user.profile.firstName?.[0] ?? ""}${
         user.profile.lastName?.[0] ?? ""
     }`.toUpperCase();
 
     // console.log("ProfileScreen", user.profile);
-    const [modalVisible, setModalVisible] = useState(false);
-    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [logOutVisible, setLogOutVisible] = useState(false);
+    const [editProfileVisible, setEditProfileVisible] = useState(false);
 
     const handleLogout = () => {
-        setModalVisible(false);
+        setLogOutVisible(false);
         logout();
         dispatch(userLogout());
         router.replace("");
         // alert("Logged out!");
     };
 
-    const handleEdit = () => {
-        setEditModalVisible(false);
-        alert("Edit Pressed!");
-    };
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.header}>
@@ -159,7 +187,15 @@ const ProfileScreen = () => {
                 <Text style={styles.title}>User</Text>
                 <TouchableOpacity
                     onPress={() => {
-                        setEditModalVisible(true);
+                        setEditProfileVisible(true);
+                        // router.push({
+                        //     pathname: "auth/profile/src/EditProfile",
+                        //     params: {
+                        //         org: section[1].items[0].value,
+                        //         address: section[1].items[1].value,
+                        //         role: section[1].items[2].value,
+                        //     },
+                        // });
                         // alert("Edit Pressed!");
                     }}
                 >
@@ -220,7 +256,7 @@ const ProfileScreen = () => {
                                     <TouchableOpacity
                                         onPress={() => {
                                             if (id === "logout") {
-                                                setModalVisible(true);
+                                                setLogOutVisible(true);
                                                 // console.log("Logout Pressed!");
                                             }
                                         }}
@@ -252,14 +288,13 @@ const ProfileScreen = () => {
                 ))}
             </ScrollView>
             <Logout
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
+                logOutVisible={logOutVisible}
+                setLogOutVisible={setLogOutVisible}
                 handleLogout={handleLogout}
             />
             <EditProfile
-                editModalVisible={editModalVisible}
-                setEditModalVisible={setEditModalVisible}
-                handleEdit={handleEdit}
+                editProfileVisible={editProfileVisible}
+                setEditProfileVisible={setEditProfileVisible}
             />
         </SafeAreaView>
     );
