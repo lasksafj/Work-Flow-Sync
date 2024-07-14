@@ -12,69 +12,78 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import api from "@/apis/api";
 import { userLogin } from "@/store/slices/userSlice";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type EditProps = {
     editProfileVisible: boolean;
     setEditProfileVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-interface Item {
-    id: string;
-    label: string;
-    value: string | undefined;
+interface FormValues {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    dateOfBirth: Date;
 }
 
-interface Section {
-    header: string;
-    items: Item[];
-}
+// Define the validation schema using yup
+const schema = yup.object().shape({
+    email: yup
+        .string()
+        .email("Must be a valid email")
+        .required("Email is required"),
+    firstName: yup.string().required("First name is required"),
+    lastName: yup.string().required("Last name is required"),
+    phoneNumber: yup
+        .string()
+        .matches(/^\+?[1-9]\d{1,14}$/, "Must be a valid phone number")
+        .required("Phone number is required"),
+    dateOfBirth: yup
+        .date()
+        .max(new Date(), "Date of birth must be in the past")
+        .required("Date of birth is required"),
+});
 
 const EditProfile = ({
     editProfileVisible,
     setEditProfileVisible,
 }: EditProps) => {
     const user = useAppSelector((state: RootState) => state.user);
-    const dispatch = useAppDispatch(); //luu du lieu vao store va refresh app xai du lieu do
+    const dispatch = useAppDispatch();
 
-    // format date
-    const dateString = user.profile.dateOfBirth;
-    const date = dateString ? new Date(dateString) : undefined;
-    const formatDate = (date?: Date): string => {
-        if (!date) return "";
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Pad month to 2 digits
-        const day = date.getDate().toString().padStart(2, "0"); // Pad day to 2 digits
-        return `${year}-${month}-${day}`;
-    };
-
-    const [section, setSection] = useState<Section[]>([
-        {
-            header: "Profile Settings",
-            items: [
-                {
-                    id: "firstName",
-                    label: "First Name",
-                    value: user.profile.firstName,
-                },
-                {
-                    id: "lastName",
-                    label: "Last Name",
-                    value: user.profile.lastName,
-                },
-                { id: "email", label: "Email", value: user.profile.email },
-                {
-                    id: "phone",
-                    label: "Phone",
-                    value: user.profile.phoneNumber,
-                },
-                {
-                    id: "dateOfBirth",
-                    label: "Date of Birth",
-                    value: formatDate(date),
-                },
-            ],
+    const {
+        control,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<FormValues>({
+        resolver: yupResolver(schema),
+        defaultValues: {
+            firstName: user.profile.firstName,
+            lastName: user.profile.lastName,
+            email: user.profile.email,
+            phoneNumber: user.profile.phoneNumber,
+            dateOfBirth: user.profile.dateOfBirth,
         },
-    ]);
+    });
+
+    const onSubmit = (data: FormValues) => {
+        api.put("/api/profile/profile-put", data)
+            .then((res) => {
+                console.log("EDIT PROFILE", res.data);
+                let updatedData = {
+                    profile: res.data,
+                    accessToken: user.accessToken,
+                };
+                dispatch(userLogin(updatedData));
+                setEditProfileVisible(false);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     return (
         <Modal
@@ -93,89 +102,106 @@ const EditProfile = ({
                         <Text style={styles.title}>Cancel</Text>
                     </TouchableOpacity>
                     <Text style={styles.title}>Edit User</Text>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setEditProfileVisible(false);
-
-                            api.put("/api/profile/profile-put", {
-                                firstName: section[0].items[0].value,
-                                lastName: section[0].items[1].value,
-                                email: section[0].items[2].value,
-                                phoneNumber: section[0].items[3].value,
-                                dateOfBirth: section[0].items[4].value,
-                            })
-                                .then((res) => {
-                                    console.log("EDIT PROFILE", res.data);
-                                    let data = {
-                                        profile: res.data,
-                                        accessToken: user.accessToken,
-                                    };
-                                    dispatch(userLogin(data));
-                                })
-                                .catch((err) => {
-                                    console.log(err);
-                                });
-                        }}
-                    >
+                    <TouchableOpacity onPress={handleSubmit(onSubmit)}>
                         <Text style={styles.title}>Save</Text>
                     </TouchableOpacity>
                 </View>
 
-                {section.map(({ header, items }) => (
-                    <View style={styles.section} key={header}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>
-                                {header}
-                            </Text>
-                        </View>
-                        <View>
-                            {items.map(({ id, label, value }, index) => (
-                                <View
-                                    style={[
-                                        styles.rowWraper,
-                                        index === 0 && { borderBottomWidth: 0 },
-                                    ]}
-                                    key={id}
-                                >
-                                    <TouchableOpacity onPress={() => {}}>
-                                        <View style={styles.row}>
-                                            <Text style={styles.rowLabel}>
-                                                {label}
-                                            </Text>
-                                            <View style={styles.rowSpacer} />
-                                            <TextInput
-                                                style={styles.rowValue}
-                                                value={value}
-                                                onChangeText={(text) => {
-                                                    let updatedSection = [
-                                                        ...section,
-                                                    ];
-                                                    const itemIndex =
-                                                        updatedSection
-                                                            .flatMap(
-                                                                (section) =>
-                                                                    section.items
-                                                            )
-                                                            .findIndex(
-                                                                (item) =>
-                                                                    item.id ===
-                                                                    id
-                                                            );
-                                                    updatedSection.flatMap(
-                                                        (section) =>
-                                                            section.items
-                                                    )[itemIndex].value = text;
+                <View style={styles.form}>
+                    <Controller
+                        control={control}
+                        name="firstName"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder="First Name"
+                            />
+                        )}
+                    />
+                    {errors.firstName && (
+                        <Text style={styles.errorText}>
+                            {errors.firstName.message}
+                        </Text>
+                    )}
 
-                                                    setSection(updatedSection);
-                                                }}
-                                            />
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                ))}
+                    <Controller
+                        control={control}
+                        name="lastName"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder="Last Name"
+                            />
+                        )}
+                    />
+                    {errors.lastName && (
+                        <Text style={styles.errorText}>
+                            {errors.lastName.message}
+                        </Text>
+                    )}
+
+                    <Controller
+                        control={control}
+                        name="email"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder="Email"
+                            />
+                        )}
+                    />
+                    {errors.email && (
+                        <Text style={styles.errorText}>
+                            {errors.email.message}
+                        </Text>
+                    )}
+
+                    <Controller
+                        control={control}
+                        name="phoneNumber"
+                        render={({ field: { onChange, onBlur, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                onBlur={onBlur}
+                                onChangeText={onChange}
+                                value={value}
+                                placeholder="Phone Number"
+                            />
+                        )}
+                    />
+                    {errors.phoneNumber && (
+                        <Text style={styles.errorText}>
+                            {errors.phoneNumber.message}
+                        </Text>
+                    )}
+
+                    <Controller
+                        control={control}
+                        name="dateOfBirth"
+                        render={({ field: { onChange, value } }) => (
+                            <TextInput
+                                style={styles.input}
+                                value={value}
+                                placeholder="Date of Birth"
+                                onChangeText={onChange}
+                            />
+                        )}
+                    />
+                    {errors.dateOfBirth && (
+                        <Text style={styles.errorText}>
+                            {errors.dateOfBirth.message}
+                        </Text>
+                    )}
+                </View>
             </SafeAreaView>
         </Modal>
     );
@@ -188,13 +214,9 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#f6f6f6",
     },
-    container: {
-        // paddingVertical: 24,
-    },
     header: {
         flexDirection: "row",
         paddingHorizontal: 10,
-        // marginBottom: 8,
         backgroundColor: "#008000",
         justifyContent: "space-between",
         alignItems: "center",
@@ -206,50 +228,18 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 6,
     },
-    section: {
-        // paddingTop: 12,
+    form: {
+        padding: 20,
     },
-    sectionHeader: {
-        paddingHorizontal: 24,
-        paddingVertical: 8,
-        backgroundColor: "lightgray",
+    input: {
+        height: 40,
+        borderColor: "gray",
+        borderWidth: 1,
+        marginBottom: 10,
+        paddingHorizontal: 10,
     },
-    sectionHeaderText: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#a7a7a7",
-        textTransform: "uppercase",
-        letterSpacing: 1.2,
-    },
-    // sectionBody: {
-    //   paddingHorizontal: 24,
-    //   paddingVertical: 12,
-    // },
-    //make line for each row
-    rowWraper: {
-        paddingLeft: 24,
-        borderTopWidth: 1,
-        borderTopColor: "#e3e3e3",
-        backgroundColor: "#fff",
-    },
-    row: {
-        height: 50,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        paddingRight: 24,
-    },
-    rowLabel: {
-        fontSize: 17,
-        fontWeight: "500",
-        color: "#000",
-    },
-    rowSpacer: {
-        flex: 1,
-    },
-    rowValue: {
-        fontSize: 17,
-        color: "#616161",
-        marginRight: 4,
+    errorText: {
+        color: "red",
+        marginBottom: 10,
     },
 });

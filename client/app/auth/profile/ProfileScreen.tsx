@@ -51,15 +51,9 @@ const ProfileScreen = () => {
     // console.log("ProfileScreen", user.profile);
 
     // format date
-    const dateString = user.profile.dateOfBirth;
-    const date = dateString ? new Date(dateString) : undefined;
-    const formatDate = (date?: Date): string => {
-        if (!date) return "";
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Pad month to 2 digits
-        const day = date.getDate().toString().padStart(2, "0"); // Pad day to 2 digits
-        return `${year}-${month}-${day}`;
-    };
+    const date = user.profile.dateOfBirth
+        ? new Date(user.profile.dateOfBirth)
+        : undefined;
 
     const [section, setSection] = useState<Section[]>([
         {
@@ -79,7 +73,7 @@ const ProfileScreen = () => {
                 {
                     id: "dateOfBirth",
                     label: "Date of Birth",
-                    value: formatDate(date),
+                    value: date?.toISOString().split("T")[0],
                 },
             ],
         },
