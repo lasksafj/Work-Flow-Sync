@@ -364,5 +364,6 @@ const styles = StyleSheet.create({
         fontSize: 17,
         color: "#616161",
         marginRight: 4,
+        textAlign: "right",
     },
 });

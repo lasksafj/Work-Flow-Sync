@@ -7,6 +7,8 @@ import {
     SafeAreaView,
     Modal,
     TextInput,
+    Button,
+    Platform,
 } from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
@@ -15,6 +17,8 @@ import { userLogin } from "@/store/slices/userSlice";
 import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import moment from "moment";
 
 type EditProps = {
     editProfileVisible: boolean;
@@ -54,6 +58,9 @@ const EditProfile = ({
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
 
+    const [date, setDate] = useState(new Date());
+    const [show, setShow] = useState(false);
+
     const {
         control,
         handleSubmit,
@@ -85,6 +92,13 @@ const EditProfile = ({
             });
     };
 
+    const onChangeDatePicker = (event: any, selectedDate?: Date) => {
+        const currentDate = selectedDate || date;
+        setShow(Platform.OS === "ios");
+        setDate(currentDate);
+        setValue("dateOfBirth", currentDate, { shouldValidate: true }); // Update form state
+    };
+
     return (
         <Modal
             animationType="slide"
@@ -107,100 +121,159 @@ const EditProfile = ({
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.form}>
-                    <Controller
-                        control={control}
-                        name="firstName"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="First Name"
-                            />
-                        )}
-                    />
-                    {errors.firstName && (
-                        <Text style={styles.errorText}>
-                            {errors.firstName.message}
-                        </Text>
-                    )}
-
-                    <Controller
-                        control={control}
-                        name="lastName"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="Last Name"
-                            />
-                        )}
-                    />
-                    {errors.lastName && (
-                        <Text style={styles.errorText}>
-                            {errors.lastName.message}
-                        </Text>
-                    )}
-
-                    <Controller
-                        control={control}
-                        name="email"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="Email"
-                            />
-                        )}
-                    />
-                    {errors.email && (
-                        <Text style={styles.errorText}>
-                            {errors.email.message}
-                        </Text>
-                    )}
-
-                    <Controller
-                        control={control}
-                        name="phoneNumber"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                onBlur={onBlur}
-                                onChangeText={onChange}
-                                value={value}
-                                placeholder="Phone Number"
-                            />
-                        )}
-                    />
-                    {errors.phoneNumber && (
-                        <Text style={styles.errorText}>
-                            {errors.phoneNumber.message}
-                        </Text>
-                    )}
-
-                    <Controller
-                        control={control}
-                        name="dateOfBirth"
-                        render={({ field: { onChange, value } }) => (
-                            <TextInput
-                                style={styles.input}
-                                value={value}
-                                placeholder="Date of Birth"
-                                onChangeText={onChange}
-                            />
-                        )}
-                    />
-                    {errors.dateOfBirth && (
-                        <Text style={styles.errorText}>
-                            {errors.dateOfBirth.message}
-                        </Text>
-                    )}
+                <View style={styles.section}>
+                    <View>
+                        <View style={styles.rowWraper}>
+                            <View style={styles.row}>
+                                <Text style={styles.rowLabel}>First Name</Text>
+                                <View style={styles.rowSpacer} />
+                                <Controller
+                                    control={control}
+                                    name="firstName"
+                                    render={({
+                                        field: { onChange, onBlur, value },
+                                    }) => (
+                                        <TextInput
+                                            style={styles.rowValue}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            placeholder="First Name"
+                                        />
+                                    )}
+                                />
+                            </View>
+                            {errors.firstName && (
+                                <Text style={styles.errorText}>
+                                    {errors.firstName.message}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.rowWraper}>
+                            <View style={styles.row}>
+                                <Text style={styles.rowLabel}>Last Name</Text>
+                                <View style={styles.rowSpacer} />
+                                <Controller
+                                    control={control}
+                                    name="lastName"
+                                    render={({
+                                        field: { onChange, onBlur, value },
+                                    }) => (
+                                        <TextInput
+                                            style={styles.rowValue}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            placeholder="Last Name"
+                                        />
+                                    )}
+                                />
+                            </View>
+                            {errors.lastName && (
+                                <Text style={styles.errorText}>
+                                    {errors.lastName.message}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.rowWraper}>
+                            <View style={styles.row}>
+                                <Text style={styles.rowLabel}>Email</Text>
+                                <View style={styles.rowSpacer} />
+                                <Controller
+                                    control={control}
+                                    name="email"
+                                    render={({
+                                        field: { onChange, onBlur, value },
+                                    }) => (
+                                        <TextInput
+                                            style={styles.rowValue}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            placeholder="Email"
+                                        />
+                                    )}
+                                />
+                            </View>
+                            {errors.email && (
+                                <Text style={styles.errorText}>
+                                    {errors.email.message}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.rowWraper}>
+                            <View style={styles.row}>
+                                <Text style={styles.rowLabel}>Phone</Text>
+                                <View style={styles.rowSpacer} />
+                                <Controller
+                                    control={control}
+                                    name="phoneNumber"
+                                    render={({
+                                        field: { onChange, onBlur, value },
+                                    }) => (
+                                        <TextInput
+                                            style={styles.rowValue}
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            placeholder="Phone Number"
+                                        />
+                                    )}
+                                />
+                            </View>
+                            {errors.phoneNumber && (
+                                <Text style={styles.errorText}>
+                                    {errors.phoneNumber.message}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={styles.rowWraper}>
+                            <View style={styles.row}>
+                                <Text style={styles.rowLabel}>
+                                    Date Of Birth
+                                </Text>
+                                <View style={styles.rowSpacer} />
+                                <Controller
+                                    control={control}
+                                    name="dateOfBirth"
+                                    render={({
+                                        field: { onChange, onBlur, value },
+                                    }) => (
+                                        <View>
+                                            <TouchableOpacity
+                                                onPress={() => setShow(true)}
+                                            >
+                                                {show && (
+                                                    <DateTimePicker
+                                                        testID="dateTimePicker"
+                                                        value={date}
+                                                        mode="date"
+                                                        display="default"
+                                                        onChange={
+                                                            onChangeDatePicker
+                                                        }
+                                                        maximumDate={new Date()}
+                                                    />
+                                                )}
+                                                <Text style={styles.rowValue}>
+                                                    {value
+                                                        ? moment(value).format(
+                                                              "YYYY-MM-DD"
+                                                          )
+                                                        : "Select Date"}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    )}
+                                />
+                            </View>
+                            {errors.dateOfBirth && (
+                                <Text style={styles.errorText}>
+                                    {errors.dateOfBirth.message}
+                                </Text>
+                            )}
+                        </View>
+                    </View>
                 </View>
             </SafeAreaView>
         </Modal>
@@ -228,6 +301,53 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 6,
     },
+    section: {
+        // paddingTop: 12,
+    },
+    sectionHeader: {
+        paddingHorizontal: 24,
+        paddingVertical: 8,
+        backgroundColor: "lightgray",
+    },
+    sectionHeaderText: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#a7a7a7",
+        textTransform: "uppercase",
+        letterSpacing: 1.2,
+    },
+    // sectionBody: {
+    //   paddingHorizontal: 24,
+    //   paddingVertical: 12,
+    // },
+    //make line for each row
+    rowWraper: {
+        paddingLeft: 24,
+        borderTopWidth: 1,
+        borderTopColor: "#e3e3e3",
+        backgroundColor: "#fff",
+    },
+    row: {
+        height: 50,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        paddingRight: 24,
+    },
+    rowLabel: {
+        fontSize: 17,
+        fontWeight: "500",
+        color: "#000",
+    },
+    rowSpacer: {
+        flex: 1,
+    },
+    rowValue: {
+        fontSize: 17,
+        color: "#616161",
+        marginRight: 4,
+        textAlign: "right",
+    },
     form: {
         padding: 20,
     },
@@ -243,3 +363,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
+function setDate(currentDate: Date | undefined) {
+    throw new Error("Function not implemented.");
+}
+
+function setValue(
+    arg0: string,
+    currentDate: Date | undefined,
+    arg2: { shouldValidate: boolean }
+) {
+    throw new Error("Function not implemented.");
+}
