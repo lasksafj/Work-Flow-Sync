@@ -1,14 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
+import { router, Stack } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-    StyleSheet,
-    View,
-    Image,
-    TouchableOpacity,
-    Text,
-    Alert,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { Svg, Circle, Text as SvgText } from "react-native-svg";
 
 interface ImageProfileProps {
@@ -17,73 +10,24 @@ interface ImageProfileProps {
 }
 
 const ImageProfile: React.FC<ImageProfileProps> = ({ initials, imageUrl }) => {
-    const [selectedImage, setSelectedImage] = useState<string | null>(imageUrl);
-
-    const pickImage = async () => {
-        // Request permission to access the library
-        const { status } =
-            await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-            alert("Sorry, we need camera roll permissions to make this work!");
-            return;
-        }
-
-        // Pick an image from the library
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
-        }
-    };
-
-    const takePhoto = async () => {
-        // Request permission to access the camera
-        const { status } = await ImagePicker.requestCameraPermissionsAsync();
-        if (status !== "granted") {
-            alert("Sorry, we need camera permissions to make this work!");
-            return;
-        }
-
-        // Take a photo using the camera
-        const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
-        }
-    };
-
-    const showImagePickerOptions = () => {
-        Alert.alert(
-            "Select Image",
-            "Choose an image from your library or take a new photo",
-            [
-                { text: "Cancel", style: "cancel" },
-                { text: "Pick from Library", onPress: pickImage },
-                { text: "Take Photo", onPress: takePhoto },
-            ],
-            { cancelable: true }
-        );
-    };
-
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#f6f6f6" }}>
             <View style={styles.container}>
-                <TouchableOpacity onPress={showImagePickerOptions}>
+                <TouchableOpacity
+                    onPress={() => {
+                        // handle onPress
+                        alert("Change Image Pressed!");
+                    }}
+                >
                     <View style={styles.profile}>
-                        {selectedImage ? (
+                        {/* <View style={styles.profileAction}>
+              <FeatherIcon name="edit" size={16} color="#fff" />
+            </View> */}
+                        {imageUrl ? (
                             <Image
                                 style={styles.profileAvatar}
                                 source={{
-                                    uri: selectedImage,
+                                    uri: imageUrl,
                                 }}
                                 alt="Profile Picture"
                             />
@@ -120,18 +64,38 @@ export default ImageProfile;
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        // paddingVertical: 48,
+        // flex: 1,
     },
     profile: {
         padding: 16,
         flexDirection: "column",
         alignItems: "center",
         backgroundColor: "#fff",
+        // borderTopWidth: 1,
+        // borderBottomWidth: 1,
+        // borderColor: "#e3e3e3",
     },
     profileAvatar: {
         width: 80,
         height: 80,
         borderRadius: 9999,
+    },
+    profileAction: {
+        marginTop: 12,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#007bff",
+        borderRadius: 12,
+    },
+    profileActionText: {
+        marginRight: 8,
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#fff",
     },
     initialsContainer: {
         width: 80,

@@ -144,8 +144,8 @@ const ProfileScreen = () => {
             ],
         },
     ];
-    const imageUrl: string = "https://reactjs.org/logo-og.png";
-    // const imageUrl = "";
+    // const imageUrl: string = "https://reactjs.org/logo-og.png";
+    const imageUrl = "";
 
     const initials = `${user.profile.firstName?.[0] ?? ""}${
         user.profile.lastName?.[0] ?? ""
