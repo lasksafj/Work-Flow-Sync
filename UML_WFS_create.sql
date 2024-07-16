@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-07-09 23:12:54.759
+-- Last modification date: 2024-07-15 22:29:13.52
 
 -- tables
 -- Table: availabletimes
@@ -51,7 +51,7 @@ CREATE TABLE messages (
 
 -- Table: notifications
 CREATE TABLE notifications (
-    content int  NOT NULL,
+    content varchar(500)  NOT NULL,
     created_date date  NOT NULL,
     emp_id int  NOT NULL,
     CONSTRAINT notifications_pk PRIMARY KEY (created_date,emp_id)
@@ -115,6 +115,7 @@ CREATE TABLE users (
     first_name varchar(80)  NOT NULL,
     phone_number varchar(10)  NOT NULL,
     date_of_birth date  NOT NULL,
+    img varchar(200)  NOT NULL,
     CONSTRAINT User_uk_01 UNIQUE (email) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT User_uk_02 UNIQUE (phone_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT users_pk PRIMARY KEY (id)
