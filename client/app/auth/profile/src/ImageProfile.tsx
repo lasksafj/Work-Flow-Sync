@@ -10,15 +10,24 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Svg, Circle, Text as SvgText } from "react-native-svg";
+import { useAppSelector } from "@/store/hooks";
+import { RootState } from "@/store/store";
 
-interface ImageProfileProps {
-    initials: string;
-    imageUrl: string | null;
-}
+// interface ImageProfileProps {
+//     initials: string;
+//     imageUrl: string | null;
+// }
 
-const ImageProfile: React.FC<ImageProfileProps> = ({ initials, imageUrl }) => {
+const ImageProfile = () => {
+    const user = useAppSelector((state: RootState) => state.user);
+    const imageUrl: string = "https://reactjs.org/logo-og.png";
+    // const imageUrl = null;
+    const initials = `${user.profile.firstName?.[0] ?? ""}${
+        user.profile.lastName?.[0] ?? ""
+    }`.toUpperCase();
+    // console.log("imageUrl111111", imageUrl);
     const [selectedImage, setSelectedImage] = useState<string | null>(imageUrl);
-
+    // console.log("selectedImage2222222222", selectedImage);
     const pickImage = async () => {
         // Request permission to access the library
         const { status } =

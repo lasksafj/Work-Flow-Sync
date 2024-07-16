@@ -94,6 +94,7 @@ const ProfileScreen = () => {
             ],
         },
     ]);
+
     // console.log("ProfileScreen22222222", section[0].items[0].value);
     section[0].items[0].value =
         user.profile.firstName + " " + user.profile.lastName;
@@ -101,7 +102,7 @@ const ProfileScreen = () => {
     section[0].items[2].value = user.profile.phoneNumber;
 
     useEffect(() => {
-        let org = "ORG1"; // Example organization ID
+        let org = "ORG4"; // Example organization ID
         api.get("/api/profile/profile-get?org=" + org)
             .then((response) => {
                 const data = response.data;
@@ -144,12 +145,6 @@ const ProfileScreen = () => {
             ],
         },
     ];
-    // const imageUrl: string = "https://reactjs.org/logo-og.png";
-    const imageUrl = "";
-
-    const initials = `${user.profile.firstName?.[0] ?? ""}${
-        user.profile.lastName?.[0] ?? ""
-    }`.toUpperCase();
 
     // console.log("ProfileScreen", user.profile);
     const [logOutVisible, setLogOutVisible] = useState(false);
@@ -198,7 +193,7 @@ const ProfileScreen = () => {
             </View>
 
             <ScrollView style={styles.container}>
-                <ImageProfile initials={initials} imageUrl={imageUrl} />
+                <ImageProfile />
 
                 {section.map(({ header, items }) => (
                     <View style={styles.section} key={header}>
