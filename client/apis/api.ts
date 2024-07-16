@@ -1,7 +1,8 @@
 import { hostDomain } from "@/config/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import { getNewAccessToken, validateToken } from "./authorize/login";
+import { getNewAccessToken, logout, validateToken } from "./authorize/login";
+import { router } from "expo-router";
 
 const api = axios.create({
     baseURL: hostDomain,
@@ -42,6 +43,9 @@ api.interceptors.response.use(
             }
             alert('Unauthorized access. Please log in.');
             error.unauthorized = true;
+
+            router.replace('');
+            logout();
         }
         // Return the error to be handled by the calling code
         return Promise.reject(error);

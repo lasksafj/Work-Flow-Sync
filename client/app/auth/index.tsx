@@ -12,29 +12,36 @@ import { router } from 'expo-router';
 import { logout } from '@/apis/authorize/login';
 import api from '@/apis/api';
 import { useEffect } from 'react';
+import { updateOrganization } from '@/store/slices/organizationSlice';
 
 export default function HomeScreen() {
 
     const user = useAppSelector((state: RootState) => state.user)
     const dispatch = useAppDispatch()
 
-    console.log('HomeScreen', user);
+    // console.log('HomeScreen', user);
 
     // Example
     useEffect(() => {
         api.get('/api/user/protected?number=123987')
             .then((res) => {
-                console.log('index api get -----', res.data);
+                console.log('INDEX API get -----', res.data);
             })
             .catch(err => {
-                console.log('index api err----', err);
-                if (err.unauthorized) {
-                    alert('LOGOUT');
-                    router.replace('');
-                    logout();
-                    dispatch(userLogout());
-                }
-            })
+                console.log('INDEX API err----', err);
+                // if (err.unauthorized) {
+                //     alert('LOGOUT');
+                //     router.replace('');
+                //     logout();
+                //     dispatch(userLogout());
+                // }
+            });
+
+        dispatch(updateOrganization({
+            abbreviation: 'ORG7',
+            name: 'Organization Three',
+            address: '789 Elm St'
+        }));
     }, []);
 
 
@@ -53,7 +60,8 @@ export default function HomeScreen() {
             <ThemedView style={styles.stepContainer}>
                 <ThemedText type="subtitle">User data</ThemedText>
                 <ThemedText>
-                    {user.profile.email}  {user.profile.dateOfBirth?.toLocaleString()}
+                    {/* {user.profile.email}  {user.profile.dateOfBirth?.toLocaleString()} */}
+                    {JSON.stringify(user.profile)}
                 </ThemedText>
                 <ThemedText>
                     {user.profile.firstName} {user.profile.lastName} {user.profile.phoneNumber}

@@ -3,6 +3,12 @@ const router = express.Router();
 const chatController = require('../controllers/chatController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.post('/get-groups', authMiddleware, chatController.getGroups);
+router.get('/get-groups', authMiddleware, chatController.getGroups);
+router.post('/create-group', authMiddleware, chatController.createGroup);
+router.post('/add-participant', authMiddleware, chatController.addParticipants);
+router.get('/get-employees', authMiddleware, chatController.getEmployees);
+
+router.get('/messages/:groupId', authMiddleware, chatController.getMessages);
+// router.post('/messages', authMiddleware, chatController.postMessage);
 
 module.exports = router;

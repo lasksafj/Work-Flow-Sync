@@ -4,7 +4,7 @@ import { Avatar, Bubble, Composer, GiftedChat, IMessage, InputToolbar } from 're
 import { View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const CustomHeaderTitle = ({ chatId }: any) => {
+const CustomHeaderTitle = ({ groupName }: any) => {
     return (
         <View style={styles.container}>
             <Image
@@ -12,7 +12,7 @@ const CustomHeaderTitle = ({ chatId }: any) => {
                 alt='avatar'
                 style={styles.image}
             />
-            <Text style={styles.text}>AAAA {chatId}</Text>
+            <Text style={styles.text}>{groupName}</Text>
         </View>
     );
 }
@@ -72,13 +72,13 @@ const renderSend = (props: any) => {
 };
 
 const ChatScreen = () => {
-    const { chatId } = useLocalSearchParams();
+    const { groupId, groupName } = useLocalSearchParams();
     const [messages, setMessages] = useState<IMessage[]>([]);
     const navigation = useNavigation();
 
     useEffect(() => {
         navigation.setOptions({
-            headerTitle: () => <CustomHeaderTitle chatId={chatId} />,
+            headerTitle: () => <CustomHeaderTitle groupName={groupName} />,
         });
     }, []);
 

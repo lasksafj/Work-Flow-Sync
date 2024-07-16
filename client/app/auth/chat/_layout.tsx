@@ -13,7 +13,7 @@ export default function ChatLayout() {
                 options={{
                     title: 'Chats',
                     headerLargeTitle: true,
-                    headerTransparent: true,
+                    // headerTransparent: true,
                     headerBlurEffect: 'regular',
                     headerLeft: () => (
                         <Ionicons
@@ -27,7 +27,7 @@ export default function ChatLayout() {
                             <TouchableOpacity>
                                 <Ionicons name="camera-outline" color={Colors.primary} size={30} />
                             </TouchableOpacity>
-                            <Link href="/(modals)/new-chat" asChild>
+                            <Link href="auth/chat/NewChatScreen" asChild>
                                 <TouchableOpacity>
                                     <Ionicons name="add-circle" color={Colors.primary} size={30} />
                                 </TouchableOpacity>
@@ -42,6 +42,8 @@ export default function ChatLayout() {
                     },
                 }}
             />
+
+            <Stack.Screen name="NewChatScreen" />
 
 
             <Stack.Screen
