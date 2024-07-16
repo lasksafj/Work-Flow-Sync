@@ -1,12 +1,13 @@
 import { User } from "@/models/User";
 import { createSlice } from "@reduxjs/toolkit";
 
-const initUser: User = {
+const initUser = {
     lastName: undefined,
     firstName: undefined,
     email: undefined,
     phoneNumber: undefined,
-    dateOfBirth: undefined
+    dateOfBirth: undefined,
+    img: undefined
 }
 
 const initialState = {
@@ -24,7 +25,8 @@ const userSlice = createSlice({
                 lastName: action.payload.profile.lastName,
                 firstName: action.payload.profile.firstName,
                 phoneNumber: action.payload.profile.phoneNumber,
-                dateOfBirth: action.payload.profile.dateOfBirth
+                dateOfBirth: action.payload.profile.dateOfBirth,
+                img: action.payload.profile.img
             };
             state.accessToken = action.payload.access;
         },

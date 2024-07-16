@@ -1,5 +1,6 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-07-15 22:29:13.52
+-- Last modification date: 2024-07-10 01:31:46.188
+
 
 -- tables
 -- Table: availabletimes
@@ -115,11 +116,7 @@ CREATE TABLE users (
     first_name varchar(80)  NOT NULL,
     phone_number varchar(10)  NOT NULL,
     date_of_birth date  NOT NULL,
-<<<<<<< Updated upstream
     img varchar(200)  NOT NULL,
-=======
-    profile_image_url VARCHAR(255),
->>>>>>> Stashed changes
     CONSTRAINT User_uk_01 UNIQUE (email) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT User_uk_02 UNIQUE (phone_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT users_pk PRIMARY KEY (id)

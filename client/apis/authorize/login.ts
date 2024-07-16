@@ -11,6 +11,9 @@ const loginLocal = async (email: string, password: string) => {
             {
                 email: email,
                 password: password
+            },
+            {
+                timeout: 5000
             }
         );
         await AsyncStorage.setItem('accessToken', response.data.access);
@@ -26,7 +29,15 @@ const loginLocal = async (email: string, password: string) => {
 const getNewAccessToken = async () => {
     try {
         let refresh = await AsyncStorage.getItem('refreshToken');
-        const response = await axios.post(hostDomain + '/api/user/refresh-token/', { refresh: refresh });
+        const response = await axios.post(
+            hostDomain + '/api/user/refresh-token/',
+            {
+                refresh: refresh
+            },
+            {
+                timeout: 5000
+            }
+        );
         await AsyncStorage.setItem('accessToken', response.data.access);
         await AsyncStorage.setItem('refreshToken', response.data.refresh);
         return response.data;
@@ -48,7 +59,10 @@ const validateToken = async () => {
         const response = await axios.post(
             hostDomain + '/api/user/verify/',
             {},
-            { headers: { Authorization: `Bearer ${access}` } }
+            {
+                headers: { Authorization: `Bearer ${access}` },
+                timeout: 5000
+            }
         );
         return response;  // Access token is still valid
     } catch (err) {

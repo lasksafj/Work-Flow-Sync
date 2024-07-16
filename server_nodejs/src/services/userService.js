@@ -30,7 +30,8 @@ exports.loginUser = async (userData) => {
         lastName: user.last_name,
         firstName: user.first_name,
         phoneNumber: user.phone_number,
-        dateOfBirth: user.date_of_birth
+        dateOfBirth: user.date_of_birth,
+        img: user.img
     }
     return { accessToken, refreshToken, profile };
 };
@@ -64,7 +65,8 @@ exports.verifyUser = async (accessToken) => {
         lastName: user.last_name,
         firstName: user.first_name,
         phoneNumber: user.phone_number,
-        dateOfBirth: user.date_of_birth
+        dateOfBirth: user.date_of_birth,
+        img: user.img
     }
     return { profile };
 }
