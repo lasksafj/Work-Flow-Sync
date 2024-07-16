@@ -115,7 +115,7 @@ CREATE TABLE users (
     first_name varchar(80)  NOT NULL,
     phone_number varchar(10)  NOT NULL,
     date_of_birth date  NOT NULL,
-    img varchar(200)  NOT NULL,
+    img varchar(200)  NULL,
     CONSTRAINT User_uk_01 UNIQUE (email) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT User_uk_02 UNIQUE (phone_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT users_pk PRIMARY KEY (id)
