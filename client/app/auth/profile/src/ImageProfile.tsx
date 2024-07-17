@@ -20,8 +20,8 @@ import { RootState } from "@/store/store";
 
 const ImageProfile = () => {
     const user = useAppSelector((state: RootState) => state.user);
-    const imageUrl: string = "https://reactjs.org/logo-og.png";
-    // const imageUrl = null;
+    // const imageUrl: string = "https://reactjs.org/logo-og.png";
+    const imageUrl = null;
     const initials = `${user.profile.firstName?.[0] ?? ""}${
         user.profile.lastName?.[0] ?? ""
     }`.toUpperCase();

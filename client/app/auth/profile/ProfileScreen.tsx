@@ -47,6 +47,9 @@ const ProfileScreen = () => {
     //     });
     const router = useRouter();
     const user = useAppSelector((state: RootState) => state.user);
+    const organization = useAppSelector(
+        (state: RootState) => state.organization
+    );
     const dispatch = useAppDispatch(); //luu du lieu vao store va refresh app xai du lieu do
     // console.log("ProfileScreen", user.profile);
 
@@ -80,11 +83,11 @@ const ProfileScreen = () => {
         {
             header: "Workplace",
             items: [
-                { id: "namewp", label: "Name", value: "" },
+                { id: "namewp", label: "Name", value: organization.name },
                 {
                     id: "address",
                     label: "Address",
-                    value: "",
+                    value: organization.address,
                 },
                 {
                     id: "position",
@@ -102,17 +105,15 @@ const ProfileScreen = () => {
     section[0].items[2].value = user.profile.phoneNumber;
 
     useEffect(() => {
-        let org = "ORG4"; // Example organization ID
-        api.get("/api/profile/profile-get?org=" + org)
+        let org = organization.abbreviation; // Organization ID
+        api.get("/api/profile/profile-getRole?org=" + org)
             .then((response) => {
                 const data = response.data;
                 console.log(data);
                 let newSection = [...section];
-                newSection[1].items[0].value = data.orgname;
-                newSection[1].items[1].value = data.address;
                 newSection[1].items[2].value = data.role;
 
-                // console.log(newSection[1].items[0].value);
+                // console.log(newSection[1].items[2].value);
                 setSection(newSection);
             })
             .catch((error) => {
