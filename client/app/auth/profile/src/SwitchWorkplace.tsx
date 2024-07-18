@@ -1,25 +1,132 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Text } from "react-native";
-import { useAppSelector } from "@/store/hooks";
+import { StyleSheet, View, Text, Modal, TouchableOpacity } from "react-native";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
+import { Feather as FeatherIcon } from "@expo/vector-icons";
+import api from "@/apis/api";
+import { set } from "date-fns";
 
-const SwitchWorkplace = () => {
+type SwitchProps = {
+    switchWorkplaceVisible: boolean;
+    setSwitchWorkplaceVisible: React.Dispatch<React.SetStateAction<boolean>>;
+};
+const SwitchWorkplace = ({
+    switchWorkplaceVisible,
+    setSwitchWorkplaceVisible,
+}: SwitchProps) => {
+    const user = useAppSelector((state: RootState) => state.user);
+    const organization = useAppSelector(
+        (state: RootState) => state.organization
+    );
+    const dispatch = useAppDispatch();
+    const [workplaces, setWorkplaces] = React.useState([]);
+
+    useEffect(() => {
+        api.get("/api/profile/profile-getOrg")
+            .then((response) => {
+                const data = response.data;
+                console.log(data);
+                setWorkplaces(data);
+            })
+            .catch((error) => {
+                alert(error);
+            });
+    }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
+
+    console.log(workplaces);
     return (
-        <SafeAreaView style={styles.container}>
-            <View>
-                <Text>Switch Workplace</Text>
-            </View>
-        </SafeAreaView>
+        <Modal
+            animationType="slide"
+            transparent={false}
+            visible={switchWorkplaceVisible}
+            onRequestClose={() => {
+                setSwitchWorkplaceVisible(false);
+            }}
+        >
+            <SafeAreaView style={styles.container}>
+                <View style={styles.header}>
+                    <TouchableOpacity
+                        onPress={() => {
+                            setSwitchWorkplaceVisible(false);
+                        }}
+                    >
+                        <FeatherIcon
+                            name="chevron-left"
+                            size={25}
+                            color="white"
+                            style={styles.title}
+                        />
+                    </TouchableOpacity>
+                    <Text style={styles.title}>Select Workplace</Text>
+                    <View style={styles.spacer} />
+                </View>
+                <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionHeaderText}>
+                            All Workplaces
+                        </Text>
+                    </View>
+                    <View>
+                        <Text>Workplace 1</Text>
+                    </View>
+                </View>
+                <View style={styles.section}>
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionHeaderText}>
+                            Add New Workplace
+                        </Text>
+                    </View>
+                    <View>
+                        <Text>Add a code</Text>
+                    </View>
+                </View>
+            </SafeAreaView>
+        </Modal>
     );
 };
 
 export default SwitchWorkplace;
 
 const styles = StyleSheet.create({
-    container: {
+    safeArea: {
         flex: 1,
-        justifyContent: "center",
+        backgroundColor: "#f6f6f6",
+    },
+    container: {
+        // paddingVertical: 24,
+    },
+    header: {
+        flexDirection: "row",
+        paddingHorizontal: 10,
+        // marginBottom: 8,
+        backgroundColor: "#008000",
+        justifyContent: "space-between",
         alignItems: "center",
+    },
+    spacer: {
+        width: 25,
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: "700",
+        color: "white",
+        marginBottom: 6,
+        marginTop: 6,
+    },
+    section: {
+        // paddingTop: 12,
+    },
+    sectionHeader: {
+        paddingHorizontal: 24,
+        paddingVertical: 8,
+        backgroundColor: "lightgray",
+    },
+    sectionHeaderText: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#a7a7a7",
+        textTransform: "uppercase",
+        letterSpacing: 1.2,
     },
 });

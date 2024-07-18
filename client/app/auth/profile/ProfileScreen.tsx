@@ -9,14 +9,16 @@ import {
     TouchableOpacity,
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
-import ImageProfile from "./src/ImageProfile";
-import Logout from "./src/Logout";
-import EditProfile from "./src/EditProfile";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { logout } from "@/apis/authorize/login";
 import { userLogout } from "@/store/slices/userSlice";
 import api from "@/apis/api";
+
+import ImageProfile from "./src/ImageProfile";
+import Logout from "./src/Logout";
+import EditProfile from "./src/EditProfile";
+import SwitchWorkplace from "./src/SwitchWorkplace";
 
 interface Item {
     id: string;
@@ -45,7 +47,9 @@ const ProfileScreen = () => {
     //     .catch((error) => {
     //         alert(error);
     //     });
+
     const router = useRouter();
+
     const user = useAppSelector((state: RootState) => state.user);
     const organization = useAppSelector(
         (state: RootState) => state.organization
@@ -150,6 +154,7 @@ const ProfileScreen = () => {
     // console.log("ProfileScreen", user.profile);
     const [logOutVisible, setLogOutVisible] = useState(false);
     const [editProfileVisible, setEditProfileVisible] = useState(false);
+    const [switchWorkplaceVisible, setSwitchWorkplaceVisible] = useState(false);
 
     const handleLogout = () => {
         setLogOutVisible(false);
@@ -162,7 +167,7 @@ const ProfileScreen = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <View style={styles.header}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     onPress={() => {
                         alert("Back Pressed!");
                     }}
@@ -173,7 +178,8 @@ const ProfileScreen = () => {
                         color="white"
                         style={styles.title}
                     />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <View style={styles.spacer} />
                 <Text style={styles.title}>User</Text>
                 <TouchableOpacity
                     onPress={() => {
@@ -249,6 +255,9 @@ const ProfileScreen = () => {
                                                 setLogOutVisible(true);
                                                 // console.log("Logout Pressed!");
                                             }
+                                            if (id === "switchworkplace") {
+                                                setSwitchWorkplaceVisible(true);
+                                            }
                                         }}
                                     >
                                         <View style={styles.row}>
@@ -286,6 +295,10 @@ const ProfileScreen = () => {
                 editProfileVisible={editProfileVisible}
                 setEditProfileVisible={setEditProfileVisible}
             />
+            <SwitchWorkplace
+                switchWorkplaceVisible={switchWorkplaceVisible}
+                setSwitchWorkplaceVisible={setSwitchWorkplaceVisible}
+            />
         </SafeAreaView>
     );
 };
@@ -307,6 +320,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#008000",
         justifyContent: "space-between",
         alignItems: "center",
+    },
+    spacer: {
+        width: 25,
     },
     title: {
         fontSize: 20,

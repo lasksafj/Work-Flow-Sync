@@ -17,6 +17,22 @@ exports.profileGetRole = async (req, res) => {
     }
 };
 
+exports.profileGetOrg = async (req, res) => {
+    console.log(req.user);
+    try {
+        const data = await db.query(
+            `select o.name
+            from employees e
+            join organizations o ON e.org_abbreviation = o.abbreviation
+            where e.user_id=$1;`,
+            [req.user.id]
+        );
+        res.status(200).json(data.rows);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 exports.profilePut = async (req, res) => {
     try {
         let { firstName, lastName, email, phoneNumber, dateOfBirth } = req.body;

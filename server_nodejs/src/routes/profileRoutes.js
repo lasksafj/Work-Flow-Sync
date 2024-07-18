@@ -8,6 +8,7 @@ router.get(
     authMiddleware,
     profileController.profileGetRole
 );
+router.get("/profile-getOrg", authMiddleware, profileController.profileGetOrg);
 router.put("/profile-put", authMiddleware, profileController.profilePut);
 
 module.exports = router;
