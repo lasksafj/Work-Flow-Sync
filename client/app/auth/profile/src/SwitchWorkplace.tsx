@@ -20,7 +20,7 @@ const SwitchWorkplace = ({
         (state: RootState) => state.organization
     );
     const dispatch = useAppDispatch();
-    const [workplaces, setWorkplaces] = React.useState([]);
+    const [workplaces, setWorkplaces] = React.useState<{ id: number; name: string }[]>([]);
 
     useEffect(() => {
         api.get("/api/profile/profile-getOrg")
@@ -34,7 +34,7 @@ const SwitchWorkplace = ({
             });
     }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
 
-    console.log(workplaces);
+    // console.log(workplaces);
     return (
         <Modal
             animationType="slide"
@@ -68,7 +68,32 @@ const SwitchWorkplace = ({
                         </Text>
                     </View>
                     <View>
-                        <Text>Workplace 1</Text>
+                        {workplaces.map(({name}, index) => (
+                                <View
+                                style={[
+                                    styles.rowWraper,
+                                    index === 0 && { borderBottomWidth: 0 },
+                                ]}
+                                key={index}
+                            >
+                                <TouchableOpacity
+                                    onPress={() => {
+                                    }}
+                                >
+                                    <View style={styles.row}>
+                                        <FeatherIcon
+                                            name="archive"
+                                            size={20}
+                                            color="#616161"
+                                            style={{ marginRight: 12 }}
+                                        />
+                                        <Text style={styles.rowLabel}>
+                                            {name}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        ))}
                     </View>
                 </View>
                 <View style={styles.section}>
@@ -78,7 +103,7 @@ const SwitchWorkplace = ({
                         </Text>
                     </View>
                     <View>
-                        <Text>Add a code</Text>
+                        <Text style={styles.rowLabel}>Add a code</Text>
                     </View>
                 </View>
             </SafeAreaView>
@@ -128,5 +153,32 @@ const styles = StyleSheet.create({
         color: "#a7a7a7",
         textTransform: "uppercase",
         letterSpacing: 1.2,
+    },
+    rowWraper: {
+        paddingLeft: 24,
+        borderTopWidth: 1,
+        borderTopColor: "#e3e3e3",
+        backgroundColor: "#fff",
+    },
+    row: {
+        height: 50,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        paddingRight: 24,
+    },
+    rowLabel: {
+        fontSize: 17,
+        fontWeight: "500",
+        color: "#000",
+    },
+    rowSpacer: {
+        flex: 1,
+    },
+    rowValue: {
+        fontSize: 17,
+        color: "#616161",
+        marginRight: 4,
+        textAlign: "right",
     },
 });
