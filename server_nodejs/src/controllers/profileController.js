@@ -21,7 +21,7 @@ exports.profileGetOrg = async (req, res) => {
     console.log(req.user);
     try {
         const data = await db.query(
-            `select o.name
+            `select o.abbreviation as abbreviation, o.name as name, o.address as address
             from employees e
             join organizations o ON e.org_abbreviation = o.abbreviation
             where e.user_id=$1;`,
