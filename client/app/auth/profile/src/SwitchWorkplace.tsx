@@ -6,6 +6,9 @@ import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
 import { set } from "date-fns";
+import { updateOrganization } from "@/store/slices/organizationSlice";
+import { FlatList } from "react-native-gesture-handler";
+import { router } from "expo-router";
 
 type SwitchProps = {
     switchWorkplaceVisible: boolean;
@@ -20,7 +23,14 @@ const SwitchWorkplace = ({
         (state: RootState) => state.organization
     );
     const dispatch = useAppDispatch();
-    const [workplaces, setWorkplaces] = React.useState<{ id: number; name: string }[]>([]);
+    const [workplaces, setWorkplaces] = React.useState<
+        {
+            id: string;
+            abbreviation: string;
+            name: string;
+            address: string;
+        }[]
+    >([]);
 
     useEffect(() => {
         api.get("/api/profile/profile-getOrg")
@@ -35,6 +45,37 @@ const SwitchWorkplace = ({
     }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
 
     // console.log(workplaces);
+    type ItemProps = { name: string; abbreviation: string; address: string };
+
+    const Item = ({ name, abbreviation, address }: ItemProps) => (
+        <View style={styles.rowWraper}>
+            <TouchableOpacity
+                onPress={() => {
+                    dispatch(
+                        updateOrganization({
+                            abbreviation: abbreviation,
+                            name: name,
+                            address: address,
+                        })
+                    );
+                    setSwitchWorkplaceVisible(false);
+                    router.replace("auth");
+                }}
+            >
+                <View>
+                    <View style={styles.row}>
+                        <FeatherIcon
+                            name="archive"
+                            size={20}
+                            color="#616161"
+                            style={{ marginRight: 12 }}
+                        />
+                        <Text style={styles.rowLabel}>{name}</Text>
+                    </View>
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
     return (
         <Modal
             animationType="slide"
@@ -67,34 +108,11 @@ const SwitchWorkplace = ({
                             All Workplaces
                         </Text>
                     </View>
-                    <View>
-                        {workplaces.map(({name}, index) => (
-                                <View
-                                style={[
-                                    styles.rowWraper,
-                                    index === 0 && { borderBottomWidth: 0 },
-                                ]}
-                                key={index}
-                            >
-                                <TouchableOpacity
-                                    onPress={() => {
-                                    }}
-                                >
-                                    <View style={styles.row}>
-                                        <FeatherIcon
-                                            name="archive"
-                                            size={20}
-                                            color="#616161"
-                                            style={{ marginRight: 12 }}
-                                        />
-                                        <Text style={styles.rowLabel}>
-                                            {name}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </View>
-                        ))}
-                    </View>
+                    <FlatList
+                        data={workplaces}
+                        renderItem={({ item }) => <Item {...item} />}
+                        keyExtractor={(item) => item.id}
+                    />
                 </View>
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
