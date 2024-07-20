@@ -56,13 +56,17 @@ const ProfileScreen = () => {
     );
     const dispatch = useAppDispatch(); //luu du lieu vao store va refresh app xai du lieu do
     // console.log("ProfileScreen", user.profile);
+    console.log("ProfileScreen", organization);
 
     // format date
     const date = user.profile.dateOfBirth
         ? new Date(user.profile.dateOfBirth)
         : undefined;
 
-    const [section, setSection] = useState<Section[]>([
+    // const [section, setSection] = useState<Section[]>();
+    const [role, setRole] = useState<string>("");
+
+    let section = [
         {
             header: "Profile Settings",
             items: [
@@ -96,17 +100,17 @@ const ProfileScreen = () => {
                 {
                     id: "position",
                     label: "Position",
-                    value: "",
+                    value: role,
                 },
             ],
         },
-    ]);
+    ];
 
     // console.log("ProfileScreen22222222", section[0].items[0].value);
-    section[0].items[0].value =
-        user.profile.firstName + " " + user.profile.lastName;
-    section[0].items[1].value = user.profile.email;
-    section[0].items[2].value = user.profile.phoneNumber;
+    // section[0].items[0].value =
+    //     user.profile.firstName + " " + user.profile.lastName;
+    // section[0].items[1].value = user.profile.email;
+    // section[0].items[2].value = user.profile.phoneNumber;
 
     useEffect(() => {
         let org = organization.abbreviation; // Organization ID
@@ -114,11 +118,7 @@ const ProfileScreen = () => {
             .then((response) => {
                 const data = response.data;
                 console.log(data);
-                let newSection = [...section];
-                newSection[1].items[2].value = data.role;
-
-                // console.log(newSection[1].items[2].value);
-                setSection(newSection);
+                setRole(data.role);
             })
             .catch((error) => {
                 alert(error);
