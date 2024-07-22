@@ -7,7 +7,7 @@ import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
 import { set } from "date-fns";
 import { updateOrganization } from "@/store/slices/organizationSlice";
-import { FlatList } from "react-native-gesture-handler";
+import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { router } from "expo-router";
 
 type SwitchProps = {
@@ -45,14 +45,15 @@ const SwitchWorkplace = ({
     }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
 
     // console.log(workplaces);
-    type ItemProps = { name: string; abbreviation: string; address: string };
+    type ItemProps = { id: string; name: string; abbreviation: string; address: string };
 
-    const Item = ({ name, abbreviation, address }: ItemProps) => (
+    const Item = ({ id, name, abbreviation, address }: ItemProps) => (
         <View style={styles.rowWraper}>
             <TouchableOpacity
                 onPress={() => {
                     dispatch(
                         updateOrganization({
+                            id: id,
                             abbreviation: abbreviation,
                             name: name,
                             address: address,
@@ -85,7 +86,8 @@ const SwitchWorkplace = ({
                 setSwitchWorkplaceVisible(false);
             }}
         >
-            <SafeAreaView style={styles.container}>
+
+            <GestureHandlerRootView style={styles.container}>
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => {
@@ -124,7 +126,7 @@ const SwitchWorkplace = ({
                         <Text style={styles.rowLabel}>Add a code</Text>
                     </View>
                 </View>
-            </SafeAreaView>
+            </GestureHandlerRootView>
         </Modal>
     );
 };
