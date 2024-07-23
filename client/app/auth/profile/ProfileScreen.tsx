@@ -63,7 +63,6 @@ const ProfileScreen = () => {
         ? new Date(user.profile.dateOfBirth)
         : undefined;
 
-    // const [section, setSection] = useState<Section[]>();
     const [role, setRole] = useState<string>("");
 
     let section = [
@@ -106,12 +105,6 @@ const ProfileScreen = () => {
         },
     ];
 
-    // console.log("ProfileScreen22222222", section[0].items[0].value);
-    // section[0].items[0].value =
-    //     user.profile.firstName + " " + user.profile.lastName;
-    // section[0].items[1].value = user.profile.email;
-    // section[0].items[2].value = user.profile.phoneNumber;
-
     useEffect(() => {
         let org = organization.abbreviation; // Organization ID
         api.get("/api/profile/profile-getRole?org=" + org)
@@ -123,7 +116,7 @@ const ProfileScreen = () => {
             .catch((error) => {
                 alert(error);
             });
-    }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
+    }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
 
     const LINKSECTIONS = [
         {

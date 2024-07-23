@@ -1,13 +1,18 @@
 import React, { useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, View, Text, Modal, TouchableOpacity } from "react-native";
+import {
+    StyleSheet,
+    View,
+    Text,
+    Modal,
+    TouchableOpacity,
+    FlatList,
+    TextInput,
+} from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
-import { set } from "date-fns";
 import { updateOrganization } from "@/store/slices/organizationSlice";
-import { FlatList, GestureHandlerRootView } from "react-native-gesture-handler";
 import { router } from "expo-router";
 
 type SwitchProps = {
@@ -23,6 +28,7 @@ const SwitchWorkplace = ({
         (state: RootState) => state.organization
     );
     const dispatch = useAppDispatch();
+    const [text, onChangeText] = React.useState("");
     const [workplaces, setWorkplaces] = React.useState<
         {
             id: string;
@@ -45,7 +51,12 @@ const SwitchWorkplace = ({
     }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
 
     // console.log(workplaces);
-    type ItemProps = { id: string; name: string; abbreviation: string; address: string };
+    type ItemProps = {
+        id: string;
+        name: string;
+        abbreviation: string;
+        address: string;
+    };
 
     const Item = ({ id, name, abbreviation, address }: ItemProps) => (
         <View style={styles.rowWraper}>
@@ -86,8 +97,7 @@ const SwitchWorkplace = ({
                 setSwitchWorkplaceVisible(false);
             }}
         >
-
-            <GestureHandlerRootView style={styles.container}>
+            <View style={{ flex: 1 }}>
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => {
@@ -123,10 +133,15 @@ const SwitchWorkplace = ({
                         </Text>
                     </View>
                     <View>
-                        <Text style={styles.rowLabel}>Add a code</Text>
+                        <TextInput
+                            style={styles.input}
+                            onChangeText={onChangeText}
+                            value={text}
+                            placeholder="Add your code here"
+                        />
                     </View>
                 </View>
-            </GestureHandlerRootView>
+            </View>
         </Modal>
     );
 };
@@ -200,5 +215,11 @@ const styles = StyleSheet.create({
         color: "#616161",
         marginRight: 4,
         textAlign: "right",
+    },
+    input: {
+        height: 40,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
     },
 });

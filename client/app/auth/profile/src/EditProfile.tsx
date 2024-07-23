@@ -4,10 +4,8 @@ import {
     StyleSheet,
     View,
     TouchableOpacity,
-    SafeAreaView,
     Modal,
     TextInput,
-    Button,
     Platform,
 } from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -65,6 +63,7 @@ const EditProfile = ({
         control,
         handleSubmit,
         formState: { errors },
+        reset,
     } = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
@@ -75,6 +74,11 @@ const EditProfile = ({
             dateOfBirth: user.profile.dateOfBirth,
         },
     });
+
+    const handleReset = () => {
+        console.log("RESET");
+        reset();
+    };
 
     const onSubmit = (data: FormValues) => {
         api.put("/api/profile/profile-put", data)
@@ -108,10 +112,13 @@ const EditProfile = ({
                 setEditProfileVisible(!editProfileVisible);
             }}
         >
-            <SafeAreaView style={styles.safeArea}>
+            <View style={{ flex: 1 }}>
                 <View style={styles.header}>
                     <TouchableOpacity
-                        onPress={() => setEditProfileVisible(false)}
+                        onPress={() => {
+                            setEditProfileVisible(false);
+                            handleReset();
+                        }}
                     >
                         <Text style={styles.title}>Cancel</Text>
                     </TouchableOpacity>
@@ -275,7 +282,7 @@ const EditProfile = ({
                         </View>
                     </View>
                 </View>
-            </SafeAreaView>
+            </View>
         </Modal>
     );
 };
