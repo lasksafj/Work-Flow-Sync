@@ -12,11 +12,12 @@ import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import api from "@/apis/api";
 import { userLogin } from "@/store/slices/userSlice";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, Form } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type EditProps = {
     editProfileVisible: boolean;
@@ -112,7 +113,7 @@ const EditProfile = ({
                 setEditProfileVisible(!editProfileVisible);
             }}
         >
-            <View style={{ flex: 1 }}>
+            <SafeAreaView style={{ flex: 1 }}>
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => {
@@ -282,7 +283,7 @@ const EditProfile = ({
                         </View>
                     </View>
                 </View>
-            </View>
+            </SafeAreaView>
         </Modal>
     );
 };

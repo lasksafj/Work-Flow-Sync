@@ -19,6 +19,7 @@ import ImageProfile from "./src/ImageProfile";
 import Logout from "./src/Logout";
 import EditProfile from "./src/EditProfile";
 import SwitchWorkplace from "./src/SwitchWorkplace";
+import EmployeeList from "./src/EmployeeList";
 
 interface Item {
     id: string;
@@ -135,6 +136,12 @@ const ProfileScreen = () => {
                     type: "link",
                 },
                 {
+                    id: "employeelist",
+                    label: "Employee List",
+                    icon: "users" as const,
+                    type: "link",
+                },
+                {
                     id: "logout",
                     label: "Log Out",
                     icon: "log-out" as const,
@@ -148,6 +155,7 @@ const ProfileScreen = () => {
     const [logOutVisible, setLogOutVisible] = useState(false);
     const [editProfileVisible, setEditProfileVisible] = useState(false);
     const [switchWorkplaceVisible, setSwitchWorkplaceVisible] = useState(false);
+    const [employeeListVisible, setEmployeeListVisible] = useState(false);
 
     const handleLogout = () => {
         setLogOutVisible(false);
@@ -158,7 +166,7 @@ const ProfileScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={{flex:1}}>
             <View style={styles.header}>
                 {/* <TouchableOpacity
                     onPress={() => {
@@ -172,6 +180,7 @@ const ProfileScreen = () => {
                         style={styles.title}
                     />
                 </TouchableOpacity> */}
+
                 <View style={styles.spacer} />
                 <Text style={styles.title}>User</Text>
                 <TouchableOpacity
@@ -251,6 +260,9 @@ const ProfileScreen = () => {
                                             if (id === "switchworkplace") {
                                                 setSwitchWorkplaceVisible(true);
                                             }
+                                            if (id === "employeelist") {
+                                                setEmployeeListVisible(true);
+                                            }
                                         }}
                                     >
                                         <View style={styles.row}>
@@ -292,6 +304,10 @@ const ProfileScreen = () => {
                 switchWorkplaceVisible={switchWorkplaceVisible}
                 setSwitchWorkplaceVisible={setSwitchWorkplaceVisible}
             />
+            <EmployeeList
+                employeeListVisible={employeeListVisible}
+                setEmployeeListVisible={setEmployeeListVisible}
+            />
         </SafeAreaView>
     );
 };
@@ -299,10 +315,6 @@ const ProfileScreen = () => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: "#f6f6f6",
-    },
     container: {
         // paddingVertical: 24,
     },

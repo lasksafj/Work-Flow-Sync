@@ -14,6 +14,7 @@ import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
 import { updateOrganization } from "@/store/slices/organizationSlice";
 import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type SwitchProps = {
     switchWorkplaceVisible: boolean;
@@ -58,6 +59,25 @@ const SwitchWorkplace = ({
         address: string;
     };
 
+    const Header = () => (
+        <View style={styles.header}>
+        <TouchableOpacity
+            onPress={() => {
+                setSwitchWorkplaceVisible(false);
+            }}
+        >
+            <FeatherIcon
+                name="chevron-left"
+                size={25}
+                color="white"
+                style={styles.title}
+            />
+        </TouchableOpacity>
+        <Text style={styles.title}>Select Workplace</Text>
+        <View style={styles.spacer} />
+    </View>
+    );
+
     const Item = ({ id, name, abbreviation, address }: ItemProps) => (
         <View style={styles.rowWraper}>
             <TouchableOpacity
@@ -97,23 +117,8 @@ const SwitchWorkplace = ({
                 setSwitchWorkplaceVisible(false);
             }}
         >
-            <View style={{ flex: 1 }}>
-                <View style={styles.header}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSwitchWorkplaceVisible(false);
-                        }}
-                    >
-                        <FeatherIcon
-                            name="chevron-left"
-                            size={25}
-                            color="white"
-                            style={styles.title}
-                        />
-                    </TouchableOpacity>
-                    <Text style={styles.title}>Select Workplace</Text>
-                    <View style={styles.spacer} />
-                </View>
+            <SafeAreaView style={{ flex: 1 }}>
+                <Header />
                 <View style={styles.section}>
                     <View style={styles.sectionHeader}>
                         <Text style={styles.sectionHeaderText}>
@@ -141,7 +146,7 @@ const SwitchWorkplace = ({
                         />
                     </View>
                 </View>
-            </View>
+            </SafeAreaView>
         </Modal>
     );
 };
