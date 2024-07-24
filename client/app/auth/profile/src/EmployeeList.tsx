@@ -5,92 +5,222 @@ import {
     Text,
     Modal,
     TouchableOpacity,
-    FlatList,
-    TextInput,
-    ScrollView,
+    SectionList,
+    Image,
 } from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
-import { updateOrganization } from "@/store/slices/organizationSlice";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { all } from "axios";
-import { id } from "inversify";
-import ImageProfile from "./ImageProfile";
+import { Svg, Circle, Text as SvgText } from "react-native-svg";
 
 type EmployeeProps = {
     employeeListVisible: boolean;
-    setEmployeeListVisible : React.Dispatch<React.SetStateAction<boolean>>;
+    setEmployeeListVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
-const items = [
-    {
-        id: "1",
-        img:"",
-        firstName: "John",
-        lastName:"Doe",
-        role: ["Manager", "Server"],
-    },
-    {
-        id: "2",
-        img:"",
-        firstName: "John",
-        lastName:"Doe",
-        role: ["Manager", "Server"],
-    },
-    {
-        id: "3",
-        img:"",
-        firstName: "John",
-        lastName:"Doe",
-        role: ["Manager", "Server"],
-    },
-    {
-        id: "4",
-        img:"",
-        firstName: "John",
-        lastName:"Doe",
-        role: ["Manager", "Server"],
-    },
-    {
-        id: "5",
-        img:"",
-        firstName: "John",
-        lastName:"Doe",
-        role: ["Manager", "Server"],
-    },
-    {
-        id: "6",
-        img:"",
-        firstName: "John",
-        lastName:"Doe",
-        role: ["Manager", "Server"],
-    },
-    ];
 
 const EmployeeList = ({
     employeeListVisible,
     setEmployeeListVisible,
-}:EmployeeProps) => {
+}: EmployeeProps) => {
+    const employees = [
+        {
+            id: "1",
+            img: "",
+            firstName: "Anh",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "2",
+            img: "",
+            firstName: "John",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "3",
+            img: "",
+            firstName: "Long",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "4",
+            img: "",
+            firstName: "Huy",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "5",
+            img: "",
+            firstName: "Bao",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "6",
+            img: "",
+            firstName: "Linh",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "7",
+            img: "",
+            firstName: "Anh",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "8",
+            img: "",
+            firstName: "John",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "9",
+            img: "",
+            firstName: "Long",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "10",
+            img: "",
+            firstName: "Huy",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "11",
+            img: "",
+            firstName: "Bao",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+        {
+            id: "12",
+            img: "",
+            firstName: "Linh",
+            lastName: "Doe",
+            role: ["Manager", "Server"],
+        },
+    ];
+
+    const groupEmployeesByFirstLetter = (employees: any[]) => {
+        const grouped = employees.reduce((acc, employee) => {
+            const firstLetter = employee.firstName[0].toUpperCase();
+            if (!acc[firstLetter]) {
+                acc[firstLetter] = [];
+            }
+            acc[firstLetter].push(employee);
+            return acc;
+        }, {});
+
+        // Convert the grouped object to an array of sections
+        return Object.keys(grouped)
+            .sort()
+            .map((letter) => ({
+                title: letter,
+                data: grouped[letter],
+            }));
+    };
+
+    const sections = useMemo(
+        () => groupEmployeesByFirstLetter(employees),
+        [employees]
+    );
+
+    const InitialImg = (img: string, initials: string) => (
+        <View style={styles.profile}>
+            {img ? (
+                <Image
+                    resizeMode="cover"
+                    style={styles.profileAvatar}
+                    source={{
+                        uri: img,
+                    }}
+                    alt="Avarar"
+                />
+            ) : (
+                <View style={styles.initialsAvatar}>
+                    <Svg height="50" width="50">
+                        <Circle cx="25" cy="25" r="25" fill="#6200EE" />
+                        <SvgText
+                            fill="white"
+                            fontSize="20"
+                            fontWeight="bold"
+                            x="25"
+                            y="32"
+                            textAnchor="middle"
+                        >
+                            {initials}
+                        </SvgText>
+                    </Svg>
+                </View>
+            )}
+        </View>
+    );
 
     const Header = () => (
         <View style={styles.header}>
-        <TouchableOpacity onPress={() => {
-            setEmployeeListVisible(false);
-        }}>
-            <FeatherIcon
-                name="chevron-left"
-                size={25}
-                color="white"
-                style={styles.title}
-            />
-        </TouchableOpacity>
-        <Text style={styles.title}>Employee List</Text>
-        <Text style={styles.spacer}/>
-    </View>
+            <TouchableOpacity
+                onPress={() => {
+                    setEmployeeListVisible(false);
+                }}
+            >
+                <FeatherIcon
+                    name="chevron-left"
+                    size={25}
+                    color="white"
+                    style={styles.title}
+                />
+            </TouchableOpacity>
+            <Text style={styles.title}>Employee List</Text>
+            <Text style={styles.spacer} />
+        </View>
     );
-    
+
+    const renderSectionHeader = ({
+        section: { title },
+    }: {
+        section: { title: string };
+    }) => (
+        <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{title}</Text>
+        </View>
+    );
+
+    type ItemProps = {
+        id: string;
+        img: string;
+        firstName: string;
+        lastName: string;
+        role: string[];
+    };
+
+    const Item = ({ id, img, firstName, lastName, role }: ItemProps) => (
+        <View style={styles.sectionItems}>
+            <View style={styles.cardWrapper}>
+                <View style={styles.card}>
+                    {InitialImg(img, `${firstName[0]}${lastName[0]}`)}
+                    <View style={styles.cardBody}>
+                        <Text style={styles.cardTitle}>
+                            {firstName} {lastName}
+                        </Text>
+                        <Text style={styles.cardRole}>{role.join(", ")}</Text>
+                    </View>
+                </View>
+            </View>
+        </View>
+    );
+
     return (
         <Modal
             animationType="slide"
@@ -100,23 +230,23 @@ const EmployeeList = ({
                 setEmployeeListVisible(false);
             }}
         >
-            <SafeAreaView style={{flex:1}}>
-                <ScrollView>
-                    <Header/>
-                </ScrollView>
+            <SafeAreaView style={{ flex: 1 }}>
+                <Header />
+                <SectionList
+                    sections={sections}
+                    renderItem={({ item }) => <Item {...item} />}
+                    renderSectionHeader={renderSectionHeader}
+                    keyExtractor={(item) => item.id}
+                    style={styles.list}
+                />
             </SafeAreaView>
         </Modal>
-
     );
-}
+};
 
 export default EmployeeList;
 
 const styles = StyleSheet.create({
-    searchContent: {
-        paddingLeft: 24,
-    },
-    
     header: {
         flexDirection: "row",
         paddingHorizontal: 10,
@@ -125,9 +255,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
     },
-    spacer: {
-        width: 25,
-    },
     title: {
         fontSize: 20,
         fontWeight: "700",
@@ -135,46 +262,71 @@ const styles = StyleSheet.create({
         marginBottom: 6,
         marginTop: 6,
     },
+    spacer: {
+        width: 25,
+    },
     section: {
-        marginTop:12,
-        paddingLeft:24,
+        marginTop: 12,
+        paddingLeft: 24,
     },
     sectionTitle: {
-        fontSize:20,
-        fontWeight:"700",
-        color:"#000",
+        fontSize: 20,
+        fontWeight: "700",
+        color: "#000",
     },
-    sectionHeader: {
-        paddingHorizontal: 24,
-        paddingVertical: 8,
-        backgroundColor: "lightgray",
+    sectionItems: {
+        marginTop: 8,
     },
-    sectionHeaderText: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#a7a7a7",
-        textTransform: "uppercase",
-        letterSpacing: 1.2,
-    },
-    rowWraper: {
-        paddingLeft: 24,
-        borderTopWidth: 1,
-        borderTopColor: "#e3e3e3",
-        backgroundColor: "#fff",
-    },
-    row: {
-        height: 50,
+    card: {
+        paddingVertical: 14,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-start",
-        paddingRight: 24,
     },
-    rowLabel: {
-        fontSize: 17,
-        fontWeight: "500",
+    cardWrapper: {
+        borderBottomWidth: 1,
+        borderColor: "#d6d6d6",
+    },
+    cardImg: {
+        width: 42,
+        height: 42,
+    },
+    cardBody: {
+        marginLeft: 12,
+        marginRight: "auto",
+    },
+    cardTitle: {
+        fontSize: 16,
+        fontWeight: "700",
         color: "#000",
     },
-    rowSpacer: {
+    cardRole: {
+        fontSize: 15,
+        lineHeight: 20,
+        fontWeight: "500",
+        color: "#616d79",
+        marginTop: 3,
+    },
+    profile: {
+        padding: 16,
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor: "#fff",
+    },
+    profileAvatar: {
+        width: 50,
+        height: 50,
+        borderRadius: 9999,
+    },
+    initialsAvatar: {
+        width: 80,
+        height: 80,
+        borderRadius: 9999,
+        overflow: "hidden",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    list: {
         flex: 1,
     },
 });
