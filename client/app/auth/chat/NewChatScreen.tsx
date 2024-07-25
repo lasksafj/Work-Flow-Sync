@@ -2,54 +2,34 @@ import { View, Text, StyleSheet, Image, Pressable, FlatList, TouchableOpacity, T
 import { Colors } from '@/constants/Colors';
 import { AlphabetList } from 'react-native-section-alphabet-list';
 import { useEffect, useState } from 'react';
-import api from '@/apis/api';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import InitialNameAvatar from '@/components/InitialNameAvatar';
-import { useNavigation } from 'expo-router';
+import Icon from 'react-native-vector-icons/Feather';
+import { router, useNavigation } from 'expo-router';
+import { addParticipantApi, createGroupApi, getEmployeesApi } from '@/apis/chat/chatApi';
 
+const NewChatHeader = ({ closeNewChat }: any) => {
+    return (
+        <View style={styles.header}>
+            <TouchableOpacity
+                onPress={closeNewChat}
+                style={{ width: 50 }}
+            >
+                <Icon name="arrow-left" size={24} color="#000" />
+            </TouchableOpacity>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', }}>New Chat</Text>
+            <View style={{ width: 50 }} />
+        </View>
+    )
+}
 
 const NewChatScreen = () => {
     const organization = useAppSelector((state: RootState) => state.organization);
     const user = useAppSelector((state: RootState) => state.user)
 
     const navigation = useNavigation();
-
-    const [contacts, setContacts] = useState([]);
-    const [selectedNames, setSelectedNames] = useState<string[]>([]);
-    const [groupName, setGroupName] = useState('');
-
-    const addName = (name: string) => {
-        if (!selectedNames.includes(name))
-            setSelectedNames([...selectedNames, name]);
-    };
-
-    const removeName = (name: string) => {
-        setSelectedNames(selectedNames.filter(item => item !== name));
-    };
-
-    const createGroup = () => {
-        if (selectedNames.length == 0)
-            return;
-        // api.post('/api/chat/create-group', ) 
-    }
-
     useEffect(() => {
-        api.get(`/api/chat/get-employees?orgAbbr=${organization.abbreviation}`)
-            .then((res) => {
-                let data = res.data.map((contact: any, index: number) => ({
-                    value: `${contact.first_name} ${contact.last_name}`,
-                    email: contact.email,
-                    img: contact.img,
-                    key: `${index}`,
-                }));
-                data = data.filter((contact: any) => contact.email !== user.profile.email);
-                setContacts(data);
-            })
-            .catch(err => {
-                console.log('NEWCHATSCREEN get-employees', err);
-            });
-
         navigation.setOptions({
             headerRight: () =>
                 <TouchableOpacity
@@ -58,6 +38,75 @@ const NewChatScreen = () => {
                     <Text style={{ fontSize: 20 }}>Create</Text>
                 </TouchableOpacity>
         });
+    })
+
+    const [contacts, setContacts] = useState([]);
+    const [selectedParticipants, setSelectedParticipants] = useState<any[]>([]);
+    const [groupName, setGroupName] = useState('');
+
+    const addParticipant = (participant: any) => {
+        if (!selectedParticipants.some(p => p.email == participant.email))
+            setSelectedParticipants([...selectedParticipants, participant]);
+    };
+
+    const removeParticipant = (participant: any) => {
+        setSelectedParticipants(selectedParticipants.filter(item => item.email !== participant.email));
+    };
+
+    const createGroup = async () => {
+        console.log('selectedParticipants', selectedParticipants);
+
+        if (selectedParticipants.length == 0)
+            return;
+        let gname = groupName;
+        if (gname == '') {
+            // if (selectedParticipants.length == 1)
+            //     gname = selectedParticipants[0].name;
+            // else
+            //     gname = selectedParticipants[0].name + ', ' + selectedParticipants[1].name;
+
+            // const userName = user.profile.firstName + ' ' + user.profile.lastName;
+            // gname = selectedParticipants.map(participant => participant.name).join(', ');
+            // gname += ', ' + userName;
+        }
+
+        let group = await createGroupApi(gname);
+        if (!group)
+            return;
+        const res = await addParticipantApi(
+            group.id,
+            selectedParticipants.map((p) => p.email)
+        )
+        if (!res)
+            return;
+        if (!group.name) {
+            group.name = selectedParticipants.map(participant => participant.name).join(', ');
+        }
+        router.navigate({
+            pathname: 'auth/chat/ChatListScreen',
+            params: {
+                groupId: group.id,
+                groupName: group.name
+            }
+        })
+    }
+
+    useEffect(() => {
+        async function getEmployees() {
+            const res = await getEmployeesApi(organization.abbreviation);
+            if (!res)
+                return;
+            let data = res.map((contact: any, index: number) => ({
+                value: `${contact.first_name} ${contact.last_name}`,
+                email: contact.email,
+                avatar: contact.avatar,
+                key: `${index}`,
+            }));
+            data = data.filter((contact: any) => contact.email !== user.profile.email);
+            setContacts(data);
+        }
+        getEmployees();
+
     }, [])
 
     return (
@@ -69,17 +118,16 @@ const NewChatScreen = () => {
                 onChangeText={setGroupName}
             />
             <FlatList
-                data={selectedNames}
+                data={selectedParticipants}
                 horizontal
-                keyExtractor={(item) => item}
+                keyExtractor={(item) => item.email}
                 renderItem={({ item }) => (
-                    <Pressable onPress={() => removeName(item)}>
-                        <Text style={styles.selectedName}>{item}</Text>
+                    <Pressable onPress={() => removeParticipant(item)}>
+                        <Text style={styles.selectedName}>{item.name}</Text>
                     </Pressable>
                 )}
                 style={styles.selectedList}
             />
-
             <AlphabetList
                 data={contacts}
                 stickySectionHeadersEnabled
@@ -94,11 +142,11 @@ const NewChatScreen = () => {
                 renderCustomItem={(item: any) => (
                     <>
                         <TouchableOpacity style={styles.listItemContainer}
-                            onPress={() => addName(item.value)}
+                            onPress={() => addParticipant({ name: item.value, email: item.email })}
                         >
                             {
-                                item.img ?
-                                    <Image source={{ uri: item.img }} style={styles.listItemImage} />
+                                item.avatar ?
+                                    <Image source={{ uri: item.avatar }} style={styles.listItemImage} />
                                     :
                                     <InitialNameAvatar name={item.value} size={30} />
                             }
@@ -166,6 +214,13 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         paddingHorizontal: 10,
     },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        borderBottomColor: Colors.lightGray,
+        borderBottomWidth: 1,
+        padding: 15
+    }
 });
 
 const defaultStyles = StyleSheet.create({
@@ -185,7 +240,7 @@ const defaultStyles = StyleSheet.create({
         height: StyleSheet.hairlineWidth,
         backgroundColor: Colors.lightGray,
         marginLeft: 50,
-    },
+    }
 });
 
 export default NewChatScreen;

@@ -38,9 +38,9 @@ export default function HomeScreen() {
             });
 
         dispatch(updateOrganization({
-            abbreviation: 'ORG7',
-            name: 'Organization Three',
-            address: '789 Elm St'
+            abbreviation: 'ABC',
+            name: 'ABC Corp',
+            address: '1234 Market St, San Francisco, CA'
         }));
     }, []);
 

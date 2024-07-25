@@ -1,12 +1,11 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-07-10 01:31:46.188
-
+-- Last modification date: 2024-07-25 19:37:56.039
 
 -- tables
 -- Table: availabletimes
 CREATE TABLE availabletimes (
-    start_time date  NOT NULL,
-    end_time date  NOT NULL,
+    start_time timestamp  NOT NULL,
+    end_time timestamp  NOT NULL,
     emp_id int  NOT NULL,
     CONSTRAINT availabletimes_pk PRIMARY KEY (emp_id,end_time,start_time)
 );
@@ -23,10 +22,14 @@ CREATE TABLE employees (
     CONSTRAINT employees_pk PRIMARY KEY (id)
 );
 
+CREATE INDEX employees_idx_1 on employees (user_id ASC);
+
+CREATE INDEX employees_idx_2 on employees (org_abbreviation ASC);
+
 -- Table: feedbacks
 CREATE TABLE feedbacks (
     content varchar(500)  NOT NULL,
-    created_date date  NOT NULL,
+    created_date timestamp  NOT NULL,
     emp_id int  NOT NULL,
     CONSTRAINT feedbacks_pk PRIMARY KEY (created_date,emp_id)
 );
@@ -35,7 +38,7 @@ CREATE TABLE feedbacks (
 CREATE TABLE groups (
     id serial  NOT NULL,
     name varchar(80)  NOT NULL,
-    created_at date  NOT NULL,
+    created_at timestamp  NOT NULL,
     CONSTRAINT groups_pk PRIMARY KEY (id)
 );
 
@@ -43,19 +46,29 @@ CREATE TABLE groups (
 CREATE TABLE messages (
     id serial  NOT NULL,
     content varchar(500)  NOT NULL,
-    create_time date  NOT NULL,
+    create_time timestamp  NOT NULL,
     user_id int  NOT NULL,
     group_id int  NOT NULL,
     CONSTRAINT Message_uk_01 UNIQUE (user_id, create_time) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT messages_pk PRIMARY KEY (id)
 );
 
+CREATE INDEX messages_idx_1 on messages (group_id DESC);
+
+-- Table: notification_receivers
+CREATE TABLE notification_receivers (
+    notification_id int  NOT NULL,
+    receiver_id int  NOT NULL,
+    CONSTRAINT notification_receivers_pk PRIMARY KEY (notification_id,receiver_id)
+);
+
 -- Table: notifications
 CREATE TABLE notifications (
+    id serial  NOT NULL,
     content varchar(500)  NOT NULL,
-    created_date date  NOT NULL,
-    emp_id int  NOT NULL,
-    CONSTRAINT notifications_pk PRIMARY KEY (created_date,emp_id)
+    created_date timestamp  NOT NULL,
+    sender_id int  NOT NULL,
+    CONSTRAINT notifications_pk PRIMARY KEY (id)
 );
 
 -- Table: organizations
@@ -75,6 +88,8 @@ CREATE TABLE participants (
     CONSTRAINT participants_pk PRIMARY KEY (user_id,group_id)
 );
 
+CREATE INDEX participants_idx_1 on participants (group_id ASC);
+
 -- Table: roles
 CREATE TABLE roles (
     name varchar(80)  NOT NULL,
@@ -84,10 +99,10 @@ CREATE TABLE roles (
 
 -- Table: schedules
 CREATE TABLE schedules (
-    start_time date  NOT NULL,
-    end_time date  NOT NULL,
+    start_time timestamp  NOT NULL,
+    end_time timestamp  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT schedules_pk PRIMARY KEY (end_time,start_time)
+    CONSTRAINT schedules_pk PRIMARY KEY (end_time,start_time,emp_id)
 );
 
 -- Table: statuses
@@ -99,10 +114,12 @@ CREATE TABLE statuses (
     CONSTRAINT statuses_pk PRIMARY KEY (group_id,user_id,mes_id)
 );
 
+CREATE INDEX statuses_idx_1 on statuses (mes_id DESC);
+
 -- Table: timesheets
 CREATE TABLE timesheets (
-    clock_in date  NOT NULL,
-    clock_out date  NOT NULL,
+    clock_in timestamp  NOT NULL,
+    clock_out timestamp  NOT NULL,
     emp_id int  NOT NULL,
     CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out)
 );
@@ -116,7 +133,7 @@ CREATE TABLE users (
     first_name varchar(80)  NOT NULL,
     phone_number varchar(10)  NOT NULL,
     date_of_birth date  NOT NULL,
-    img varchar(200)  NULL,
+    avatar varchar(200)  NULL,
     CONSTRAINT User_uk_01 UNIQUE (email) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT User_uk_02 UNIQUE (phone_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT users_pk PRIMARY KEY (id)
@@ -173,7 +190,7 @@ ALTER TABLE messages ADD CONSTRAINT Message_User
 
 -- Reference: Notification_Employee (table: notifications)
 ALTER TABLE notifications ADD CONSTRAINT Notification_Employee
-    FOREIGN KEY (emp_id)
+    FOREIGN KEY (sender_id)
     REFERENCES employees (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
@@ -231,6 +248,22 @@ ALTER TABLE timesheets ADD CONSTRAINT TimeSheet_Employee
 ALTER TABLE messages ADD CONSTRAINT messages_groups
     FOREIGN KEY (group_id)
     REFERENCES groups (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: notification_receivers_employees (table: notification_receivers)
+ALTER TABLE notification_receivers ADD CONSTRAINT notification_receivers_employees
+    FOREIGN KEY (receiver_id)
+    REFERENCES employees (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: notification_receivers_notifications (table: notification_receivers)
+ALTER TABLE notification_receivers ADD CONSTRAINT notification_receivers_notifications
+    FOREIGN KEY (notification_id)
+    REFERENCES notifications (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
