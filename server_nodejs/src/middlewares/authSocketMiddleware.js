@@ -1,17 +1,16 @@
 const jwt = require('jsonwebtoken');
 
 const authSocketMiddleware = (socket, next) => {
-    const token = socket.handshake.auth.token;
-
+    const token = socket.handshake.query.token;
     if (!token) {
         return next(new Error('Authentication error'));
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_ACCESS_SECRET, (err, user) => {
         if (err) {
             return next(new Error('Authentication error'));
         }
-        socket.user = decoded;
+        socket.user = user;
         next();
     });
 }

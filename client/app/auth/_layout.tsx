@@ -1,25 +1,33 @@
 import { Tabs, useSegments } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { connectSockets, disconnectSockets } from '@/socket/socket';
 
 export default function TabLayout() {
     // const colorScheme = useColorScheme();
-    const segments = useSegments();
-    const hide = segments.includes("ChatScreen");
+    // const segments = useSegments();
+    // const hide = segments.includes("ChatScreen");
+
+    useEffect(() => {
+        connectSockets();
+
+        return () => {
+            disconnectSockets();
+        };
+    }, [])
 
     return (
         <Tabs
             screenOptions={{
                 tabBarActiveTintColor: Colors['light'].tint,
                 headerShown: false,
-                tabBarStyle: {
-                    display: hide ? "none" : "flex",
-
-                }
+                // tabBarStyle: {
+                //     display: hide ? "none" : "flex",
+                // }
             }}>
             <Tabs.Screen
                 name="index"
@@ -56,7 +64,7 @@ export default function TabLayout() {
                         <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
                     ),
                 }}
-            />    
+            />
             <Tabs.Screen
                 name="earnings"
                 options={{
