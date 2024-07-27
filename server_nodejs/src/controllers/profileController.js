@@ -7,7 +7,6 @@ exports.profileGetRole = async (req, res) => {
         const data = await db.query(
             `SELECT e.role_name as role
              FROM employees e
-             JOIN roles r ON e.role_name = r.name
              WHERE e.user_id=$1 AND e.org_abbreviation=$2;`,
             [req.user.id, req.query.org]
         );
@@ -26,6 +25,22 @@ exports.profileGetOrg = async (req, res) => {
             join organizations o ON e.org_abbreviation = o.abbreviation
             where e.user_id=$1;`,
             [req.user.id]
+        );
+        res.status(200).json(data.rows);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+exports.profileGetAllUsers = async (req, res) => {
+    try {
+        const data = await db.query(
+            `SELECT e.id as id, u.first_name as "firstName", u.last_name as "lastName", u.img as img
+            FROM employees e
+            JOIN users u ON u.id = e.user_id 
+            WHERE e.org_abbreviation = $1
+            ORDER BY u.first_name;`,
+            [req.query.org]
         );
         res.status(200).json(data.rows);
     } catch (error) {

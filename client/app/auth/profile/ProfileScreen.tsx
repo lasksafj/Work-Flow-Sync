@@ -166,7 +166,7 @@ const ProfileScreen = () => {
     };
 
     return (
-        <SafeAreaView style={{flex:1}}>
+        <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
                 {/* <TouchableOpacity
                     onPress={() => {
