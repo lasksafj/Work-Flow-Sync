@@ -37,16 +37,16 @@ export default function ChatLayout() {
                     headerStyle: {
                         backgroundColor: '#fff',
                     },
-                    headerSearchBarOptions: {
-                        placeholder: 'Search',
-                    },
+                    // headerSearchBarOptions: {
+                    //     placeholder: 'Search',
+                    // },
                 }}
             />
 
             <Stack.Screen name="NewChatScreen" />
 
 
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="ChatScreen"
                 options={{
                     title: '',
@@ -65,7 +65,7 @@ export default function ChatLayout() {
                         backgroundColor: Colors.background,
                     },
                 }}
-            />
+            /> */}
 
 
         </Stack >
