@@ -38,9 +38,9 @@ export default function HomeScreen() {
             });
 
         dispatch(updateOrganization({
-            abbreviation: 'ABC',
-            name: 'ABC Corp',
-            address: '1234 Market St, San Francisco, CA'
+            abbreviation: 'ORG1',
+            name: 'Organization One',
+            address: '123 Main St'
         }));
     }, []);
 

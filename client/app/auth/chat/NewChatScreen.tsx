@@ -79,14 +79,14 @@ const NewChatScreen = () => {
         )
         if (!res)
             return;
-        if (!group.name) {
-            group.name = selectedParticipants.map(participant => participant.name).join(', ');
-        }
+
         router.navigate({
             pathname: 'auth/chat/ChatListScreen',
             params: {
                 groupId: group.id,
-                groupName: group.name
+                groupName: group.name,
+                groupImg: group.img,
+                groupCreatedAt: group.created_at,
             }
         })
     }
@@ -117,17 +117,20 @@ const NewChatScreen = () => {
                 value={groupName}
                 onChangeText={setGroupName}
             />
-            <FlatList
-                data={selectedParticipants}
-                horizontal
-                keyExtractor={(item) => item.email}
-                renderItem={({ item }) => (
-                    <Pressable onPress={() => removeParticipant(item)}>
-                        <Text style={styles.selectedName}>{item.name}</Text>
-                    </Pressable>
-                )}
-                style={styles.selectedList}
-            />
+            <View style={styles.selectedList}>
+                <FlatList
+                    data={selectedParticipants}
+                    horizontal
+                    keyExtractor={(item) => item.email}
+                    renderItem={({ item }) => (
+                        <Pressable onPress={() => removeParticipant(item)}>
+                            <Text style={styles.selectedName}>{item.name}</Text>
+                        </Pressable>
+                    )}
+
+                />
+            </View>
+
             <AlphabetList
                 data={contacts}
                 stickySectionHeadersEnabled
