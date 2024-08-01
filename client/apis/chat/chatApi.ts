@@ -1,9 +1,9 @@
 import api from "../api";
 
-const getGroupsApi = async () => {
+const getGroupsApi = async (limit: number, offset: number) => {
     try {
         let response = await api.get(
-            '/api/chat/get-groups',
+            `/api/chat/get-groups?limit=${limit}&&offset=${offset}`,
         );
         return response.data;
     }

@@ -2,20 +2,22 @@ const chatService = require('../services/chatService');
 
 exports.getGroups = async (req, res) => {
     try {
-        let groups = await chatService.getGroups(req.user.id);
-        groups = await Promise.all(groups.map(async (group, i) => {
-            let mes = await chatService.getLastMessage(group.groupId);
-            if (mes) {
-                group.lastMessage = mes.content;
-                group.lastMessageTime = mes.create_time;
-            }
-            else {
-                group.lastMessage = '';
-                group.lastMessageTime = group.created_at;
-            }
+        const limit = parseInt(req.query.limit);
+        const offset = parseInt(req.query.offset);
+        let groups = await chatService.getGroups(req.user.id, limit, offset);
+        // groups = await Promise.all(groups.map(async (group, i) => {
+        //     let mes = await chatService.getLastMessage(group.groupId);
+        //     if (mes) {
+        //         group.lastMessage = mes.content;
+        //         group.lastMessageTime = mes.create_time;
+        //     }
+        //     else {
+        //         group.lastMessage = '';
+        //         group.lastMessageTime = group.created_at;
+        //     }
 
-            return group;
-        }));
+        //     return group;
+        // }));
         res.status(200).json(groups);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -65,8 +67,8 @@ exports.getEmployees = async (req, res) => {
 exports.getMessages = async (req, res) => {
     try {
         const groupId = req.query.groupId;
-        const limit = parseInt(req.query.limit) || 20;
-        const offset = parseInt(req.query.offset) || 0;
+        const limit = parseInt(req.query.limit);
+        const offset = parseInt(req.query.offset);
         const messages = await chatService.getMessages(groupId, limit, offset);
         res.status(200).json(messages);
     } catch (error) {

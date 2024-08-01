@@ -2,7 +2,7 @@ const db = require('../config/db');
 
 
 
-exports.getGroups = async (userId) => {
+exports.getGroups = async (userId, limit, offset) => {
     // const result = await db.query(
     //     `select 
     //         g.id AS "groupId", g.name AS "groupName", 
@@ -22,27 +22,55 @@ exports.getGroups = async (userId) => {
     //     [userId]
     // );
 
+    // add group img??
     const result = await db.query(
-        `select g.id AS "groupId", g.name AS "groupName", created_at
-        from groups g inner join participants p on g.id = p.group_id
-        where p.user_id = $1
-        order by created_at desc`,
-        [userId]
+        `SELECT 
+            g.id AS "groupId", 
+            g.name AS "groupName", 
+            g.created_at AS "groupCreatedAt", 
+            m.create_time AS "lastMessageTime", 
+            m.content AS "lastMessage",
+            p.last_active_time AS "lastActiveTime"
+        FROM 
+            groups g
+        INNER JOIN participants p on p.group_id = g.id
+        LEFT JOIN 
+            (SELECT 
+                group_id, 
+                MAX(create_time) AS last_message_create_time 
+            FROM 
+                messages 
+            GROUP BY 
+                group_id) lm 
+            ON g.id = lm.group_id
+        LEFT JOIN 
+            messages m 
+            ON lm.group_id = m.group_id AND lm.last_message_create_time = m.create_time
+        WHERE p.user_id = $1
+        order by COALESCE(last_message_create_time, g.created_at) DESC, 
+            g.created_at DESC 
+        LIMIT $2 OFFSET $3`,
+        [userId, limit, offset]
     )
     return result.rows;
 }
 
-exports.getLastMessage = async (groupId) => {
-    const result = await db.query(
-        `select m.content, m.create_time
-        from messages m
-        where m.group_id = $1
-        order by m.create_time desc
-        limit 1`,
-        [groupId]
-    );
-    return result.rows[0];
+exports.getGroupInfo = async (groupId) => {
+    const res = await db.query(`select * from groups where id = $1`, [groupId]);
+    return res.rows[0];
 }
+
+// exports.getLastMessage = async (groupId) => {
+//     const result = await db.query(
+//         `select m.content, m.create_time
+//         from messages m
+//         where m.group_id = $1
+//         order by m.create_time desc
+//         limit 1`,
+//         [groupId]
+//     );
+//     return result.rows[0];
+// }
 
 exports.createGroup = async (groupName, userId) => {
     try {
@@ -66,7 +94,7 @@ exports.createGroup = async (groupName, userId) => {
 
 exports.getParticipants = async (groupId) => {
     const result = await db.query(
-        `select u.email, CONCAT(u.first_name, ' ', u.last_name) AS name
+        `select u.email, CONCAT(u.first_name, ' ', u.last_name) AS name, u.avatar
         from users u inner join participants p on u.id = p.user_id
         where p.group_id = $1`,
         [groupId]
@@ -109,10 +137,10 @@ exports.getMessages = async (groupId, limit, offset) => {
     return res.rows;
 };
 
-exports.createMessage = async (groupId, userId, content) => {
+exports.createMessage = async (groupId, userId, content, messageId) => {
     const res = await db.query(
-        'INSERT INTO messages (group_id, user_id, content, create_time) VALUES ($1, $2, $3, NOW()) RETURNING *',
-        [groupId, userId, content]
+        'INSERT INTO messages (id, group_id, user_id, content, create_time) VALUES ($1, $2, $3, $4, NOW()) RETURNING *',
+        [messageId, groupId, userId, content]
     );
     let message = res.rows[0];
     const senderInfoQuery = await db.query(
@@ -136,11 +164,30 @@ exports.createMessage = async (groupId, userId, content) => {
 
 exports.getEmployees = async (orgAbbr) => {
     const res = await db.query(
-        `select email, first_name, last_name, avatar
+        `select u.email, u.first_name, u.last_name, u.avatar
         from users u inner join employees e on u.id = e.user_id
-        inner join organizations o on o.abbreviation = e.org_abbreviation
-        where o.abbreviation = $1`,
+        where e.org_abbreviation = $1
+		group by u.email, u.first_name, u.last_name, u.avatar`,
         [orgAbbr]
     );
     return res.rows;
+}
+
+exports.updateActiveTimeParticipant = async (userId, groupId) => {
+    const res = await db.query(`
+        UPDATE participants 
+        SET last_active_time = NOW()
+        WHERE user_id = $1 AND group_id = $2
+        RETURNING *`,
+        [userId, groupId]);
+    return res.rows[0];
+}
+
+exports.getLastActiveTimeParticipant = async (userId, groupId) => {
+    const res = await db.query(`
+        select last_active_time
+        from participants 
+        WHERE user_id = $1 AND group_id = $2`,
+        [userId, groupId]);
+    return res.rows[0].last_active_time;
 }

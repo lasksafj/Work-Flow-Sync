@@ -2,27 +2,29 @@ import { getGroupsApi, getParticipantsApi } from '@/apis/chat/chatApi';
 import { Colors } from '@/constants/Colors';
 import { format, isBefore, startOfToday } from 'date-fns';
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, TouchableHighlight, Modal, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, TouchableHighlight, Modal, SafeAreaView, ActivityIndicator } from 'react-native';
 import ChatScreen from './ChatScreen';
 import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
-
-
+import { chatSocket } from '@/socket/socket';
+import { Avatar } from '@/components/Avatar';
 
 type chatType = {
     groupId: string,
     groupName: string,
-    img: string,
+    groupImg?: string,
     lastMessageTime: string,
-    lastMessage: string
+    lastMessage: string,
+    lastActiveTime?: string,
+    seen?: boolean,
 }
 
 const RenderItem = ({ item, openChat }: any) => {
-    const { groupId, groupName, lastMessageTime, img, lastMessage } = item;
+    let { groupId, groupName, lastMessageTime, groupCreatedAt, groupImg, lastMessage, lastActiveTime, seen } = item;
 
-    const date = new Date(lastMessageTime);
+    const date = lastMessageTime ? new Date(lastMessageTime) : new Date(groupCreatedAt);
     let time;
     // Check if the timeVar is before 0h (start of the day)
     if (isBefore(date, startOfToday())) {
@@ -31,11 +33,14 @@ const RenderItem = ({ item, openChat }: any) => {
         time = format(date, 'hh:mm a');
     }
 
+    const lastActive = new Date(lastActiveTime);
+    if (!seen)
+        seen = lastActiveTime && (Math.floor(date.getTime() / 1000) <= Math.floor(lastActive.getTime() / 1000));
 
     return (
         <TouchableHighlight activeOpacity={0.8} underlayColor={Colors.lightGray}
             onPress={() => {
-                openChat({ groupId, groupName });
+                openChat({ groupId, groupName, groupImg });
             }}
         >
             <View
@@ -46,17 +51,21 @@ const RenderItem = ({ item, openChat }: any) => {
                     paddingLeft: 20,
                     paddingVertical: 10,
                 }}>
-                <Image source={{ uri: img }} style={{ width: 50, height: 50, borderRadius: 50 }} />
+                {/* <Image
+                    source={{ uri: img[0] || "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com" }}
+                    style={{ width: 50, height: 50, borderRadius: 50 }}
+                /> */}
+                <Avatar img={groupImg} />
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 18, }}>
+                    <Text style={{ fontSize: 18, fontWeight: seen ? 'normal' : 'bold' }}>
                         {groupName.length > 20 ? `${groupName.substring(0, 20)}...` : groupName}
                     </Text>
-                    <Text style={{ fontSize: 16, color: Colors.gray }}>
-                        {lastMessage.length > 40 ? `${lastMessage.substring(0, 40)}...` : lastMessage}
+                    <Text style={{ fontSize: 16, color: seen ? Colors.gray : 'black', fontWeight: seen ? 'normal' : 'bold', }}>
+                        {lastMessage && lastMessage.length > 40 ? `${lastMessage.substring(0, 40)}...` : lastMessage}
                     </Text>
 
                 </View>
-                <Text style={{ color: Colors.gray, paddingRight: 20, alignSelf: 'flex-start' }}>
+                <Text style={{ color: seen ? Colors.gray : 'black', paddingRight: 20, alignSelf: 'flex-start', fontWeight: seen ? 'normal' : 'bold' }}>
                     {time}
                 </Text>
 
@@ -70,15 +79,20 @@ const RenderItem = ({ item, openChat }: any) => {
 const ChatListScreen = () => {
     const user = useAppSelector((state: RootState) => state.user)
 
-    const [chats, setchats] = useState<chatType[]>([]);
+    const [chats, setChats] = useState<chatType[]>([]);
     const [modalChatVisible, setModalChatVisible] = useState(false);
-    const [selectedGroup, setSelectedGroup] = useState({ groupId: '', groupName: '' });
+    const [selectedGroup, setSelectedGroup] = useState({ groupId: '', groupName: '', groupImg: '' });
 
-    let { groupId, groupName } = useLocalSearchParams();
+    const limit = 15;
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [chatsAvailable, setChatsAvailable] = useState(true);
+
+
+    let { groupId, groupName, groupImg, groupCreatedAt } = useLocalSearchParams();
     if (groupId)
-        console.log('groupId, groupName', groupId, groupName);
+        console.log('groupId useLocalSearchParams ', groupId, groupName, groupImg, groupCreatedAt);
     else
-        console.log('groupId, groupName', selectedGroup);
+        console.log('selectedGroup', selectedGroup);
 
 
     const openChat = (group: any) => {
@@ -89,46 +103,153 @@ const ChatListScreen = () => {
 
     const closeChat = () => {
         setModalChatVisible(false);
-        setSelectedGroup({ groupId: '', groupName: '' });
+        setChats(prevChats =>
+            prevChats.map(chat =>
+                chat.groupId == selectedGroup.groupId ? { ...chat, seen: true } : chat
+            )
+        );
+        setSelectedGroup({ groupId: '', groupName: '', groupImg: '' });
         router.setParams({
             groupId: '',
-            groupName: ''
+            groupName: '',
+            groupImg: ''
         });
     };
 
-    useEffect(() => {
-        if (groupId && groupId != '') {
-            openChat({ groupId, groupName });
+    const createGroupNameImg = async (groupId: string) => {
+        let participants = await getParticipantsApi(groupId);
+        if (participants) {
+            let gname = participants
+                .filter((p: any) => p.email != user.profile.email)
+                .map((p: any) => p.name)
+                .join(', ');
+            let gImg = participants
+                .filter((p: any) => p.email != user.profile.email)
+                .map((p: any) => p.avatar)
+                .join(', ');
+
+            return { gname, gImg };
         }
-    }, [groupId])
+        return { gname: '', gImg: '' };
+    }
 
-    useFocusEffect(
-        useCallback(() => {
-            // console.log('CHATLISTSCREEN  getGroupsApi');
-            async function getGroup() {
-                let res = await getGroupsApi();
-                if (!res)
-                    return
-                // console.log(res);
+    const onChatListNewMessage = useCallback(async ({ groupId, groupName, groupImg, lastMessageTime, lastMessage, lastActiveTime }: any) => {
+        let { gname, gImg } = await createGroupNameImg(groupId);
+        let seen = false;
+        setChats(prevChats => {
+            // Data from server id: number, data in client id: string, so use == to compare
+            const index = prevChats.findIndex(chat => chat.groupId == groupId);
+            const newChats: chatType[] = index > -1
+                ? [{ ...prevChats[index], lastMessageTime, lastMessage, lastActiveTime, seen }, ...prevChats.slice(0, index), ...prevChats.slice(index + 1)]
+                : [{ groupId, groupName, groupImg, lastMessageTime, lastMessage, lastActiveTime, seen }, ...prevChats];
 
-                for (let i = 0; i < res.length; i++) {
-                    res[i].img = "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com";
-                    if (!res[i].groupName) {
-                        let participants = await getParticipantsApi(res[i].groupId);
-                        let gname = participants
-                            .filter((p: any) => p.email != user.profile.email)
-                            .map((p: any) => p.name)
-                            .join(', ');
-                        res[i].groupName = gname;
-                    }
-                }
-                // should sort on server ?????????????????????????????????????????
-                res = res.sort((a: any, b: any) => new Date(b.lastMessageTime).getTime() - new Date(a.lastMessageTime).getTime());
-                setchats(res);
+            if (!newChats[0].groupName) {
+                newChats[0].groupName = gname;
             }
-            getGroup();
-        }, [modalChatVisible])
-    );
+            if (!newChats[0].groupImg) {
+                newChats[0].groupImg = gImg;
+            }
+            return newChats;
+        });
+    }, []);
+
+
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         // console.log('CHATLISTSCREEN  getGroupsApi');
+    //         async function getGroup() {
+    //             let res = await getGroupsApi();
+    //             if (!res)
+    //                 return
+
+    //             for (let i = 0; i < res.length; i++) {
+    //                 res[i].groupImg = "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com";
+    //                 if (!res[i].groupName) {
+    //                     let participants = await getParticipantsApi(res[i].groupId);
+    //                     if (participants) {
+    //                         let gname = participants
+    //                             .filter((p: any) => p.email != user.profile.email)
+    //                             .map((p: any) => p.name)
+    //                             .join(', ');
+    //                         res[i].groupName = gname;
+    //                     }
+    //                 }
+    //             }
+    //             setChats(res);
+    //         }
+    //         getGroup();
+    //     }, [modalChatVisible])
+    // );
+
+    const fetchGroups = async (offset: number) => {
+        setIsLoadingMore(true);
+        let res = await getGroupsApi(limit, offset);
+        if (res) {
+            if (res.length < limit) {
+                setChatsAvailable(false);
+            }
+
+            for (const group of res) {
+                group.groupId = String(group.groupId);
+                const { gname, gImg } = await createGroupNameImg(group.groupId);
+                if (!group.groupName) {
+                    group.groupName = gname;
+                }
+                if (!group.groupImg) {
+                    group.groupImg = gImg;
+                }
+            }
+
+            setChats(prevChats => {
+                const chatMap = new Map(prevChats.map(chat => [chat.groupId, chat]));
+                for (const group of res) {
+                    chatMap.set(group.groupId, group);
+                }
+                return Array.from(chatMap.values());
+            });
+        }
+        setIsLoadingMore(false);
+    };
+
+    const handleLoadMore = () => {
+        if (!isLoadingMore && chatsAvailable) {
+            fetchGroups(chats.length);
+        }
+    };
+
+    const renderFooter = () => {
+        if (!isLoadingMore) return null;
+        return <ActivityIndicator size="large" color={Colors.primary} />;
+    };
+
+    useEffect(() => {
+        async function initGroup() {
+            if (groupId && groupId != '') {
+                if (!groupName || !groupImg) {
+                    const { gname, gImg } = await createGroupNameImg(groupId as string);
+                    groupName = groupName || gname;
+                    groupImg = groupImg || gImg;
+                }
+                openChat({ groupId, groupName, groupImg });
+                onChatListNewMessage({ groupId, groupName, groupImg, lastMessageTime: groupCreatedAt });
+            }
+        }
+        initGroup();
+    }, [groupId]);
+
+    useEffect(() => {
+        fetchGroups(chats.length);
+    }, []);
+
+    useEffect(() => {
+        chatSocket.emit('ChatList:join', user.profile.email);
+        chatSocket.on('ChatList:newMessage', onChatListNewMessage);
+
+        return () => {
+            chatSocket.off('ChatList:newMessage');
+            chatSocket.emit('ChatList:leave', user.profile.email);
+        }
+    }, []);
 
 
     // const [modalNewChatVisible, setModalNewChatVisible] = useState(false);
@@ -176,6 +297,11 @@ const ChatListScreen = () => {
                 }
                 keyExtractor={(item) => item.groupId}
                 estimatedItemSize={200}
+
+                onEndReached={chatsAvailable ? handleLoadMore : null}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={renderFooter}
+
             // style={styles.container}
             />
 
