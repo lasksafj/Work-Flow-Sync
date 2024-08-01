@@ -61,21 +61,21 @@ const SwitchWorkplace = ({
 
     const Header = () => (
         <View style={styles.header}>
-        <TouchableOpacity
-            onPress={() => {
-                setSwitchWorkplaceVisible(false);
-            }}
-        >
-            <FeatherIcon
-                name="chevron-left"
-                size={25}
-                color="white"
-                style={styles.title}
-            />
-        </TouchableOpacity>
-        <Text style={styles.title}>Select Workplace</Text>
-        <View style={styles.spacer} />
-    </View>
+            <TouchableOpacity
+                onPress={() => {
+                    setSwitchWorkplaceVisible(false);
+                }}
+            >
+                <FeatherIcon
+                    name="chevron-left"
+                    size={25}
+                    color="white"
+                    style={styles.title}
+                />
+            </TouchableOpacity>
+            <Text style={styles.title}>Select Workplace</Text>
+            <View style={styles.spacer} />
+        </View>
     );
 
     const Item = ({ id, name, abbreviation, address }: ItemProps) => (

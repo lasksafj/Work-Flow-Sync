@@ -38,7 +38,7 @@ export default function HomeScreen() {
 
         dispatch(
             updateOrganization({
-                abbreviation: "ORG7",
+                abbreviation: "ORG3",
                 name: "Organization Three",
                 address: "789 Elm St",
             })

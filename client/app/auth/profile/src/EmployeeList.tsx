@@ -26,81 +26,6 @@ const EmployeeList = ({
     employeeListVisible,
     setEmployeeListVisible,
 }: EmployeeProps) => {
-    // const employees = [
-    //     {
-    //         id: "1",
-    //         img: "",
-    //         firstName: "Anh",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "2",
-    //         img: "",
-    //         firstName: "John",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "3",
-    //         img: "",
-    //         firstName: "Long",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "4",
-    //         img: "",
-    //         firstName: "Huy",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "5",
-    //         img: "",
-    //         firstName: "Bao",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "6",
-    //         img: "",
-    //         firstName: "Linh",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "7",
-    //         img: "",
-    //         firstName: "Anh",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "8",
-    //         img: "",
-    //         firstName: "John",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "9",
-    //         img: "",
-    //         firstName: "Long",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "10",
-    //         img: "",
-    //         firstName: "Huy",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "11",
-    //         img: "",
-    //         firstName: "Bao",
-    //         lastName: "Doe",
-    //     },
-    //     {
-    //         id: "12",
-    //         img: "",
-    //         firstName: "Linh",
-    //         lastName: "Doe",
-    //     },
-    // ];
-
     const organization = useAppSelector(
         (state: RootState) => state.organization
     );
@@ -117,7 +42,7 @@ const EmployeeList = ({
             .catch((error) => {
                 alert(error);
             });
-    }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
+    }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
 
     // console.log("Phong test00000000000", employees);
     const groupEmployeesByFirstLetter = (employees: any[]) => {
@@ -154,14 +79,14 @@ const EmployeeList = ({
     //     sections.map((section) => section.title)
     // );
 
-    const InitialImg = (img: string, initials: string) => (
+    const InitialAvatar = (avatar: string, initials: string) => (
         <View style={styles.profile}>
-            {img ? (
+            {avatar ? (
                 <Image
                     resizeMode="cover"
                     style={styles.profileAvatar}
                     source={{
-                        uri: img,
+                        uri: avatar,
                     }}
                     alt="Avarar"
                 />
@@ -216,16 +141,16 @@ const EmployeeList = ({
 
     type ItemProps = {
         id: string;
-        img: string;
+        avatar: string;
         firstName: string;
         lastName: string;
     };
 
-    const Item = ({ id, img, firstName, lastName }: ItemProps) => (
+    const Item = ({ id, avatar, firstName, lastName }: ItemProps) => (
         <View style={styles.sectionItems}>
             <View style={styles.cardWrapper}>
                 <View style={styles.card}>
-                    {InitialImg(img, `${firstName[0]}${lastName[0]}`)}
+                    {InitialAvatar(avatar, `${firstName[0]}${lastName[0]}`)}
                     <View style={styles.cardBody}>
                         <Text style={styles.cardTitle}>
                             {firstName} {lastName}
@@ -303,7 +228,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: "#d6d6d6",
     },
-    cardImg: {
+    cardAvatar: {
         width: 42,
         height: 42,
     },

@@ -7,6 +7,7 @@ const requestLogger = require("./middlewares/loggerMiddleware");
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const earningsRoutes = require("./routes/earningsRoutes"); // Anh
+const profileRoutes = require("./routes/profileRoutes");
 
 const socketConfig = require("./config/socket");
 const authSocketMiddleware = require("./middlewares/authSocketMiddleware");
