@@ -7,7 +7,7 @@ const initUser = {
     email: undefined,
     phoneNumber: undefined,
     dateOfBirth: undefined,
-    img: undefined
+    avatar: undefined
 }
 
 const initialState = {
@@ -26,7 +26,7 @@ const userSlice = createSlice({
                 firstName: action.payload.profile.firstName,
                 phoneNumber: action.payload.profile.phoneNumber,
                 dateOfBirth: action.payload.profile.dateOfBirth,
-                img: action.payload.profile.img
+                avatar: action.payload.profile.avatar
             };
             state.accessToken = action.payload.access;
         },
