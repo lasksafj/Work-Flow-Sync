@@ -7,6 +7,7 @@ import {
     TouchableOpacity,
     FlatList,
     TextInput,
+    Dimensions,
 } from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
@@ -15,6 +16,7 @@ import api from "@/apis/api";
 import { updateOrganization } from "@/store/slices/organizationSlice";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { FlashList } from "@shopify/flash-list";
 
 type SwitchProps = {
     switchWorkplaceVisible: boolean;
@@ -125,9 +127,10 @@ const SwitchWorkplace = ({
                             All Workplaces
                         </Text>
                     </View>
-                    <FlatList
+                    <FlashList
                         data={workplaces}
                         renderItem={({ item }) => <Item {...item} />}
+                        estimatedItemSize={200}
                         keyExtractor={(item) => item.id}
                     />
                 </View>
@@ -180,7 +183,8 @@ const styles = StyleSheet.create({
         marginTop: 6,
     },
     section: {
-        // paddingTop: 12,
+        height: 200,
+        width: Dimensions.get("screen").width,
     },
     sectionHeader: {
         paddingHorizontal: 24,

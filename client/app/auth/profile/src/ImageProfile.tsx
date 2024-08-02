@@ -12,6 +12,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Svg, Circle, Text as SvgText } from "react-native-svg";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
+import { SingleAvatar } from "@/components/Avatar";
+import InitialNameAvatar from "@/components/InitialNameAvatar";
 
 // interface ImageProfileProps {
 //     initials: string;
@@ -21,12 +23,14 @@ import { RootState } from "@/store/store";
 const ImageProfile = () => {
     const user = useAppSelector((state: RootState) => state.user);
     // const imageUrl: string = "https://reactjs.org/logo-og.png";
-    const imageUrl = null;
-    const initials = `${user.profile.firstName?.[0] ?? ""}${
-        user.profile.lastName?.[0] ?? ""
-    }`.toUpperCase();
+    // const imageUrl = null;
+    // const initials = `${user.profile.firstName?.[0] ?? ""}${
+    //     user.profile.lastName?.[0] ?? ""
+    // }`.toUpperCase();
     // console.log("imageUrl111111", imageUrl);
-    const [selectedImage, setSelectedImage] = useState<string | null>(imageUrl);
+    const [selectedImage, setSelectedImage] = useState<string | null>(
+        user.profile.avatar
+    );
     // console.log("selectedImage2222222222", selectedImage);
     const pickImage = async () => {
         // Request permission to access the library
@@ -89,33 +93,28 @@ const ImageProfile = () => {
                 <TouchableOpacity onPress={showImagePickerOptions}>
                     <View style={styles.profile}>
                         {selectedImage ? (
-                            <Image
+                            // <Image
+                            //     style={styles.profileAvatar}
+                            //     source={{
+                            //         uri: selectedImage,
+                            //     }}
+                            //     alt="Profile Picture"
+                            // />
+                            <SingleAvatar
+                                uri={selectedImage}
+                                size={100}
                                 style={styles.profileAvatar}
-                                source={{
-                                    uri: selectedImage,
-                                }}
-                                alt="Profile Picture"
                             />
                         ) : (
                             <View style={styles.initialsContainer}>
-                                <Svg height="100" width="100">
-                                    <Circle
-                                        cx="50"
-                                        cy="50"
-                                        r="50"
-                                        fill="#6200EE"
-                                    />
-                                    <SvgText
-                                        fill="white"
-                                        fontSize="40"
-                                        fontWeight="bold"
-                                        x="50"
-                                        y="65"
-                                        textAnchor="middle"
-                                    >
-                                        {initials}
-                                    </SvgText>
-                                </Svg>
+                                <InitialNameAvatar
+                                    name={
+                                        user.profile.firstName +
+                                        " " +
+                                        user.profile.lastName
+                                    }
+                                    size={100}
+                                />
                             </View>
                         )}
                     </View>

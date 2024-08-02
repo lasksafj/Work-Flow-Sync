@@ -254,3 +254,34 @@ const styles = StyleSheet.create({
         marginRight: 4,
     },
 });
+
+// router.push({
+//     pathname: "auth/profile/src/EditProfile",
+//     params: {
+//         org: section[1].items[0].value,
+//         address: section[1].items[1].value,
+//         role: section[1].items[2].value,
+//     },
+// });
+// alert("Edit Pressed!");
+
+{
+    /* <Svg height="100" width="100">
+                                    <Circle
+                                        cx="50"
+                                        cy="50"
+                                        r="50"
+                                        fill="#6200EE"
+                                    />
+                                    <SvgText
+                                        fill="white"
+                                        fontSize="40"
+                                        fontWeight="bold"
+                                        x="50"
+                                        y="65"
+                                        textAnchor="middle"
+                                    >
+                                        {initials}
+                                    </SvgText>
+                                </Svg> */
+}

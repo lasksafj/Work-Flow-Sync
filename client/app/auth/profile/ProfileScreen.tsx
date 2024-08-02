@@ -186,15 +186,6 @@ const ProfileScreen = () => {
                 <TouchableOpacity
                     onPress={() => {
                         setEditProfileVisible(true);
-                        // router.push({
-                        //     pathname: "auth/profile/src/EditProfile",
-                        //     params: {
-                        //         org: section[1].items[0].value,
-                        //         address: section[1].items[1].value,
-                        //         role: section[1].items[2].value,
-                        //     },
-                        // });
-                        // alert("Edit Pressed!");
                     }}
                 >
                     <Text style={styles.title}>Edit</Text>
