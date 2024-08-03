@@ -285,3 +285,27 @@ const styles = StyleSheet.create({
                                     </SvgText>
                                 </Svg> */
 }
+
+// initialsContainer: {
+//     width: 80,
+//     height: 80,
+//     borderRadius: 9999,
+//     overflow: "hidden",
+//     justifyContent: "center",
+//     alignItems: "center",
+// },
+
+{
+    /* <TouchableOpacity
+                    onPress={() => {
+                        alert("Back Pressed!");
+                    }}
+                >
+                    <FeatherIcon
+                        name="chevron-left"
+                        size={25}
+                        color="white"
+                        style={styles.title}
+                    />
+                </TouchableOpacity> */
+}

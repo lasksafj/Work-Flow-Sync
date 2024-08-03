@@ -168,19 +168,6 @@ const ProfileScreen = () => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
-                {/* <TouchableOpacity
-                    onPress={() => {
-                        alert("Back Pressed!");
-                    }}
-                >
-                    <FeatherIcon
-                        name="chevron-left"
-                        size={25}
-                        color="white"
-                        style={styles.title}
-                    />
-                </TouchableOpacity> */}
-
                 <View style={styles.spacer} />
                 <Text style={styles.title}>User</Text>
                 <TouchableOpacity

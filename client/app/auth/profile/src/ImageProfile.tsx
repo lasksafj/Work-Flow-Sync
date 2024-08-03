@@ -1,37 +1,19 @@
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-    StyleSheet,
-    View,
-    Image,
-    TouchableOpacity,
-    Text,
-    Alert,
-} from "react-native";
+import { StyleSheet, View, TouchableOpacity, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Svg, Circle, Text as SvgText } from "react-native-svg";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
-import { SingleAvatar } from "@/components/Avatar";
+import { Avatar } from "@/components/Avatar";
 import InitialNameAvatar from "@/components/InitialNameAvatar";
-
-// interface ImageProfileProps {
-//     initials: string;
-//     imageUrl: string | null;
-// }
 
 const ImageProfile = () => {
     const user = useAppSelector((state: RootState) => state.user);
-    // const imageUrl: string = "https://reactjs.org/logo-og.png";
-    // const imageUrl = null;
-    // const initials = `${user.profile.firstName?.[0] ?? ""}${
-    //     user.profile.lastName?.[0] ?? ""
-    // }`.toUpperCase();
-    // console.log("imageUrl111111", imageUrl);
     const [selectedImage, setSelectedImage] = useState<string | null>(
-        user.profile.avatar
+        user.profile.avatar || null
     );
     // console.log("selectedImage2222222222", selectedImage);
+
     const pickImage = async () => {
         // Request permission to access the library
         const { status } =
@@ -76,7 +58,7 @@ const ImageProfile = () => {
 
     const showImagePickerOptions = () => {
         Alert.alert(
-            "Select Image",
+            "Select Avatar",
             "Choose an image from your library or take a new photo",
             [
                 { text: "Cancel", style: "cancel" },
@@ -86,39 +68,26 @@ const ImageProfile = () => {
             { cancelable: true }
         );
     };
-
+    // console.log("selectedImage3333333333333", selectedImage);
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#f6f6f6" }}>
             <View style={styles.container}>
-                <TouchableOpacity onPress={showImagePickerOptions}>
-                    <View style={styles.profile}>
+                <View style={styles.profile}>
+                    <TouchableOpacity onPress={showImagePickerOptions}>
                         {selectedImage ? (
-                            // <Image
-                            //     style={styles.profileAvatar}
-                            //     source={{
-                            //         uri: selectedImage,
-                            //     }}
-                            //     alt="Profile Picture"
-                            // />
-                            <SingleAvatar
-                                uri={selectedImage}
-                                size={100}
-                                style={styles.profileAvatar}
-                            />
+                            <Avatar img={selectedImage} size={100} />
                         ) : (
-                            <View style={styles.initialsContainer}>
-                                <InitialNameAvatar
-                                    name={
-                                        user.profile.firstName +
-                                        " " +
-                                        user.profile.lastName
-                                    }
-                                    size={100}
-                                />
-                            </View>
+                            <InitialNameAvatar
+                                name={
+                                    user.profile.firstName +
+                                    " " +
+                                    user.profile.lastName
+                                }
+                                size={100}
+                            />
                         )}
-                    </View>
-                </TouchableOpacity>
+                    </TouchableOpacity>
+                </View>
             </View>
         </SafeAreaView>
     );
@@ -135,18 +104,5 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         backgroundColor: "#fff",
-    },
-    profileAvatar: {
-        width: 80,
-        height: 80,
-        borderRadius: 9999,
-    },
-    initialsContainer: {
-        width: 80,
-        height: 80,
-        borderRadius: 9999,
-        overflow: "hidden",
-        justifyContent: "center",
-        alignItems: "center",
     },
 });
