@@ -136,6 +136,7 @@ const EmployeeList = ({
                             </Text>
                         </View>
                     )}
+                    style={{ flex: 1 }}
                 />
             </SafeAreaView>
         </Modal>
