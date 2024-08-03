@@ -1,16 +1,25 @@
 import { Image, View } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
+
+const defaultImageUri = "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com"
 
 const SingleAvatar = ({ uri, size = 50, style }: any) => {
+    const [img, setImg] = useState(uri);
+
     return (
         <Image
-            source={{ uri: uri || "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com" }}
+            source={{ uri: img || defaultImageUri }}
             style={[{ width: size, height: size, borderRadius: size }, style]}
+            onError={() => setImg(defaultImageUri)}
+
         />
     )
 }
 
 const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
+    const [img1, setImg1] = useState(uri1);
+    const [img2, setImg2] = useState(uri2);
+
     const outerSize = size;
     const innerSize = outerSize * 2 / 3;
     return (
@@ -23,16 +32,17 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
             width: outerSize, height: outerSize,
         }, style]}>
             <Image
-                source={{ uri: uri2 || "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com" }}
+                source={{ uri: img2 || defaultImageUri }}
                 style={{
                     width: innerSize,
                     height: innerSize,
                     borderRadius: innerSize,
                     position: 'absolute', top: innerSize / 20, left: innerSize / 20
                 }}
+                onError={() => setImg2(defaultImageUri)}
             />
             <Image
-                source={{ uri: uri1 || "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com" }}
+                source={{ uri: img1 || defaultImageUri }}
                 style={{
                     width: innerSize,
                     height: innerSize,
@@ -41,6 +51,7 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
                     borderWidth: 2,
                     position: 'absolute', bottom: innerSize / 20, right: innerSize / 20
                 }}
+                onError={() => setImg1(defaultImageUri)}
             />
         </View>
     );
