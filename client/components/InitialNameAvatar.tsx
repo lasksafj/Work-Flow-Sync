@@ -10,7 +10,7 @@ const getColorFromName = (name: string) => {
     return color;
 };
 
-const InitialNameAvatar = ({ name, size = 50 }: any) => {
+const InitialNameAvatar = ({ name, size = 50, style }: any) => {
     const color = getColorFromName(name);
     // Function to get the initials from the name
     const getInitials = (name: string) => {
@@ -22,7 +22,7 @@ const InitialNameAvatar = ({ name, size = 50 }: any) => {
     };
 
     return (
-        <View style={[styles.avatar, { width: size, height: size, borderRadius: size / 2, backgroundColor: color }]}>
+        <View style={[styles.avatar, { width: size, height: size, borderRadius: size / 2, backgroundColor: color }, style]}>
             <Text style={[styles.initials, { fontSize: size / 2 }]}>{getInitials(name)}</Text>
         </View>
     );

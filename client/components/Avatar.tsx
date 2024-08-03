@@ -46,10 +46,11 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
     );
 };
 
-const Avatar = ({ img, size = 50, style }: any) => {
+const Avatar = ({ img = '', size = 50, style }: any) => {
+    img = img || '';
     let groupImg;
     let imgArray = img.split(', ');
-    if (imgArray.length == 1) {
+    if (imgArray.length <= 1) {
         groupImg = <SingleAvatar uri={imgArray[0]} size={size} style={style} />;
     }
     else {
