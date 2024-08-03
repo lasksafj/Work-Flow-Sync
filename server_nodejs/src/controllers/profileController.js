@@ -35,10 +35,11 @@ exports.profileGetOrg = async (req, res) => {
 exports.profileGetAllUsers = async (req, res) => {
     try {
         const data = await db.query(
-            `SELECT e.id as id, u.first_name as "firstName", u.last_name as "lastName", u.avatar as avatar
+            `SELECT u.email, u.first_name, u.last_name, u.avatar
             FROM employees e
-            JOIN users u ON u.id = e.user_id 
+            INNER JOIN users u ON u.id = e.user_id 
             WHERE e.org_abbreviation = $1
+            GROUP BY u.email, u.first_name, u.last_name, u.avatar
             ORDER BY u.first_name;`,
             [req.query.org]
         );

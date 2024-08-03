@@ -16,6 +16,10 @@ import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { all } from "axios";
 import { Svg, Circle, Text as SvgText } from "react-native-svg";
+import { AlphabetList } from "react-native-section-alphabet-list";
+import { Colors } from "@/constants/Colors";
+import InitialNameAvatar from "@/components/InitialNameAvatar";
+import { Avatar } from "@/components/Avatar";
 
 type EmployeeProps = {
     employeeListVisible: boolean;
@@ -33,10 +37,19 @@ const EmployeeList = ({
 
     useEffect(() => {
         let org = organization.abbreviation;
+
+        // dung get.then.catch la thay the cho async await
         api.get("/api/profile/profile-getAllUsers?org=" + org)
             .then((response) => {
-                const data = response.data;
+                const res = response.data;
+                let data = res.map((contact: any, index: number) => ({
+                    value: `${contact.first_name} ${contact.last_name}`,
+                    avatar: contact.avatar,
+                    email: contact.email,
+                    key: `${index}`,
+                }));
                 console.log(data);
+
                 setEmployees(data);
             })
             .catch((error) => {
@@ -44,71 +57,7 @@ const EmployeeList = ({
             });
     }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
 
-    // console.log("Phong test00000000000", employees);
-    const groupEmployeesByFirstLetter = (employees: any[]) => {
-        const grouped = employees.reduce((acc, employee) => {
-            const firstName = employee.firstName;
-            const firstLetter = firstName[0] ? firstName[0].toUpperCase() : "";
-            if (!acc[firstLetter]) {
-                acc[firstLetter] = [];
-            }
-            acc[firstLetter].push(employee);
-            return acc;
-        }, {});
-
-        // console.log("Phongsfgasfbv test", grouped);
-        // Convert the grouped object to an array of sections
-        return Object.keys(grouped)
-            .sort()
-            .map((letter) => ({
-                title: letter,
-                data: grouped[letter],
-            }));
-    };
-
-    // console.log(
-    //     "Phong test1111111111",
-    //     groupEmployeesByFirstLetter(employees).map((section) => section.title)
-    // );
-    const sections = useMemo(
-        () => groupEmployeesByFirstLetter(employees),
-        [employees]
-    );
-    // console.log(
-    //     "Phong test",
-    //     sections.map((section) => section.title)
-    // );
-
-    const InitialAvatar = (avatar: string, initials: string) => (
-        <View style={styles.profile}>
-            {avatar ? (
-                <Image
-                    resizeMode="cover"
-                    style={styles.profileAvatar}
-                    source={{
-                        uri: avatar,
-                    }}
-                    alt="Avarar"
-                />
-            ) : (
-                <View style={styles.initialsAvatar}>
-                    <Svg height="50" width="50">
-                        <Circle cx="25" cy="25" r="25" fill="#6200EE" />
-                        <SvgText
-                            fill="white"
-                            fontSize="20"
-                            fontWeight="bold"
-                            x="25"
-                            y="32"
-                            textAnchor="middle"
-                        >
-                            {initials}
-                        </SvgText>
-                    </Svg>
-                </View>
-            )}
-        </View>
-    );
+    console.log("Phong test00000000000", employees);
 
     const Header = () => (
         <View style={styles.header}>
@@ -129,39 +78,6 @@ const EmployeeList = ({
         </View>
     );
 
-    const renderSectionHeader = ({
-        section: { title },
-    }: {
-        section: { title: string };
-    }) => (
-        <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{title}</Text>
-        </View>
-    );
-
-    type ItemProps = {
-        id: string;
-        avatar: string;
-        firstName: string;
-        lastName: string;
-    };
-
-    const Item = ({ id, avatar, firstName, lastName }: ItemProps) => (
-        <View style={styles.sectionItems}>
-            <View style={styles.cardWrapper}>
-                <View style={styles.card}>
-                    {InitialAvatar(avatar, `${firstName[0]}${lastName[0]}`)}
-                    <View style={styles.cardBody}>
-                        <Text style={styles.cardTitle}>
-                            {firstName} {lastName}
-                        </Text>
-                    </View>
-                </View>
-            </View>
-        </View>
-    );
-    // console.log("---------------", sections[0]);
-
     return (
         <Modal
             animationType="slide"
@@ -173,12 +89,53 @@ const EmployeeList = ({
         >
             <SafeAreaView style={{ flex: 1 }}>
                 <Header />
-                <SectionList
-                    sections={sections}
-                    renderItem={({ item }) => <Item {...item} />}
-                    renderSectionHeader={renderSectionHeader}
-                    keyExtractor={(item) => item.id}
-                    style={styles.list}
+                <AlphabetList
+                    data={employees}
+                    stickySectionHeadersEnabled
+                    indexLetterStyle={{
+                        color: Colors.primary,
+                        fontSize: 12,
+                    }}
+                    indexContainerStyle={{
+                        width: 24,
+                        backgroundColor: Colors.background,
+                    }}
+                    renderCustomItem={(item: any) => (
+                        <View style={styles.listItemContainer}>
+                            {item.avatar ? (
+                                <Avatar
+                                    img={item.avatar}
+                                    size={30}
+                                    style={styles.listItemImage}
+                                />
+                            ) : (
+                                <InitialNameAvatar
+                                    name={item.value}
+                                    size={30}
+                                />
+                            )}
+                            <View>
+                                <Text style={{ color: "#000", fontSize: 14 }}>
+                                    {item.value}
+                                </Text>
+                                <Text
+                                    style={{
+                                        color: Colors.gray,
+                                        fontSize: 12,
+                                    }}
+                                >
+                                    {item.email}
+                                </Text>
+                            </View>
+                        </View>
+                    )}
+                    renderCustomSectionHeader={(section) => (
+                        <View style={styles.sectionHeaderContainer}>
+                            <Text style={{ color: Colors.gray }}>
+                                {section.title}
+                            </Text>
+                        </View>
+                    )}
                 />
             </SafeAreaView>
         </Modal>
@@ -269,5 +226,22 @@ const styles = StyleSheet.create({
     },
     list: {
         flex: 1,
+    },
+    listItemImage: {},
+
+    sectionHeaderContainer: {
+        height: 30,
+        backgroundColor: Colors.background,
+        justifyContent: "center",
+        paddingHorizontal: 14,
+    },
+    listItemContainer: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        height: 50,
+        paddingHorizontal: 14,
+        backgroundColor: "#fff",
     },
 });
