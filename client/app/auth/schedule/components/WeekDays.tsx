@@ -3,39 +3,41 @@ import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from '
 import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView, Easing, PanResponder } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import moment from 'moment';
-
-type weekDatePropType = {
-    changeDate: Function 
-}
-
+import { Ionicons } from '@expo/vector-icons'
+import Constants from 'expo-constants';
+// type weekDatePropType = {
+//     changeDate: Function 
+// }
+const itemWidth = Constants.screenWidth / 7;
 const WeekDays = (props: any) => {
-  const [selectedDay, setSelectedDay] = useState(moment().format('YYYY-MM-DD'));
+  // const [selectedDay, setSelectedDay] = useState(moment().format('YYYY-MM-DD'));
   // const [isCalendarVisible, setIsCalendarVisible] = useState(false);
   
   const animationValue = useRef(new Animated.Value(0)).current;
 
-  const daysOfWeek = useMemo(
-    () =>
-      Array.from({ length: 7 }, (v, i) =>
-        moment(selectedDay).startOf('week').add(i, 'days').format('YYYY-MM-DD')
-      ),
-    [selectedDay]
-  );
+  // const daysOfWeek = useMemo(
+  //   () =>
+  //     Array.from({ length: 7 }, (v, i) =>
+  //       moment(selectedDay).startOf('week').add(i, 'days').format('YYYY-MM-DD')
+  //     ),
+  //   [selectedDay]
+  // );
 
-  const [selectedWeek, setSelectedWeek] = useState(daysOfWeek)
+  // const [selectedWeek, setSelectedWeek] = useState(daysOfWeek)
 
-  useEffect(() => {
-    props.changeDate(selectedDay, selectedWeek)
-  }, [props, selectedDay, selectedWeek])
+  // useEffect(() => {
+  //   props.changeDate(selectedDay, selectedWeek)
+  // }, [props, selectedDay, selectedWeek])
 
   const handleDayPress = useCallback((day: DateData) => {
-    setSelectedDay(day.dateString);
+    props.setSelectedDay(day.dateString);
     toggleCalendarVisibility(0);
   }, []);
 
   const handleSelectDay = useCallback((day: string) => {
-    setSelectedDay(day);
-    props.changeDate(day,selectedWeek)
+    props.setSelectedDay(day);
+    // setSelectedWeek(daysOfWeek);
+    // props.changeDate(day, selectedWeek)
   }, []);
 
 
@@ -72,19 +74,24 @@ const WeekDays = (props: any) => {
   return (
     <View style={styles.container}>
       <Animated.View style={{ overflow: 'hidden', height: calendarHeight }}>
-        <Calendar onDayPress={handleDayPress} selectedDay={selectedDay} />
+        <Calendar onDayPress={handleDayPress} selectedDay={props.selectedDay} />
       </Animated.View>
-
+{/* 
       <Header
-        daysOfWeek={daysOfWeek}
-        selectedDay={selectedDay}
+        daysOfWeek={props.daysOfWeek}
+        selectedDay={props.selectedDay}
         onDayPress={handleSelectDay}
-      />
-      <View style={{ alignItems: 'center', padding: 5, backgroundColor: 'green' }} {...panResponder.panHandlers}>
-        <Text>AAA</Text>
+      /> */}
+      <View style={styles.weeks} {...panResponder.panHandlers}>
+        <Header
+          daysOfWeek={props.daysOfWeek}
+          selectedDay={props.selectedDay}
+          onDayPress={handleSelectDay}
+         
+        />
       </View>
 
-      <ScreenA selectedDay={selectedDay} />
+      {/* <ScreenA selectedDay={props.selectedDay} selectedWeek={props.daysOfWeek} /> */}
 
       {/* <TimeSchedule /> */}
 
@@ -112,32 +119,37 @@ const Header = memo(({ daysOfWeek, selectedDay, onDayPress }: any) => {
           ]}
           onPress={() => onDayPress(day)}
         >
-          <Text
-            style={[
-              styles.dayText,
-              day === selectedDay && styles.selectedDayText,
-            ]}
-          >
-            {moment(day).format('ddd')}
-          </Text>
-          <Text
-            style={[
-              styles.dayText,
-              day === selectedDay && styles.selectedDayText,
-            ]}
-          >
-            {moment(day).format('D')}
-          </Text>
+          <View style={styles.item}>
+            <Text
+              style={[
+                styles.dayText,
+                day === selectedDay && styles.selectedDayText,
+              ]}
+            >
+              {moment(day).format('ddd')}
+            </Text>
+            <Text
+              style={[
+                styles.dayText,
+                day === selectedDay && styles.selectedDayText,
+              ]}
+            >
+              {moment(day).format('D')}
+            </Text>
+          </View>
+          
         </TouchableOpacity>
       ))}
     </View>
   )
 });
 
-const ScreenA = memo(({ selectedDay }: any) => (
+const ScreenA = memo(({ selectedDay, selectedWeek }: any) => (
   <View style={styles.screen}>
     <Text>Screen A</Text>
     <Text>Selected Day: {selectedDay}</Text>
+    <Text>Day of the Week: {selectedWeek}</Text>
+
   </View>
 ));
 
@@ -165,12 +177,12 @@ const styles = StyleSheet.create({
   },
   dayButton: {
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 4,
   },
   selectedDayButton: {
     backgroundColor: '#00adf5',
     borderRadius: 5,
-    padding: 5,
+    padding: 4,
   },
   dayText: {
     color: '#2d4150',
@@ -207,6 +219,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  weeks: {
+    width: Constants.screenWidth,
+    paddingHorizontal: 2,
+    
+  },
+  item:{
+    justifyContent:'center',
+    alignItems:'center',
+    width: 40,
+    backgroundColor: 'red',
+    borderColor: 'black',
+    borderRadius: 4
+  }
 });
 
 export default WeekDays;

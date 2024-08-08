@@ -1,86 +1,87 @@
-import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Dimensions } from 'react-native'
-import React, { useMemo, useState, useRef, useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { handleFetchScheduleData } from '@/apis/userService';
+import ScheduleCard from './ScheduleCard';
 
-const { width } = Dimensions.get('screen')
-
-const ScheduleDetail = () => {
- 
-
-  return (
-    <SafeAreaView>
-        <TouchableOpacity style={styles.container}>
-           <View style={styles.wrap}>
-                <View style={styles.header}>
-                    <Text>
-                        Header-Date
-                    </Text>
-                </View>
-                <View style={styles.body}>
-                    <View style={styles.item}>
-                        <View>
-                            <Text>Start</Text>
-                        </View>
-                        <View>
-                            <Text>End</Text>
-                        </View>
-                    </View >
-                    <View style={styles.item}>
-                        <Text>Name</Text>
-                    </View>
-                    <View style={styles.item}>
-                        <Text>FullName</Text>
-                        <Text>hours</Text>
-                        <Text>Company</Text>
-                    </View>
-
-                </View>
-           </View>
-            
-        </TouchableOpacity>
-    </SafeAreaView>
-   
-  )
+interface ScheduleDetailProps {
+  detail: string;
+  isExpanded: boolean;
+  onPress: () => void;
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        // justifyContent: 'center',
-        // alignItems: 'center',
-        width,
-        paddingHorizontal:2,
-       
-    },
-    wrap:{
-        width: '100%',
-        backgroundColor: 'blue',
-        borderRadius:4,
-        marginVertical:5
-    },
-    header: {
-        width: '100%',
-        backgroundColor: 'yellow',
-        borderRadius: 4,
-        paddingVertical:4,
-        paddingLeft:8
-    },
-    body: {
-        flexDirection: "row",
-        width:'100%',
-        
-        alignItems: 'flex-start',
-        // justifyContent: 'flex-start',
-        marginHorizontal: -1,
-        borderEndEndRadius:4,
-        paddingVertical:8,
+const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onPress }) => {
+  const [listData, setListData] = useState([]);
+  const [height] = useState(new Animated.Value(isExpanded ? (listData.length ? listData.length * 100 : 50) : 0));
+  const [dataFetched, setDataFetched] = useState(false);
 
-    },
-    item:{
-        // flex: 1,
-        flexDirection: 'column',
-        marginHorizontal: 6
+  useEffect(() => {
+    const fetchData = async () => {
+      let data = await handleFetchScheduleData(detail);
+      setListData(data.data.ED);
+      setDataFetched(true);
+      Animated.timing(height, {
+        toValue: data.data.ED.length ? data.data.ED.length * 100 : 50,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    };
+
+    if (isExpanded && !dataFetched) {
+      fetchData();
+    } else {
+      Animated.timing(height, {
+        toValue: isExpanded ? (listData.length ? listData.length * 100 : 50) : 0,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
     }
-})
+  }, [isExpanded, dataFetched, listData.length]);
 
-export default ScheduleDetail
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity onPress={onPress} style={styles.bar}>
+        <Text style={styles.barText}>{detail}</Text>
+      </TouchableOpacity>
+      <Animated.View style={[styles.details, { height }]}>
+        {isExpanded && (
+          listData.length > 0 ? (
+            listData.map((item, index) => (
+              <ScheduleCard detail={item} key={index} />
+            ))
+          ) : (
+            <View style={{justifyContent: 'center', alignItems: 'flex-start', height:50}}>
+              <Text style={{fontSize:20, fontWeight: '300', paddingLeft: 8}}>
+                No Working Schedule
+              </Text>
+            </View>
+          )
+        )}
+      </Animated.View>
+    </View>
+  );
+};
 
+const styles = StyleSheet.create({
+  container: {
+    margin: 3,
+  },
+  bar: {
+    backgroundColor: '#007BFF',
+    padding: 10,
+    borderRadius: 5,
+  },
+  barText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  details: {
+    overflow: 'hidden',
+    backgroundColor: '#E0E0E0',
+    borderRadius: 5,
+  },
+  detailContent: {
+    padding: 10,
+  },
+});
+
+export default ScheduleDetail;

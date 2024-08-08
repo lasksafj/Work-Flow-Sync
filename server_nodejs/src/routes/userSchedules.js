@@ -10,8 +10,9 @@ const scheduleController = require('../controllers/scheduleController')
  */
 
 const scheduleRoutes = (app) => {
-    router.get('/get-user-data', authMiddleware, scheduleController.getUserData)
-
+    router.get('/fetch-schedule-data', authMiddleware, scheduleController.getAllScheduleData)
+    router.post('/update-working-hours', authMiddleware, scheduleController.updateSchedule)
+    
     return app.use('/api/schedule', router)
 }
 

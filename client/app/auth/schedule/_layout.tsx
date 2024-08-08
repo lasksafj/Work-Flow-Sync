@@ -29,7 +29,7 @@ export default function ScheduleLayout() {
                 )
             }}
             />
-            <Stack.Screen name="ScehduleScreen" options={{ headerTitle:'Schedule Page', headerBackTitle:'Back' }}/>
+            <Stack.Screen name="ScheduleScreen" options={{ headerTitle:'Schedule Page', headerBackTitle:'Back' }}/>
         </Stack>
     )
 }

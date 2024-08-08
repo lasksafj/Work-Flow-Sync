@@ -1,3 +1,4 @@
+
 import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
 import { createMaterialTopTabNavigator,
@@ -27,7 +28,8 @@ const Layout = () => {
         tabBarIndicatorStyle: styles.indicator,
         tabBarLabelStyle: styles.label,
         tabBarActiveTintColor: 'black',
-        tabBarInactiveTintColor: 'white'
+        tabBarInactiveTintColor: 'white',
+        swipeEnabled: false,
     }}>
         <MaterialTopTabs.Screen name="Schedule" options={{title:'Schedule'}}/>
         <MaterialTopTabs.Screen name="Availability" options={{title:'Availability'}}/>

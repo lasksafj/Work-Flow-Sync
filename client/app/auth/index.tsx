@@ -62,7 +62,7 @@ export default function HomeScreen() {
                 router.replace('');
             }} />
 
-
+            
         </ParallaxScrollView>
     );
 }
