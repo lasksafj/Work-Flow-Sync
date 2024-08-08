@@ -1,10 +1,14 @@
 import { Image, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const defaultImageUri = "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com"
 
 const SingleAvatar = ({ uri, size = 50, style }: any) => {
     const [img, setImg] = useState(uri);
+
+    useEffect(() => {
+        setImg(uri);
+    }, [uri]);
 
     return (
         <Image
@@ -19,6 +23,14 @@ const SingleAvatar = ({ uri, size = 50, style }: any) => {
 const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
     const [img1, setImg1] = useState(uri1);
     const [img2, setImg2] = useState(uri2);
+
+    useEffect(() => {
+        setImg1(uri1);
+    }, [uri1]);
+
+    useEffect(() => {
+        setImg2(uri2);
+    }, [uri2]);
 
     const outerSize = size;
     const innerSize = outerSize * 2 / 3;
@@ -37,7 +49,7 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
                     width: innerSize,
                     height: innerSize,
                     borderRadius: innerSize,
-                    position: 'absolute', top: innerSize / 20, left: innerSize / 20
+                    position: 'absolute', top: 0, left: 0
                 }}
                 onError={() => setImg2(defaultImageUri)}
             />
@@ -49,7 +61,7 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
                     borderRadius: innerSize / 2,
                     borderColor: 'white',
                     borderWidth: 2,
-                    position: 'absolute', bottom: innerSize / 20, right: innerSize / 20
+                    position: 'absolute', bottom: 0, right: 0
                 }}
                 onError={() => setImg1(defaultImageUri)}
             />
