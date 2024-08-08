@@ -1,7 +1,7 @@
 import { Credentials, User } from "@/models/User";
 import axios, { AxiosInstance } from "axios";
 
-import { hostDomain } from '@/config/config'
+import { hostDomain } from '@/.config/config'
 
 
 const register = async (user: User, password: any) => {

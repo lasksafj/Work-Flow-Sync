@@ -1,7 +1,7 @@
 import { Credentials, User } from "@/models/User";
 import axios, { AxiosInstance } from "axios";
 
-import { hostDomain } from '@/config/config'
+import { hostDomain } from '@/.config/config'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const loginLocal = async (email: string, password: string) => {
