@@ -1,21 +1,10 @@
-import React, { useEffect, useMemo } from "react";
-import {
-    StyleSheet,
-    View,
-    Text,
-    Modal,
-    TouchableOpacity,
-    SectionList,
-    Image,
-} from "react-native";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import React, { useEffect } from "react";
+import { StyleSheet, View, Text, Modal, TouchableOpacity } from "react-native";
+import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
-import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { all } from "axios";
-import { Svg, Circle, Text as SvgText } from "react-native-svg";
 import { AlphabetList } from "react-native-section-alphabet-list";
 import { Colors } from "@/constants/Colors";
 import InitialNameAvatar from "@/components/InitialNameAvatar";
@@ -57,7 +46,7 @@ const EmployeeList = ({
             });
     }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
 
-    console.log("Phong test00000000000", employees);
+    // console.log("Phong test00000000000", employees);
 
     const Header = () => (
         <View style={styles.header}>
