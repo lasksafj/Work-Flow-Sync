@@ -43,6 +43,11 @@ const schema = yup.object().shape({
     phoneNumber: yup
         .string()
         .matches(/^\+?[1-9]\d{1,14}$/, "Must be a valid phone number")
+        .test(
+            "len",
+            "Phone number must be 10 characters",
+            (val: any) => val.length === 10
+        )
         .required("Phone number is required"),
     dateOfBirth: yup
         .date()
@@ -78,7 +83,13 @@ const EditProfile = ({
 
     const handleReset = () => {
         console.log("RESET");
-        reset();
+        reset({
+            firstName: user.profile.firstName,
+            lastName: user.profile.lastName,
+            email: user.profile.email,
+            phoneNumber: user.profile.phoneNumber,
+            dateOfBirth: user.profile.dateOfBirth,
+        });
     };
 
     const onSubmit = (data: FormValues) => {
