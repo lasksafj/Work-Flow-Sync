@@ -10,6 +10,7 @@ npm-debug.*
 *.orig.*
 web-build/
 %ProgramData%
+config/
 
 # macOS
 .DS_Store
@@ -20,4 +21,3 @@ web-build/
 expo-env.d.ts
 # @end expo-cli
 
-config/
