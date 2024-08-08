@@ -7,6 +7,7 @@ import {
     StyleSheet,
     View,
     TouchableOpacity,
+    SectionList,
 } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
@@ -33,22 +34,6 @@ interface Section {
 }
 
 const ProfileScreen = () => {
-    // api.get("/api/example/example-get?number=999")
-    //     .then((response) => {
-    //         alert(response.data.number);
-    //     })
-    //     .catch((error) => {
-    //         alert(error);
-    //     });
-
-    // api.post("/api/example/example-post", { number: 100 })
-    //     .then((response) => {
-    //         alert(response.data.number);
-    //     })
-    //     .catch((error) => {
-    //         alert(error);
-    //     });
-
     const router = useRouter();
 
     const user = useAppSelector((state: RootState) => state.user);
@@ -69,7 +54,8 @@ const ProfileScreen = () => {
     let section = [
         {
             header: "Profile Settings",
-            items: [
+            // use items for map, data for SectionList
+            data: [
                 {
                     id: "name",
                     label: "Name",
@@ -90,7 +76,8 @@ const ProfileScreen = () => {
         },
         {
             header: "Workplace",
-            items: [
+            // use items for map, data for SectionList
+            data: [
                 { id: "namewp", label: "Name", value: organization.name },
                 {
                     id: "address",
@@ -165,6 +152,31 @@ const ProfileScreen = () => {
         // alert("Logged out!");
     };
 
+    const renderSectionHeader = ({
+        section: { header },
+    }: {
+        section: { header: string };
+    }) => (
+        <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+                <Text style={styles.sectionHeaderText}>{header}</Text>
+            </View>
+        </View>
+    );
+
+    const RenderItems = ({ id, label, value }: Item, index: number) => (
+        <View
+            style={[styles.rowWraper, index === 0 && { borderBottomWidth: 0 }]}
+            key={id}
+        >
+            <View style={styles.row}>
+                <Text style={styles.rowLabel}>{label}</Text>
+                <View style={styles.rowSpacer} />
+                <Text style={styles.rowValue}>{value}</Text>
+            </View>
+        </View>
+    );
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
@@ -181,37 +193,13 @@ const ProfileScreen = () => {
 
             <ScrollView style={styles.container}>
                 <ImageProfile />
-
-                {section.map(({ header, items }) => (
-                    <View style={styles.section} key={header}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>
-                                {header}
-                            </Text>
-                        </View>
-                        <View>
-                            {items.map(({ id, label, value }, index) => (
-                                <View
-                                    style={[
-                                        styles.rowWraper,
-                                        index === 0 && { borderBottomWidth: 0 },
-                                    ]}
-                                    key={id}
-                                >
-                                    <View style={styles.row}>
-                                        <Text style={styles.rowLabel}>
-                                            {label}
-                                        </Text>
-                                        <View style={styles.rowSpacer} />
-                                        <Text style={styles.rowValue}>
-                                            {value}
-                                        </Text>
-                                    </View>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                ))}
+                <SectionList
+                    sections={section}
+                    renderItem={({ item }) => <RenderItems {...item} />}
+                    renderSectionHeader={renderSectionHeader}
+                    keyExtractor={(item) => item.id}
+                    style={styles.section}
+                />
 
                 {LINKSECTIONS.map(({ header, items }) => (
                     <View style={styles.section} key={header}>
