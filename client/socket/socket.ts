@@ -1,6 +1,6 @@
 import io, { Socket } from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { hostDomain } from "@/config/config";
+import { hostDomain } from "@/.config/config";
 import { router } from "expo-router";
 import { getNewAccessToken, logout } from "@/apis/authorize/login";
 

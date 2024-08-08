@@ -1,4 +1,4 @@
-import { hostDomain } from "@/config/config";
+import { hostDomain } from "@/.config/config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { getNewAccessToken, logout, validateToken } from "./authorize/login";
