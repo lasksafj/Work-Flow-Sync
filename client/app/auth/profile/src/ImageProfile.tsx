@@ -70,26 +70,24 @@ const ImageProfile = () => {
     };
     // console.log("selectedImage3333333333333", selectedImage);
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#f6f6f6" }}>
-            <View style={styles.container}>
-                <View style={styles.profile}>
-                    <TouchableOpacity onPress={showImagePickerOptions}>
-                        {selectedImage ? (
-                            <Avatar img={selectedImage} size={100} />
-                        ) : (
-                            <InitialNameAvatar
-                                name={
-                                    user.profile.firstName +
-                                    " " +
-                                    user.profile.lastName
-                                }
-                                size={100}
-                            />
-                        )}
-                    </TouchableOpacity>
-                </View>
+        <View style={styles.container}>
+            <View style={styles.profile}>
+                <TouchableOpacity onPress={showImagePickerOptions}>
+                    {selectedImage ? (
+                        <Avatar img={selectedImage} size={100} />
+                    ) : (
+                        <InitialNameAvatar
+                            name={
+                                user.profile.firstName +
+                                " " +
+                                user.profile.lastName
+                            }
+                            size={100}
+                        />
+                    )}
+                </TouchableOpacity>
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 

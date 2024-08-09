@@ -25,13 +25,18 @@ import EmployeeList from "./src/EmployeeList";
 interface Item {
     id: string;
     label: string;
-    value: string | undefined;
+    value: any;
 }
 
-interface Section {
-    header: string;
-    items: Item[];
+interface LinkItem {
+    id: string;
+    label: string;
+    value: any;
+    icon: any;
+    type: string;
 }
+
+type CombinedItem = Item | LinkItem;
 
 const ProfileScreen = () => {
     const router = useRouter();
@@ -93,6 +98,42 @@ const ProfileScreen = () => {
         },
     ];
 
+    const LINKSECTIONS = [
+        {
+            header: "Utilities",
+            data: [
+                {
+                    id: "request",
+                    label: "Request",
+                    value: null,
+                    icon: "archive" as const,
+                    type: "link",
+                },
+                {
+                    id: "switchworkplace",
+                    label: "Switch Workplace",
+                    value: null,
+                    icon: "refresh-cw" as const,
+                    type: "link",
+                },
+                {
+                    id: "employeelist",
+                    label: "Employee List",
+                    value: null,
+                    icon: "users" as const,
+                    type: "link",
+                },
+                {
+                    id: "logout",
+                    label: "Log Out",
+                    value: null,
+                    icon: "log-out" as const,
+                    type: "trigger",
+                },
+            ],
+        },
+    ];
+
     useEffect(() => {
         let org = organization.abbreviation; // Organization ID
         api.get("/api/profile/profile-getRole?org=" + org)
@@ -105,38 +146,6 @@ const ProfileScreen = () => {
                 alert(error);
             });
     }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
-
-    const LINKSECTIONS = [
-        {
-            header: "Utilities",
-            items: [
-                {
-                    id: "request",
-                    label: "Request",
-                    icon: "archive" as const,
-                    type: "link",
-                },
-                {
-                    id: "switchworkplace",
-                    label: "Switch Workplace",
-                    icon: "refresh-cw" as const,
-                    type: "link",
-                },
-                {
-                    id: "employeelist",
-                    label: "Employee List",
-                    icon: "users" as const,
-                    type: "link",
-                },
-                {
-                    id: "logout",
-                    label: "Log Out",
-                    icon: "log-out" as const,
-                    type: "trigger",
-                },
-            ],
-        },
-    ];
 
     // console.log("ProfileScreen", user.profile);
     const [logOutVisible, setLogOutVisible] = useState(false);
@@ -177,6 +186,53 @@ const ProfileScreen = () => {
         </View>
     );
 
+    const RenderLinkItems = ({ id, label, value, icon, type }: LinkItem, index: number) => (
+        <View
+            style={[styles.rowWraper, index === 0 && { borderBottomWidth: 0 },]}
+            key={id}
+        >
+            <TouchableOpacity
+                onPress={() => {
+                    if (id === "logout") {
+                        setLogOutVisible(true);
+                        // console.log("Logout Pressed!");
+                    }
+                    if (id === "switchworkplace") {
+                        setSwitchWorkplaceVisible(true);
+                    }
+                    if (id === "employeelist") {
+                        setEmployeeListVisible(true);
+                    }
+                }}
+            >
+                <View style={styles.row}>
+                    <FeatherIcon
+                        name={icon}
+                        size={20}
+                        color="#616161"
+                        style={{ marginRight: 12 }}
+                    />
+                    <Text style={styles.rowLabel}>
+                        {label}
+                    </Text>
+                    <View style={styles.rowSpacer} />
+                    {["link"].includes(type) && (
+                        <FeatherIcon
+                            name="chevron-right"
+                            size={20}
+                            color="#616161"
+                        />
+                    )}
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
+
+    const comninedSections = [...section, ...LINKSECTIONS];
+    // console.log(comninedSections.forEach((item) => console.log(item.data)));
+
+
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
@@ -191,72 +247,39 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.container}>
-                <ImageProfile />
-                <SectionList
-                    sections={section}
-                    renderItem={({ item }) => <RenderItems {...item} />}
-                    renderSectionHeader={renderSectionHeader}
-                    keyExtractor={(item) => item.id}
-                    style={styles.section}
-                />
+            <SectionList
+                sections={comninedSections}
+                renderItem={({ item }) => {
+                    if (item.value === null) {
+                        return <RenderLinkItems {...item} />;
+                    } else {
+                        return <RenderItems {...item} />;
+                    }
+                }}
+                renderSectionHeader={renderSectionHeader}
+                keyExtractor={(item) => item.id}
+                style={styles.section}
+                contentContainerStyle={{ paddingBottom: 10 }}
+                ListHeaderComponent={<ImageProfile />}
+            />
 
-                {LINKSECTIONS.map(({ header, items }) => (
-                    <View style={styles.section} key={header}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionHeaderText}>
-                                {header}
-                            </Text>
-                        </View>
-                        <View>
-                            {items.map(({ id, label, icon, type }, index) => (
-                                <View
-                                    style={[
-                                        styles.rowWraper,
-                                        index === 0 && { borderBottomWidth: 0 },
-                                    ]}
-                                    key={id}
-                                >
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            if (id === "logout") {
-                                                setLogOutVisible(true);
-                                                // console.log("Logout Pressed!");
-                                            }
-                                            if (id === "switchworkplace") {
-                                                setSwitchWorkplaceVisible(true);
-                                            }
-                                            if (id === "employeelist") {
-                                                setEmployeeListVisible(true);
-                                            }
-                                        }}
-                                    >
-                                        <View style={styles.row}>
-                                            <FeatherIcon
-                                                name={icon}
-                                                size={20}
-                                                color="#616161"
-                                                style={{ marginRight: 12 }}
-                                            />
-                                            <Text style={styles.rowLabel}>
-                                                {label}
-                                            </Text>
-                                            <View style={styles.rowSpacer} />
-                                            {["link"].includes(type) && (
-                                                <FeatherIcon
-                                                    name="chevron-right"
-                                                    size={20}
-                                                    color="#616161"
-                                                />
-                                            )}
-                                        </View>
-                                    </TouchableOpacity>
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                ))}
-            </ScrollView>
+            {/* <SectionList
+                sections={section}
+                renderItem={({ item }) => <RenderItems {...item} />}
+                renderSectionHeader={renderSectionHeader}
+                keyExtractor={(item) => item.id}
+                style={styles.section}
+                contentContainerStyle={{ paddingBottom: 10 }}
+                ListHeaderComponent={<ImageProfile />}
+            />
+            <SectionList
+                sections={LINKSECTIONS}
+                renderItem={({ item }) => <RenderLinkItems {...item} />}
+                renderSectionHeader={renderSectionHeader}
+                keyExtractor={(item) => item.id}
+                style={styles.section}
+                contentContainerStyle={{ paddingBottom: 10 }}
+            /> */}
             <Logout
                 logOutVisible={logOutVisible}
                 setLogOutVisible={setLogOutVisible}
@@ -282,7 +305,7 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
     container: {
-        // paddingVertical: 24,
+
     },
     header: {
         flexDirection: "row",
