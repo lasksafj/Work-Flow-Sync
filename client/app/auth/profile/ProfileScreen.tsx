@@ -22,21 +22,18 @@ import EditProfile from "./src/EditProfile";
 import SwitchWorkplace from "./src/SwitchWorkplace";
 import EmployeeList from "./src/EmployeeList";
 
-interface Item {
+interface ItemProps {
     id: string;
     label: string;
     value: any;
 }
 
-interface LinkItem {
+interface LinkProps {
     id: string;
     label: string;
-    value: any;
     icon: any;
     type: string;
 }
-
-type CombinedItem = Item | LinkItem;
 
 const ProfileScreen = () => {
     const router = useRouter();
@@ -60,7 +57,7 @@ const ProfileScreen = () => {
         {
             header: "Profile Settings",
             // use items for map, data for SectionList
-            data: [
+            items: [
                 {
                     id: "name",
                     label: "Name",
@@ -82,7 +79,7 @@ const ProfileScreen = () => {
         {
             header: "Workplace",
             // use items for map, data for SectionList
-            data: [
+            items: [
                 { id: "namewp", label: "Name", value: organization.name },
                 {
                     id: "address",
@@ -101,32 +98,28 @@ const ProfileScreen = () => {
     const LINKSECTIONS = [
         {
             header: "Utilities",
-            data: [
+            items: [
                 {
                     id: "request",
                     label: "Request",
-                    value: null,
                     icon: "archive" as const,
                     type: "link",
                 },
                 {
                     id: "switchworkplace",
                     label: "Switch Workplace",
-                    value: null,
                     icon: "refresh-cw" as const,
                     type: "link",
                 },
                 {
                     id: "employeelist",
                     label: "Employee List",
-                    value: null,
                     icon: "users" as const,
                     type: "link",
                 },
                 {
                     id: "logout",
                     label: "Log Out",
-                    value: null,
                     icon: "log-out" as const,
                     type: "trigger",
                 },
@@ -173,7 +166,7 @@ const ProfileScreen = () => {
         </View>
     );
 
-    const RenderItems = ({ id, label, value }: Item, index: number) => (
+    const RenderItems = ({ id, label, value }: ItemProps, index: number) => (
         <View
             style={[styles.rowWraper, index === 0 && { borderBottomWidth: 0 }]}
             key={id}
@@ -186,7 +179,7 @@ const ProfileScreen = () => {
         </View>
     );
 
-    const RenderLinkItems = ({ id, label, value, icon, type }: LinkItem, index: number) => (
+    const RenderLinkItems = ({ id, label, icon, type }: LinkProps, index: number) => (
         <View
             style={[styles.rowWraper, index === 0 && { borderBottomWidth: 0 },]}
             key={id}
@@ -228,11 +221,6 @@ const ProfileScreen = () => {
         </View>
     );
 
-    const comninedSections = [...section, ...LINKSECTIONS];
-    // console.log(comninedSections.forEach((item) => console.log(item.data)));
-
-
-
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={styles.header}>
@@ -247,39 +235,32 @@ const ProfileScreen = () => {
                 </TouchableOpacity>
             </View>
 
-            <SectionList
-                sections={comninedSections}
-                renderItem={({ item }) => {
-                    if (item.value === null) {
-                        return <RenderLinkItems {...item} />;
-                    } else {
-                        return <RenderItems {...item} />;
-                    }
-                }}
-                renderSectionHeader={renderSectionHeader}
-                keyExtractor={(item) => item.id}
-                style={styles.section}
-                contentContainerStyle={{ paddingBottom: 10 }}
-                ListHeaderComponent={<ImageProfile />}
-            />
+            <ScrollView style={styles.container}>
+                <ImageProfile />
 
-            {/* <SectionList
-                sections={section}
-                renderItem={({ item }) => <RenderItems {...item} />}
-                renderSectionHeader={renderSectionHeader}
-                keyExtractor={(item) => item.id}
-                style={styles.section}
-                contentContainerStyle={{ paddingBottom: 10 }}
-                ListHeaderComponent={<ImageProfile />}
-            />
-            <SectionList
-                sections={LINKSECTIONS}
-                renderItem={({ item }) => <RenderLinkItems {...item} />}
-                renderSectionHeader={renderSectionHeader}
-                keyExtractor={(item) => item.id}
-                style={styles.section}
-                contentContainerStyle={{ paddingBottom: 10 }}
-            /> */}
+                {section.map(({ header, items }) => (
+                    <View style={styles.section} key={header}>
+                        {renderSectionHeader({ section: { header: header } })}
+                        <View>
+                            {items.map(({ id, label, value }, index) => (
+                                RenderItems({ id, label, value }, index)
+                            ))}
+                        </View>
+                    </View>
+                ))}
+
+                {LINKSECTIONS.map(({ header, items }) => (
+                    <View style={styles.section} key={header}>
+                        {renderSectionHeader({ section: { header: header } })}
+                        <View>
+                            {items.map(({ id, label, icon, type }, index) => (
+                                RenderLinkItems({ id, label, icon, type }, index)
+                            ))}
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
+
             <Logout
                 logOutVisible={logOutVisible}
                 setLogOutVisible={setLogOutVisible}
