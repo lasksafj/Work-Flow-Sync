@@ -56,11 +56,11 @@ const NotificationScreen = () => {
             });
     };
 
-    const sortNotificationsByDate = (notifications: any) => {
+    const sortNotificationsByDate = (noties: any) => {
         const today: any = [];
         const earlier: any = [];
 
-        notifications.forEach((notification: any) => {
+        noties.forEach((notification: any) => {
             const createdAt = new Date(notification.created_date);
             if (isToday(createdAt)) {
                 today.push(notification);
@@ -72,12 +72,16 @@ const NotificationScreen = () => {
         const sortedData = [];
 
         if (today.length > 0) {
-            sortedData.push({ type: "header", title: "Today" });
+            if (notifications.length == 0) {
+                sortedData.push("Today");
+            }
             sortedData.push(...today.map((item: any) => ({ type: "item", ...item })));
         }
 
         if (earlier.length > 0) {
-            sortedData.push({ type: "header", title: "Earlier" });
+            if (notifications.findIndex((value) => value === "Earlier") == -1) {
+                sortedData.push("Earlier");
+            }
             sortedData.push(...earlier.map((item: any) => ({ type: "item", ...item })));
         }
 
@@ -105,9 +109,6 @@ const NotificationScreen = () => {
     };
 
     const RenderItem = ({ item, index }: any) => {
-        // if (item.type === "header") {
-        //     return <Text style={styles.sectionHeader}>{item.title}</Text>;
-        // }
 
         return (
             <TouchableOpacity
@@ -185,9 +186,9 @@ const NotificationScreen = () => {
                 <FlashList
                     data={notifications}
                     renderItem={({ item }) => {
-                        if (item.type === "header") {
+                        if (typeof item === "string") {
                             // Rendering header
-                            return <Text style={styles.sectionHeader}>{item.title}</Text>;
+                            return <Text style={styles.sectionHeader}>{item}</Text>;
                         } else {
                             // Render item
                             return <RenderItem item={item} />;
