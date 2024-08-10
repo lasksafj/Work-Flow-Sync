@@ -19,10 +19,11 @@ type chatType = {
     lastMessage: string,
     lastActiveTime?: string,
     seen?: boolean,
+    otherParticipantName: string
 }
 
 const RenderItem = ({ item, openChat }: any) => {
-    let { groupId, groupName, lastMessageTime, groupCreatedAt, groupImg, lastMessage, lastActiveTime, seen } = item;
+    let { groupId, groupName, lastMessageTime, groupCreatedAt, groupImg, lastMessage, lastActiveTime, seen, otherParticipantName } = item;
 
     const date = lastMessageTime ? new Date(lastMessageTime) : new Date(groupCreatedAt);
     let time;
@@ -40,7 +41,7 @@ const RenderItem = ({ item, openChat }: any) => {
     return (
         <TouchableHighlight activeOpacity={0.8} underlayColor={Colors.lightGray}
             onPress={() => {
-                openChat({ groupId, groupName, groupImg });
+                openChat({ groupId, groupName, groupImg, otherParticipantName });
             }}
         >
             <View
@@ -55,7 +56,7 @@ const RenderItem = ({ item, openChat }: any) => {
                     source={{ uri: img[0] || "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com" }}
                     style={{ width: 50, height: 50, borderRadius: 50 }}
                 /> */}
-                <Avatar img={groupImg} />
+                <Avatar img={groupImg} name={otherParticipantName} />
                 <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 18, fontWeight: seen ? 'normal' : 'bold' }}>
                         {groupName.length > 20 ? `${groupName.substring(0, 20)}...` : groupName}
@@ -81,7 +82,7 @@ const ChatListScreen = () => {
 
     const [chats, setChats] = useState<chatType[]>([]);
     const [modalChatVisible, setModalChatVisible] = useState(false);
-    const [selectedGroup, setSelectedGroup] = useState({ groupId: '', groupName: '', groupImg: '' });
+    const [selectedGroup, setSelectedGroup] = useState({ groupId: '', groupName: '', groupImg: '', otherParticipantName: '' });
 
     const limit = 15;
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -108,7 +109,7 @@ const ChatListScreen = () => {
                 chat.groupId == selectedGroup.groupId ? { ...chat, seen: true } : chat
             )
         );
-        setSelectedGroup({ groupId: '', groupName: '', groupImg: '' });
+        setSelectedGroup({ groupId: '', groupName: '', groupImg: '', otherParticipantName: '' });
         router.setParams({
             groupId: '',
             groupName: '',
@@ -140,8 +141,8 @@ const ChatListScreen = () => {
             // Data from server id: number, data in client id: string, so use == to compare
             const index = prevChats.findIndex(chat => chat.groupId == groupId);
             const newChats: chatType[] = index > -1
-                ? [{ ...prevChats[index], lastMessageTime, lastMessage, lastActiveTime, seen }, ...prevChats.slice(0, index), ...prevChats.slice(index + 1)]
-                : [{ groupId, groupName, groupImg, lastMessageTime, lastMessage, lastActiveTime, seen }, ...prevChats];
+                ? [{ ...prevChats[index], lastMessageTime, lastMessage, lastActiveTime, seen, otherParticipantName: gname }, ...prevChats.slice(0, index), ...prevChats.slice(index + 1)]
+                : [{ groupId, groupName, groupImg, lastMessageTime, lastMessage, lastActiveTime, seen, otherParticipantName: gname }, ...prevChats];
 
             if (!newChats[0].groupName) {
                 newChats[0].groupName = gname;
@@ -198,6 +199,7 @@ const ChatListScreen = () => {
                 if (!group.groupImg) {
                     group.groupImg = gImg;
                 }
+                group.otherParticipantName = gname;
             }
 
             setChats(prevChats => {
@@ -225,12 +227,12 @@ const ChatListScreen = () => {
     useEffect(() => {
         async function initGroup() {
             if (groupId && groupId != '') {
+                const { gname, gImg } = await createGroupNameImg(groupId as string);
                 if (!groupName || !groupImg) {
-                    const { gname, gImg } = await createGroupNameImg(groupId as string);
                     groupName = groupName || gname;
                     groupImg = groupImg || gImg;
                 }
-                openChat({ groupId, groupName, groupImg });
+                openChat({ groupId, groupName, groupImg, otherParticipantName: gname });
                 onChatListNewMessage({ groupId, groupName, groupImg, lastMessageTime: groupCreatedAt });
             }
         }
