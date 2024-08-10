@@ -5,7 +5,6 @@ import * as ImagePicker from "expo-image-picker";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Avatar } from "@/components/Avatar";
-import InitialNameAvatar from "@/components/InitialNameAvatar";
 
 const ImageProfile = () => {
     const user = useAppSelector((state: RootState) => state.user);
@@ -73,18 +72,11 @@ const ImageProfile = () => {
         <View style={styles.container}>
             <View style={styles.profile}>
                 <TouchableOpacity onPress={showImagePickerOptions}>
-                    {selectedImage ? (
-                        <Avatar img={selectedImage} size={100} />
-                    ) : (
-                        <InitialNameAvatar
-                            name={
-                                user.profile.firstName +
-                                " " +
-                                user.profile.lastName
-                            }
-                            size={100}
-                        />
-                    )}
+                    <Avatar img={selectedImage} name={
+                        user.profile.firstName +
+                        " " +
+                        user.profile.lastName
+                    } size={100} />
                 </TouchableOpacity>
             </View>
         </View>

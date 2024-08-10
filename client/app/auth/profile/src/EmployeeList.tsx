@@ -7,7 +7,6 @@ import api from "@/apis/api";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AlphabetList } from "react-native-section-alphabet-list";
 import { Colors } from "@/constants/Colors";
-import InitialNameAvatar from "@/components/InitialNameAvatar";
 import { Avatar } from "@/components/Avatar";
 
 type EmployeeProps = {
@@ -91,18 +90,7 @@ const EmployeeList = ({
                     }}
                     renderCustomItem={(item: any) => (
                         <View style={styles.listItemContainer}>
-                            {item.avatar ? (
-                                <Avatar
-                                    img={item.avatar}
-                                    size={30}
-                                    style={styles.listItemImage}
-                                />
-                            ) : (
-                                <InitialNameAvatar
-                                    name={item.value}
-                                    size={30}
-                                />
-                            )}
+                            <Avatar img={item.avatar} name={item.value} size={30} />
                             <View>
                                 <Text style={{ color: "#000", fontSize: 14 }}>
                                     {item.value}
