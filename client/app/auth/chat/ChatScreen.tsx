@@ -11,7 +11,7 @@ import InitialNameAvatar from '@/components/InitialNameAvatar';
 import { Avatar } from '@/components/Avatar';
 
 
-const ChatHeader = ({ closeChat, groupName, groupImg }: any) => {
+const ChatHeader = ({ closeChat, groupName, groupImg, otherParticipantName }: any) => {
     return (
         <View style={styles.chatHeader}>
             <TouchableOpacity
@@ -26,7 +26,7 @@ const ChatHeader = ({ closeChat, groupName, groupImg }: any) => {
                     alt='avatar'
                     style={{ width: 30, height: 30, marginRight: 10, }}
                 /> */}
-                <Avatar img={groupImg} size={35} style={{ marginRight: 10 }} />
+                <Avatar img={groupImg} name={otherParticipantName} size={35} style={{ marginRight: 10 }} />
                 <Text style={{ fontSize: 20, fontWeight: 'bold', }}>{groupName}</Text>
             </View>
             <View style={{ width: 50, alignItems: 'center' }} />
@@ -146,7 +146,7 @@ const getMessages = async (groupId: string, limit: number, offset: number) => {
 const ChatScreen = ({ group, closeChat }: any) => {
     const user = useAppSelector((state: RootState) => state.user);
 
-    const { groupId, groupName, groupImg } = group;
+    const { groupId, groupName, groupImg, otherParticipantName } = group;
     const [messages, setMessages] = useState<IMessage[]>([]);
 
     const [isLoadingEarlier, setIsLoadingEarlier] = useState(false);
@@ -250,7 +250,7 @@ const ChatScreen = ({ group, closeChat }: any) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <ChatHeader closeChat={closeChat} groupName={groupName} groupImg={groupImg} />
+            <ChatHeader closeChat={closeChat} groupName={groupName} groupImg={groupImg} otherParticipantName={otherParticipantName} />
             <GiftedChat
                 messages={messages}
                 onSend={(messages) => onSend(messages)}
