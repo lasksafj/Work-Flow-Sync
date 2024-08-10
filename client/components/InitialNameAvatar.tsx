@@ -6,9 +6,25 @@ const getColorFromName = (name: string) => {
     for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const color = `#${((hash >> 24) & 0xFF).toString(16).padStart(2, '0')}${((hash >> 16) & 0xFF).toString(16).padStart(2, '0')}${((hash >> 8) & 0xFF).toString(16).padStart(2, '0')}`;
+
+    // Extract RGB components
+    const r = (hash >> 16) & 0xFF;
+    const g = (hash >> 8) & 0xFF;
+    const b = hash & 0xFF;
+
+    // Darkening factor (e.g., 0.7 for 30% darker)
+    const factor = 0.7;
+
+    // Apply darkening factor
+    const darkR = Math.floor(r * factor);
+    const darkG = Math.floor(g * factor);
+    const darkB = Math.floor(b * factor);
+
+    // Convert to hex and pad with 0 if necessary
+    const color = `#${darkR.toString(16).padStart(2, '0')}${darkG.toString(16).padStart(2, '0')}${darkB.toString(16).padStart(2, '0')}`;
     return color;
 };
+
 
 const InitialNameAvatar = ({ name, size = 50, style }: any) => {
     const color = getColorFromName(name);
