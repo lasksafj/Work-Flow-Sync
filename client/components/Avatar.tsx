@@ -1,26 +1,38 @@
 import { Image, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
+import InitialNameAvatar from './InitialNameAvatar';
 
 const defaultImageUri = "https://i.pravatar.cc/150?u=aguilarduke@marketoid.com"
 
-const SingleAvatar = ({ uri, size = 50, style }: any) => {
+const SingleAvatar = ({ uri, name, size = 50, style }: any) => {
     const [img, setImg] = useState(uri);
 
     useEffect(() => {
         setImg(uri);
     }, [uri]);
 
-    return (
-        <Image
-            source={{ uri: img || defaultImageUri }}
-            style={[{ width: size, height: size, borderRadius: size }, style]}
-            onError={() => setImg(defaultImageUri)}
+    if (!img && !name) {
+        return (
+            <Image
+                source={{ uri: defaultImageUri }}
+                style={[{ width: size, height: size, borderRadius: size }, style]}
+            />
+        )
+    }
 
-        />
+    return (
+        img ?
+            <Image
+                source={{ uri: img }}
+                style={[{ width: size, height: size, borderRadius: size }, style]}
+                onError={() => setImg('')}
+            />
+            :
+            <InitialNameAvatar size={size} name={name} style={style} />
     )
 }
 
-const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
+const DoubleAvatar = ({ uri1, name1, uri2, name2, size = 50, style }: any) => {
     const [img1, setImg1] = useState(uri1);
     const [img2, setImg2] = useState(uri2);
 
@@ -43,7 +55,26 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
             position: 'relative',
             width: outerSize, height: outerSize,
         }, style]}>
-            <Image
+            <SingleAvatar
+                uri={img2}
+                name={name2}
+                size={innerSize}
+                style={{
+                    position: 'absolute', top: 0, left: 0
+                }}
+            />
+            <SingleAvatar
+                uri={img1}
+                name={name1}
+                size={innerSize}
+                style={{
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    position: 'absolute', bottom: 0, right: 0
+                }}
+            />
+
+            {/* <Image
                 source={{ uri: img2 || defaultImageUri }}
                 style={{
                     width: innerSize,
@@ -64,24 +95,41 @@ const DoubleAvatar = ({ uri1, uri2, size = 50, style }: any) => {
                     position: 'absolute', bottom: 0, right: 0
                 }}
                 onError={() => setImg1(defaultImageUri)}
-            />
+            /> */}
         </View>
     );
 };
 
-const Avatar = ({ img = '', size = 50, style }: any) => {
+const Avatar = ({ img = '', size = 50, name = '', style }: any) => {
     img = img || '';
+    name = name || '';
+
     let groupImg;
-    let imgArray = img.split(', ');
+    let imgArray = img.split(',').map((e: string) => e.trim());
+    let nameArray = name.split(',').map((e: string) => e.trim());
+
     if (imgArray.length <= 1) {
-        groupImg = <SingleAvatar uri={imgArray[0]} size={size} style={style} />;
+        groupImg = <SingleAvatar uri={imgArray[0]} name={nameArray[0]} size={size} style={style} />;
     }
     else {
-        imgArray = imgArray.filter((i: string) => i.trim() !== '').slice(0, 2);
-        while (imgArray.length < 2) {
-            imgArray.push('');
+        const imgNameArr = imgArray.map((e: string, i: number) => [e, nameArray[i] || '']);
+        let res = [];
+        for (let i = 0; i < imgNameArr.length; i++) {
+            if (imgNameArr[i][0])
+                res.push(imgNameArr[i])
         }
-        groupImg = <DoubleAvatar uri1={imgArray[0]} uri2={imgArray[1]} size={size} style={style} />;
+        for (let i = 0; i < imgNameArr.length && res.length < 2; i++) {
+            if (!imgNameArr[i][0] && imgNameArr[i][1])
+                res.push(imgNameArr[i])
+        }
+        while (res.length < 2) {
+            res.push(['', '']);
+        }
+
+        groupImg = <DoubleAvatar
+            uri1={res[0][0]} name1={res[0][1]}
+            uri2={res[1][0]} name2={res[1][1]}
+            size={size} style={style} />;
     }
     return groupImg;
 }
