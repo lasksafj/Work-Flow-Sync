@@ -121,16 +121,11 @@ const NotificationScreen = () => {
                 }}
             >
                 <View style={styles.card}>
-                    {item.avatar ? (
-                        <Avatar img={item.avatar}
-                            style={styles.cardImg}
-                        />
-                    ) : (
-                        <InitialNameAvatar
-                            name={item.first_name + " " + item.last_name}
-                            style={styles.cardImg}
-                        />
-                    )}
+                    <Avatar
+                        name={item.first_name + " " + item.last_name}
+                        img={item.avatar}
+                        style={styles.cardImg}
+                    />
 
                     <View>
                         <Text>

@@ -2,8 +2,7 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { useLocalSearchParams } from "expo-router";
 import { format } from "date-fns";
-import Avatar from "./Avatar";
-import InitialNameAvatar from "@/components/InitialNameAvatar";
+import { Avatar } from "@/components/Avatar";
 
 const NotificationDetail = () => {
     const item: any = useLocalSearchParams();
@@ -21,8 +20,9 @@ const NotificationDetail = () => {
                         source={{ uri: item.avatar }}
                     />
                 ) : (
-                    <InitialNameAvatar
+                    <Avatar
                         name={item.first_name + " " + item.last_name}
+                        img={item.avatar}
                     // size={50}
                     // backgroundColor="#ADD8E6"
                     // textColor="#FFF"
