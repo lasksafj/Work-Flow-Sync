@@ -1,5 +1,5 @@
 
-import { hostDomain } from '@/config/config'
+import { hostDomain } from '@/.config/config'
 import api from './api'
 
 const handleSaveWorkingHours = (workingHours: any) => {

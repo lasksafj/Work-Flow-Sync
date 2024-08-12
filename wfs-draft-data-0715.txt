@@ -1,0 +1,128 @@
+-- Mọi người thêm vào từng bảng nha (nhất là các bảng cha), bảng users mọi người có thể tự thêm bằng Register
+-- mật khẩu của các user đều là 123456
+
+-- Insert data into users table (only 3 rows)
+INSERT INTO users (email, password, last_name, first_name, phone_number, date_of_birth, img) VALUES
+('aaa@gmail.com', '$2b$10$IVSrdc7fG.vSZBMOOWiYbeMT9zzm4Dwtb8kxxO7KrNvrP220hZLxG', 'Doe', 'John', '1234567890', '1980-01-01', NULL),
+('bbb@gmail.com', '$2b$10$X2pD687COL1Wr4aH5wBB2uHxOipNZRRzh0xr995WIIMIw/vbnyajq', 'Smith', 'Jane', '0987654321', '1990-02-02', NULL),
+('ccc@gmail.com', '$2b$10$QbGkqVSoouPxa/lwc2nqye9SDF6wgToEotmwXSG2zrEWz6g6N5ExC', 'Brown', 'Alice', '1112223333', '1985-03-03', NULL);
+
+-- Insert data into organizations table
+INSERT INTO organizations (abbreviation, name, address) VALUES
+('ORG1', 'Organization One', '123 Main St'),
+('ORG2', 'Organization Two', '456 Market St'),
+('ORG3', 'Organization Three', '789 Elm St'),
+('ORG4', 'Organization Four', '101 Pine St'),
+('ORG5', 'Organization Five', '202 Oak St'),
+('ORG6', 'Organization Six', '303 Maple St'),
+('ORG7', 'Organization Seven', '404 Birch St');
+
+-- Insert data into roles table
+INSERT INTO roles (name, description) VALUES
+('Manager', 'Manages the team'),
+('Server', 'Serves customers'),
+('Cook', 'Prepares food'),
+('Foodrunner', 'Delivers food to tables'),
+('Host', 'Welcomes guests'),
+('Busser', 'Clears tables'),
+('Dishwasher', 'Cleans dishes');
+
+-- Insert data into employees table
+INSERT INTO employees (employee_number, pay_rate, role_name, user_id, org_abbreviation) VALUES
+(1, 15.00, 'Manager', 1, 'ORG1'),
+(2, 12.00, 'Server', 1, 'ORG2'),
+(3, 13.00, 'Foodrunner', 1, 'ORG3'),
+(4, 11.00, 'Host', 2, 'ORG4'),
+(5, 10.00, 'Busser', 2, 'ORG5'),
+(6, 14.00, 'Dishwasher', 2, 'ORG6'),
+(7, 15.00, 'Dishwasher', 3, 'ORG7');
+
+-- Insert data into groups table
+INSERT INTO groups (name, created_at) VALUES
+('Team Alpha', '2023-01-01'),
+('Team Beta', '2023-02-01'),
+('Team Gamma', '2023-03-01'),
+('Team Delta', '2023-04-01'),
+('Team Epsilon', '2023-05-01'),
+('Team Zeta', '2023-06-01'),
+('Team Eta', '2023-07-01');
+
+-- Insert data into messages table
+INSERT INTO messages (content, create_time, user_id, group_id) VALUES
+('Hello Team!', '2024-07-01', 1, 1),
+('Meeting at 10 AM', '2024-07-02', 2, 2),
+('Lunch break at 1 PM', '2024-07-03', 3, 3),
+('Please submit reports', '2024-07-04', 1, 4),
+('Team meeting tomorrow', '2024-07-05', 2, 5),
+('Project deadline extended', '2024-07-06', 3, 6),
+('New policy update', '2024-07-07', 1, 7);
+
+-- Insert data into participants table
+INSERT INTO participants (joined_at, user_id, group_id) VALUES
+('2024-01-01', 1, 1),
+('2024-01-02', 2, 2),
+('2024-01-03', 3, 3),
+('2024-01-04', 1, 4),
+('2024-01-05', 2, 5),
+('2024-01-06', 3, 6),
+('2024-01-07', 1, 7);
+
+-- Insert data into statuses table
+INSERT INTO statuses (is_seen, mes_id, user_id, group_id) VALUES
+(TRUE, 1, 1, 1),
+(FALSE, 2, 2, 2),
+(TRUE, 3, 3, 3),
+(FALSE, 4, 1, 4),
+(TRUE, 5, 2, 5),
+(FALSE, 6, 3, 6),
+(TRUE, 7, 1, 7);
+
+-- Insert data into availabletimes table
+INSERT INTO availabletimes (start_time, end_time, emp_id) VALUES
+('2024-07-01', '2024-07-02', 1),
+('2024-07-03', '2024-07-04', 2),
+('2024-07-05', '2024-07-06', 3),
+('2024-07-07', '2024-07-08', 4),
+('2024-07-09', '2024-07-10', 5),
+('2024-07-11', '2024-07-12', 6),
+('2024-07-13', '2024-07-14', 7);
+
+-- Insert data into feedbacks table
+INSERT INTO feedbacks (content, created_date, emp_id) VALUES
+('Great job!', '2024-07-01', 1),
+('Needs improvement', '2024-07-02', 2),
+('Keep up the good work', '2024-07-03', 3),
+('Performance review pending', '2024-07-04', 4),
+('Excellent service', '2024-07-05', 5),
+('Great teamwork', '2024-07-06', 6),
+('Needs more training', '2024-07-07', 7);
+
+-- Insert data into notifications table
+INSERT INTO notifications (content, created_date, emp_id) VALUES
+('New shift available', '2024-07-01', 1),
+('Meeting reminder', '2024-07-02', 2),
+('Shift change approved', '2024-07-03', 3),
+('Training session reminder', '2024-07-04', 4),
+('Payroll processed', '2024-07-05', 5),
+('Performance review scheduled', '2024-07-06', 6),
+('New announcement', '2024-07-07', 7);
+
+-- Insert data into schedules table
+INSERT INTO schedules (start_time, end_time, emp_id) VALUES
+('2024-07-01', '2024-07-01', 1),
+('2024-07-02', '2024-07-02', 2),
+('2024-07-03', '2024-07-03', 3),
+('2024-07-04', '2024-07-04', 4),
+('2024-07-05', '2024-07-05', 5),
+('2024-07-06', '2024-07-06', 6),
+('2024-07-07', '2024-07-07', 7);
+
+-- Insert data into timesheets table
+INSERT INTO timesheets (clock_in, clock_out, emp_id) VALUES
+('2024-07-01 08:00:00', '2024-07-01 17:00:00', 1),
+('2024-07-02 09:00:00', '2024-07-02 18:00:00', 2),
+('2024-07-03 10:00:00', '2024-07-03 19:00:00', 3),
+('2024-07-04 07:00:00', '2024-07-04 16:00:00', 4),
+('2024-07-05 08:30:00', '2024-07-05 17:30:00', 5),
+('2024-07-06 09:00:00', '2024-07-06 18:00:00', 6),
+('2024-07-07 07:30:00', '2024-07-07 16:30:00', 7);

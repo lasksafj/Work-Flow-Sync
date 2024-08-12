@@ -34,17 +34,14 @@ export default function RootLayout() {
 
     return (
         <Provider store={store}>
-            <SafeAreaView style={{ flex: 1 }}>
-                <ThemeProvider value={DefaultTheme}>
-                    <Stack>
-                        <Stack.Screen name='index' options={{ headerShown: false }} />
-                        <Stack.Screen name="auth" options={{ headerShown: false }} />
-                        <Stack.Screen name='unauth' options={{ headerShown: false }} />
+            <ThemeProvider value={DefaultTheme}>
+                <Stack>
+                    <Stack.Screen name='index' options={{ headerShown: false }} />
+                    <Stack.Screen name="auth" options={{ headerShown: false }} />
+                    <Stack.Screen name='unauth' options={{ headerShown: false }} />
 
-                    </Stack>
-                </ThemeProvider>
-            </SafeAreaView>
-
+                </Stack>
+            </ThemeProvider>
         </Provider>
 
     );

@@ -15,7 +15,7 @@ const Login = () => {
     const handleSubmit = async () => {
         setIsLoading(true);
         try {
-            let response = await loginLocal(email, password);
+            let response = await loginLocal(email.trim(), password);
             // console.log('login screen', response);
 
             if (response.status) {

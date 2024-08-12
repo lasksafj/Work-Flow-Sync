@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { handleFetchScheduleData } from '@/apis/userService';
 import ScheduleCard from './ScheduleCard';
+import { Ionicons } from '@expo/vector-icons'
 
 interface ScheduleDetailProps {
   detail: string;
@@ -12,13 +13,13 @@ interface ScheduleDetailProps {
 const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onPress }) => {
   const [listData, setListData] = useState([]);
   const [height] = useState(new Animated.Value(isExpanded ? (listData.length ? listData.length * 100 : 50) : 0));
-  const [dataFetched, setDataFetched] = useState(false);
+  // const [dataFetched, setDataFetched] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       let data = await handleFetchScheduleData(detail);
-      setListData(data.data.ED);
-      setDataFetched(true);
+      setListData(prev=>data.data.ED);
+      // setDataFetched(true);
       Animated.timing(height, {
         toValue: data.data.ED.length ? data.data.ED.length * 100 : 50,
         duration: 300,
@@ -26,7 +27,7 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
       }).start();
     };
 
-    if (isExpanded && !dataFetched) {
+    if (isExpanded) {
       fetchData();
     } else {
       Animated.timing(height, {
@@ -35,12 +36,28 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
         useNativeDriver: false,
       }).start();
     }
-  }, [isExpanded, dataFetched, listData.length]);
+  }, [isExpanded, listData.length]);
+
+  const dateConvert = (date: string | Date): string => {
+    const objDate = new Date(date);
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric'
+    };
+    return objDate.toLocaleDateString('en-US', options);
+  };
 
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onPress} style={styles.bar}>
-        <Text style={styles.barText}>{detail}</Text>
+        <Text style={styles.barText}>{dateConvert(detail)}</Text>
+        {isExpanded ? 
+          <Ionicons name='chevron-up' size={20} color={"white"}/>
+          :
+          <Ionicons name='chevron-down' size={20} color={"white"}/>
+        }
+        
       </TouchableOpacity>
       <Animated.View style={[styles.details, { height }]}>
         {isExpanded && (
@@ -66,13 +83,17 @@ const styles = StyleSheet.create({
     margin: 3,
   },
   bar: {
-    backgroundColor: '#007BFF',
+    backgroundColor: '#000000',
     padding: 10,
     borderRadius: 5,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   barText: {
     color: '#FFFFFF',
     fontSize: 16,
+    
   },
   details: {
     overflow: 'hidden',

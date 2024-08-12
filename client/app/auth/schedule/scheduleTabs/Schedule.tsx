@@ -1,9 +1,12 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import WeekDays from '../components/WeekDays';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScheduleDetail from '../components/ScheduleDetail';
 import moment from 'moment';
+import { useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons'
+
 
 const Schedule: React.FC = () => {
   const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
@@ -11,6 +14,15 @@ const Schedule: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>(null);
   const itemRefs = useRef<{ [key: string]: View | null }>({});
 
+  const [trigger, setTrigger] = useState(0)
+  useFocusEffect(
+    useCallback(
+      ()=>{
+        // setExpandedDate(prev=>prev);
+        setTrigger(prev=>prev+1)
+      }
+    ,[])
+  ) 
   const daysOfWeek = useMemo(
     () =>
       Array.from({ length: 7 }, (v, i) =>
@@ -41,12 +53,12 @@ const Schedule: React.FC = () => {
   };
 
   return (
-    <SafeAreaView>
+    <View style={styles.container}>
       <ScrollView ref={scrollViewRef}>
-        <View>
-          <WeekDays selectedDay={date} setSelectedDay={setDate} daysOfWeek={daysOfWeek} />
+        <View style={styles.calendar}>
+          <WeekDays selectedDay={date} setSelectedDay={setDate} daysOfWeek={daysOfWeek} /> 
         </View>
-        <View>
+        <View style={styles.tabs}>
           {week.map((item, index) => (
             <View
               key={index}
@@ -58,8 +70,22 @@ const Schedule: React.FC = () => {
         </View>
         
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    // display: 'flex',
+    backgroundColor: '#E1D5C9',
+    flex: 1
+  },
+  calendar: {
+    backgroundColor: '#E1D5C9'
+  },
+  tabs: {
+    paddingHorizontal: 2
+  }
+})
 
 export default Schedule;

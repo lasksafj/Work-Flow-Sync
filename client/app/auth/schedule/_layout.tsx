@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons'
 
 export default function ScheduleLayout() {
     return (
-        <Stack screenOptions={{headerShadowVisible: false}}>
+        <Stack screenOptions={{headerShadowVisible: false}} >
             <Stack.Screen name='scheduleTabs' options={{
                 headerLeft: () => (
                     <Image 
@@ -28,6 +28,7 @@ export default function ScheduleLayout() {
 
                 )
             }}
+            
             />
             <Stack.Screen name="ScheduleScreen" options={{ headerTitle:'Schedule Page', headerBackTitle:'Back' }}/>
         </Stack>

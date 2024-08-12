@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView, Easing, PanResponder } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView, Easing, PanResponder, Dimensions } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import moment from 'moment';
 import { Ionicons } from '@expo/vector-icons'
@@ -8,7 +8,8 @@ import Constants from 'expo-constants';
 // type weekDatePropType = {
 //     changeDate: Function 
 // }
-const itemWidth = Constants.screenWidth / 7;
+
+const itemWidth = Dimensions.get('window').width/9;
 const WeekDays = (props: any) => {
   // const [selectedDay, setSelectedDay] = useState(moment().format('YYYY-MM-DD'));
   // const [isCalendarVisible, setIsCalendarVisible] = useState(false);
@@ -39,7 +40,6 @@ const WeekDays = (props: any) => {
     // setSelectedWeek(daysOfWeek);
     // props.changeDate(day, selectedWeek)
   }, []);
-
 
   const toggleCalendarVisibility = (value: number) => {
     // setIsCalendarVisible((prev) => !prev);
@@ -89,6 +89,7 @@ const WeekDays = (props: any) => {
           onDayPress={handleSelectDay}
          
         />
+        
       </View>
 
       {/* <ScreenA selectedDay={props.selectedDay} selectedWeek={props.daysOfWeek} /> */}
@@ -140,6 +141,7 @@ const Header = memo(({ daysOfWeek, selectedDay, onDayPress }: any) => {
           
         </TouchableOpacity>
       ))}
+      
     </View>
   )
 });
@@ -158,7 +160,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    marginTop: 20
+    // marginTop: 20
   },
   toggleButton: {
     padding: 10,
@@ -171,9 +173,11 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-evenly',
     paddingVertical: 10,
-    backgroundColor: '#f8f8f8',
+    backgroundColor: '#E1D5C9',
+    paddingHorizontal: 2,
+    // flex: 1
   },
   dayButton: {
     alignItems: 'center',
@@ -185,11 +189,13 @@ const styles = StyleSheet.create({
     padding: 4,
   },
   dayText: {
-    color: '#2d4150',
+    color: 'white',
     fontSize: 16,
+    fontWeight: 400
   },
   selectedDayText: {
-    color: '#fff',
+    color: '#BAC4FE',
+    fontWeight: 'bold'
   },
   navigation: {
     flexDirection: 'row',
@@ -221,16 +227,18 @@ const styles = StyleSheet.create({
   },
   weeks: {
     width: Constants.screenWidth,
-    paddingHorizontal: 2,
+    // paddingHorizontal: 2,
     
   },
   item:{
     justifyContent:'center',
     alignItems:'center',
-    width: 40,
-    backgroundColor: 'red',
+    width: itemWidth ,
+    backgroundColor: '#36413D',
     borderColor: 'black',
-    borderRadius: 4
+    borderRadius: 4,
+    // borderBlockColor: 'black',
+    height: 50
   }
 });
 

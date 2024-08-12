@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, Dimensions } from 'react-native';
 import { handleFetchScheduleData } from '@/apis/userService';
-import UserImage from './UserImage';
+
+import InitialNameAvatar from '@/components/InitialNameAvatar';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -26,33 +27,37 @@ const ScheduleCard = (props: any) => {
   const [userSchedule, setUserSchedule] = useState(props.detail)
   const start = new Date(userSchedule.start_time)
   const end = new Date(userSchedule.end_time)
-  
+  useEffect(()=>{
+    setUserSchedule(props.detail)
+  },[props.detail])
+  console.log('ScheduleCard: ', userSchedule)
+  console.log('ScheduleCard: ', start, ' ', end)
   return (
     <TouchableOpacity style={styles.container}>
         <View style={styles.block}>
             <View style={styles.first}>
-              <UserImage 
-                pic={''}
-                name={userSchedule.first_name[0] + userSchedule.last_name[0]}
+              <InitialNameAvatar 
+                name={userSchedule.first_name + ' ' + userSchedule.last_name}
+                size={50}
               />
                 
             </View>
             <View style={styles.second}>
-                <Text style={{fontSize:20, fontWeight:'700', }}>
+                <Text style={{fontSize:22, fontWeight:'700', }}>
                   {userSchedule.first_name + ' ' + userSchedule.last_name}
                 </Text>
-                <Text style={{fontSize:15, fontWeight:'400'}}>
+                <Text style={{fontSize:16, fontWeight:'400'}}>
                     {workingHours(start, end)}
                 </Text>
-                <Text style={{fontSize:15, fontWeight:'400'}}>
+                <Text style={{fontSize:18, fontWeight:'400'}}>
                     {userSchedule.name}
                 </Text>
             </View>
             <View style={styles.third}>
-                <Text style={{fontSize:18, fontWeight:'500'}}>
+                <Text style={{fontSize:20, fontWeight:'500'}}>
                     {dateToTime(start)}
                 </Text>
-                <Text style={{fontSize:18, fontWeight:'500'}}>
+                <Text style={{fontSize:20, fontWeight:'500'}}>
                     {dateToTime(end)}
                 </Text>
             </View>
@@ -87,7 +92,7 @@ const styles = StyleSheet.create({
     
   },
   second: {
-    paddingLeft: 5,
+    paddingLeft: 10,
     textAlign: 'left',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
