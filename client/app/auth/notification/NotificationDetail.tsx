@@ -23,9 +23,6 @@ const NotificationDetail = () => {
                     <Avatar
                         name={item.first_name + " " + item.last_name}
                         img={item.avatar}
-                    // size={50}
-                    // backgroundColor="#ADD8E6"
-                    // textColor="#FFF"
                     />
                 )}
 
