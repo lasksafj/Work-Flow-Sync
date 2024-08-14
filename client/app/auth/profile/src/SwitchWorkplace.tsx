@@ -15,7 +15,7 @@ import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
 import { updateOrganization } from "@/store/slices/organizationSlice";
 import { router } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 
 type SwitchProps = {

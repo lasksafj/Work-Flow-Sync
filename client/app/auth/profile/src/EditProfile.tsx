@@ -17,7 +17,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 
 type EditProps = {
     editProfileVisible: boolean;
@@ -277,8 +277,8 @@ const EditProfile = ({
                                                 <Text style={styles.rowValue}>
                                                     {value
                                                         ? moment(value).format(
-                                                              "YYYY-MM-DD"
-                                                          )
+                                                            "YYYY-MM-DD"
+                                                        )
                                                         : "Select Date"}
                                                 </Text>
                                             </TouchableOpacity>

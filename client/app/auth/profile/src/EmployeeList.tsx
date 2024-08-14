@@ -4,7 +4,7 @@ import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import api from "@/apis/api";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native";
 import { AlphabetList } from "react-native-section-alphabet-list";
 import { Colors } from "@/constants/Colors";
 import { Avatar } from "@/components/Avatar";
