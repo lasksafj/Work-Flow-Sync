@@ -1,34 +1,33 @@
-import { Image, StyleSheet, Platform, Button } from 'react-native';
+import { Image, StyleSheet, Platform, Button } from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { RootState } from '@/store/store';
-import { useAppSelector } from '@/store/hooks';
-import { useAppDispatch } from '@/store/hooks';
-import { userLogout } from '@/store/slices/userSlice';
-import { router } from 'expo-router';
-import { logout } from '@/apis/authorize/login';
-import api from '@/apis/api';
-import { useEffect } from 'react';
-import { updateOrganization } from '@/store/slices/organizationSlice';
+import { HelloWave } from "@/components/HelloWave";
+import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { RootState } from "@/store/store";
+import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
+import { userLogout } from "@/store/slices/userSlice";
+import { router } from "expo-router";
+import { logout } from "@/apis/authorize/login";
+import api from "@/apis/api";
+import { useEffect } from "react";
+import { updateOrganization } from "@/store/slices/organizationSlice";
 
 export default function HomeScreen() {
-
-    const user = useAppSelector((state: RootState) => state.user)
-    const dispatch = useAppDispatch()
+    const user = useAppSelector((state: RootState) => state.user);
+    const dispatch = useAppDispatch();
 
     // console.log('HomeScreen', user);
 
     // Example
     useEffect(() => {
-        api.get('/api/user/protected?number=123987')
+        api.get("/api/user/protected?number=123987")
             .then((res) => {
-                console.log('INDEX API get -----', res.data);
+                console.log("INDEX API get -----", res.data);
             })
-            .catch(err => {
-                console.log('INDEX API err----', err);
+            .catch((err) => {
+                console.log("INDEX API err----", err);
                 // if (err.unauthorized) {
                 //     alert('LOGOUT');
                 //     router.replace('');
@@ -37,26 +36,25 @@ export default function HomeScreen() {
                 // }
             });
 
-        dispatch(updateOrganization({
-            abbreviation: 'ORG7',
-            name: 'Organization Three',
-            address: '789 Elm St'
-        }));
+        dispatch(
+            updateOrganization({
+                abbreviation: "ABC",
+                name: "ABC Corp",
+                address: "1234 Market St, San Francisco, CA",
+            })
+        );
     }, []);
-
-
-
 
     return (
         <ParallaxScrollView
-            headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+            headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
             headerImage={
                 <Image
-                    source={require('@/assets/images/partial-react-logo.png')}
+                    source={require("@/assets/images/partial-react-logo.png")}
                     style={styles.reactLogo}
                 />
-            }>
-
+            }
+        >
             <ThemedView style={styles.stepContainer}>
                 <ThemedText type="subtitle">User data</ThemedText>
                 <ThemedText>
@@ -68,21 +66,22 @@ export default function HomeScreen() {
                 </ThemedText>
             </ThemedView>
 
-            <Button title="Logout" onPress={() => {
-                logout();
-                dispatch(userLogout());
-                router.replace('');
-            }} />
-
-
+            <Button
+                title="Logout"
+                onPress={() => {
+                    logout();
+                    dispatch(userLogout());
+                    router.replace("");
+                }}
+            />
         </ParallaxScrollView>
     );
 }
 
 const styles = StyleSheet.create({
     titleContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        flexDirection: "row",
+        alignItems: "center",
         gap: 8,
     },
     stepContainer: {
@@ -94,6 +93,6 @@ const styles = StyleSheet.create({
         width: 290,
         bottom: 0,
         left: 0,
-        position: 'absolute',
+        position: "absolute",
     },
 });
