@@ -224,6 +224,7 @@ const ChatListScreen = () => {
         return <ActivityIndicator size="large" color={Colors.primary} />;
     };
 
+    // open group chat from useLocalSearchParams: groupId, groupName, groupImg, groupCreatedAt
     useEffect(() => {
         async function initGroup() {
             if (groupId && groupId != '') {
@@ -233,7 +234,8 @@ const ChatListScreen = () => {
                     groupImg = groupImg || gImg;
                 }
                 openChat({ groupId, groupName, groupImg, otherParticipantName: gname });
-                onChatListNewMessage({ groupId, groupName, groupImg, lastMessageTime: groupCreatedAt });
+                if (groupCreatedAt)
+                    onChatListNewMessage({ groupId, groupName, groupImg, lastMessageTime: groupCreatedAt });
             }
         }
         initGroup();
