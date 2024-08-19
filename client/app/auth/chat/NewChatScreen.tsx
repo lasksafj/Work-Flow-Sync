@@ -7,7 +7,7 @@ import { RootState } from '@/store/store';
 import InitialNameAvatar from '@/components/InitialNameAvatar';
 import Icon from 'react-native-vector-icons/Feather';
 import { router, useNavigation } from 'expo-router';
-import { addParticipantApi, createGroupApi, getEmployeesApi } from '@/apis/chat/chatApi';
+import { addParticipantApi, createGroupApi, getEmployeesApi, getGroupWith2ParticipantsApi } from '@/apis/chat/chatApi';
 
 const NewChatHeader = ({ closeNewChat }: any) => {
     return (
@@ -59,16 +59,37 @@ const NewChatScreen = () => {
         if (selectedParticipants.length == 0)
             return;
         let gname = groupName;
-        if (gname == '') {
-            // if (selectedParticipants.length == 1)
-            //     gname = selectedParticipants[0].name;
-            // else
-            //     gname = selectedParticipants[0].name + ', ' + selectedParticipants[1].name;
+        if (selectedParticipants.length == 1) {
+            if (gname) {
+                return;
+            }
+            let group = await getGroupWith2ParticipantsApi(user.profile.email, selectedParticipants[0].email);
+            if (group) {
+                router.navigate({
+                    pathname: 'auth/chat/ChatListScreen',
+                    params: {
+                        groupId: group.id,
+                        groupName: '',
+                        groupImg: '',
+                        groupCreatedAt: '',
+                    }
+                });
+                return;
+            }
 
-            // const userName = user.profile.firstName + ' ' + user.profile.lastName;
-            // gname = selectedParticipants.map(participant => participant.name).join(', ');
-            // gname += ', ' + userName;
         }
+
+
+        // if (gname == '') {
+        //     if (selectedParticipants.length == 1)
+        //         gname = selectedParticipants[0].name;
+        //     else
+        //         gname = selectedParticipants[0].name + ', ' + selectedParticipants[1].name;
+
+        //     const userName = user.profile.firstName + ' ' + user.profile.lastName;
+        //     gname = selectedParticipants.map(participant => participant.name).join(', ');
+        //     gname += ', ' + userName;
+        // }
 
         let group = await createGroupApi(gname);
         if (!group)
@@ -76,7 +97,7 @@ const NewChatScreen = () => {
         const res = await addParticipantApi(
             group.id,
             selectedParticipants.map((p) => p.email)
-        )
+        );
         if (!res)
             return;
 
@@ -88,7 +109,7 @@ const NewChatScreen = () => {
                 groupImg: group.img,
                 groupCreatedAt: group.created_at,
             }
-        })
+        });
     }
 
     useEffect(() => {

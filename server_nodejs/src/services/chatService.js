@@ -126,6 +126,21 @@ exports.addParticipants = async (groupId, participantEmails, userId) => {
     }
 }
 
+exports.getGroupWith2Participants = async (participantEmails) => {
+    const res = await db.query(`
+        select g.id
+        from groups g inner join participants p on g.id = p.group_id
+            inner join users u on p.user_id = u.id
+        where u.email IN ($1, $2)
+        group by g.id
+        HAVING COUNT(DISTINCT u.id) = 2
+        AND COUNT(DISTINCT u.email) = 2
+        AND COUNT(*) = 2;`,
+        participantEmails
+    );
+    return res.rows[0];
+}
+
 exports.getMessages = async (groupId, limit, offset) => {
     const res = await db.query(
         `SELECT m.id, m.content, m.create_time, m.user_id, m.group_id, u.email, u.first_name, u.last_name, u.avatar
@@ -191,3 +206,4 @@ exports.getLastActiveTimeParticipant = async (userId, groupId) => {
         [userId, groupId]);
     return res.rows[0].last_active_time;
 }
+
