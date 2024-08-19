@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native";
 import {
     ScrollView,
@@ -37,6 +37,8 @@ interface LinkProps {
 
 const ProfileScreen = () => {
     const router = useRouter();
+    const navigation = useNavigation();
+
 
     const user = useAppSelector((state: RootState) => state.user);
     const organization = useAppSelector(
@@ -126,6 +128,21 @@ const ProfileScreen = () => {
             ],
         },
     ];
+
+    useEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                    onPress={() => {
+                        setEditProfileVisible(true);
+                    }}
+                >
+                    <Text style={styles.title}>Edit</Text>
+                </TouchableOpacity>
+            ),
+            headerTitleStyle: styles.title,
+        });
+    }, []);
 
     useEffect(() => {
         let org = organization.abbreviation; // Organization ID
@@ -223,18 +240,6 @@ const ProfileScreen = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.header}>
-                <View style={styles.spacer} />
-                <Text style={styles.title}>User</Text>
-                <TouchableOpacity
-                    onPress={() => {
-                        setEditProfileVisible(true);
-                    }}
-                >
-                    <Text style={styles.title}>Edit</Text>
-                </TouchableOpacity>
-            </View>
-
             <ScrollView style={styles.container}>
                 <ImageProfile />
 
@@ -302,7 +307,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 20,
         fontWeight: "700",
-        color: "white",
         marginBottom: 6,
         marginTop: 6,
     },

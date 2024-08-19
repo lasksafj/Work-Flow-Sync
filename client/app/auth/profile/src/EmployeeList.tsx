@@ -124,17 +124,18 @@ export default EmployeeList;
 
 const styles = StyleSheet.create({
     header: {
-        flexDirection: "row",
-        paddingHorizontal: 10,
-        // marginBottom: 8,
-        backgroundColor: "#008000",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+        paddingVertical: 10,
+        paddingHorizontal: 15,
     },
     title: {
         fontSize: 20,
-        fontWeight: "700",
-        color: "white",
+        fontWeight: '700',
+        color: '#333',
         marginBottom: 6,
         marginTop: 6,
     },

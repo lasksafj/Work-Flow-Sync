@@ -6,7 +6,11 @@ export default function ProfileLayout() {
         <Stack>
             <Stack.Screen
                 name="ProfileScreen"
-                options={{ headerShown: false }}
+                options={{
+                    headerShown: true,
+                    headerTitle: "Profile",
+                    headerTitleAlign: "center",
+                }}
             />
         </Stack>
     );
