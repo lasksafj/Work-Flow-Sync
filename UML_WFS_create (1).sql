@@ -113,7 +113,7 @@ CREATE TABLE timesheets (
     clock_in timestamp  NOT NULL,
     clock_out timestamp  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out)
+    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out,emp_id)
 );
 
 -- Table: users
