@@ -19,7 +19,7 @@ const tabs = [
 ];
 
 type DetailType = {
-    date: Date;
+    date: string;
     shiftStart: string;
     shiftEnd: string;
     role: string;
@@ -28,7 +28,7 @@ type DetailType = {
 };
 
 let sampleDetails: DetailType[] = Array.from({ length: 7 }, () => ({
-    date: new Date(), // Initialize with current date; will be replaced
+    date: "",
     shiftStart: "N/A",
     shiftEnd: "N/A",
     role: "N/A",
@@ -53,6 +53,7 @@ export default function DashboardScreen() {
     const organization = useAppSelector((state: RootState) => state.organization);
 
     const [selectedIndex, setSelectedIndex] = React.useState((new Date().getDay() - 1 + 7) % 7);
+    // const [selectedIndex, setSelectedIndex] = React.useState(new Date().getDay() - 1);
     const [shiftDetail, setShiftDetail] = useState(sampleDetails);
 
     const selectedDetails = sampleDetails[selectedIndex];
@@ -70,28 +71,24 @@ export default function DashboardScreen() {
             (res) => {
                 const data = res.data;
                 let newShiftDetail = sampleDetails;
-                // console.log(data);
+                // console.log("------------------", data);
+                for (let i = 0; i < 7; i++) {
+                    newShiftDetail[i].date = daysOfWeek[(i + 1) % 7];
+                }
 
                 data.map((d: any) => {
-                    let date = new Date(d.start_time);
-                    for (let i = 0; i < daysOfWeek.length; i++) {
-                        newShiftDetail[i].date = new Date(daysOfWeek[(i + 2) % 7]);
-                        let num = new Date(daysOfWeek[i]);
-                        // console.log("-----", num, num.getDay(), date.getDate());
-
-                        if (
-                            num.getDate() == date.getDate() &&
-                            num.getMonth() == date.getMonth() &&
-                            num.getFullYear() == date.getFullYear()
-                        ) {
-                            newShiftDetail[(i - 2 + 7) % 7].shiftStart = d.start_time;
-                            newShiftDetail[(i - 2 + 7) % 7].shiftEnd = d.end_time;
-                            newShiftDetail[(i - 2 + 7) % 7].role = d.role_name;
-                            newShiftDetail[(i - 2 + 7) % 7].location = organization.address;
+                    for (let i = 0; i < 7; i++) {
+                        let start_date = new Date(d.start_time);
+                        if (moment(start_date).format("YYYY-MM-DD") == newShiftDetail[i].date) {
+                            newShiftDetail[i].shiftStart = d.start_time;
+                            newShiftDetail[i].shiftEnd = d.end_time;
+                            newShiftDetail[i].location = d.organization_name;
+                            newShiftDetail[i].role = d.role_name;
                         }
                     }
                 });
-                console.log(newShiftDetail);
+
+                // console.log("++++++++++++++++", newShiftDetail);
 
                 setShiftDetail(newShiftDetail);
             }
@@ -134,7 +131,8 @@ export default function DashboardScreen() {
                     <View style={styles.detailRow}>
                         <Icon name="calendar" size={20} color="#4b5563" />
                         <Text style={styles.detailsText}>
-                            {format(selectedDetails.date, "MM/dd/yyyy")}
+                            {/* {format(selectedDetails.date, "MM/dd/yyyy")} */}
+                            {selectedDetails.date}
                         </Text>
                     </View>
                     <View style={styles.detailRow}>

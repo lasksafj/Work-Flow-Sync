@@ -20,11 +20,23 @@ exports.getDetailShift = async (req, res) => {
         const { orgAbbr } = req.query;
         console.log(orgAbbr);
         const result = await db.query(
-            `SELECT s.start_time, s.end_time, e.role_name, o.name
-            FROM users u inner join employees e on u.id = e.user_id inner join organizations o
-            on o.abbreviation = e.org_abbreviation inner join schedules s on s.emp_id = e.id 
-            WHERE u.id = $1 AND o.abbreviation = $2
-            ORDER by start_time desc limit 7`,
+            `SELECT 
+                s.start_time, 
+                s.end_time, 
+                e.role_name, 
+                o.name as organization_name
+            FROM 
+                schedules s
+            JOIN 
+                employees e ON s.emp_id = e.id
+            JOIN 
+                users u ON e.user_id = u.id
+            JOIN 
+                organizations o ON e.org_abbreviation = o.abbreviation
+            WHERE 
+                u.id = $1 
+                AND o.abbreviation = $2;
+`,
             [req.user.id, orgAbbr]
         );
 
