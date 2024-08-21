@@ -150,29 +150,10 @@ const NotificationScreen = () => {
                             </View>
                         </View>
                     </View>
-
-                    {/* <View style={styles.cardAction}>
-                    <FeatherIcon
-                        color="#9ca3af"
-                        name="chevron-right"
-                        size={22}
-                    />
-                </View> */}
                 </View>
             </TouchableOpacity>
         )
     };
-
-    // const renderSectionHeader = ({
-    //     section: { title },
-    // }: {
-    //     section: { title: string };
-    // }) => <Text style={styles.sectionHeader}>{title}</Text>;
-
-    // Filter out empty sections
-    // const filteredNotifications = notifications.filter(
-    //     (section) => section.data.length > 0
-    // );
 
     return (
         <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
@@ -195,9 +176,7 @@ const NotificationScreen = () => {
                     }}
                     estimatedItemSize={100}
                     keyExtractor={(item, index) => index.toString()}
-                    // renderSectionHeader={renderSectionHeader}
                     onEndReached={loadNotifications}
-                    // onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         loading ? (
                             <ActivityIndicator size="large" color="#0000ff" />
