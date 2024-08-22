@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "tunnel": "start cmd /K ngrok http --domain=optimum-wildcat-sharing.ngrok-free.app 3000 && nodemon src",
+        "tunnel": "start cmd /K ngrok http --domain=ram-exact-happily.ngrok-free.app 3000 && nodemon src",
         "start": "nodemon src"
     },
     "keywords": [],
