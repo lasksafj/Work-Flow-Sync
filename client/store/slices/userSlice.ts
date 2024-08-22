@@ -2,12 +2,12 @@ import { User } from "@/models/User";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initUser = {
-    lastName: undefined,
-    firstName: undefined,
-    email: undefined,
-    phoneNumber: undefined,
-    dateOfBirth: undefined,
-    avatar: undefined
+    lastName: '',
+    firstName: '',
+    email: '',
+    phoneNumber: '',
+    dateOfBirth: '',
+    avatar: ''
 }
 
 const initialState = {

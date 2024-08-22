@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     },
     initials: {
         color: '#fff',
-        fontSize: 20,
+        // fontSize: 20,
         fontWeight: 'bold',
     },
 });

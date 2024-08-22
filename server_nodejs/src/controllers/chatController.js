@@ -54,6 +54,16 @@ exports.addParticipants = async (req, res) => {
     }
 };
 
+exports.getGroupWith2Participants = async (req, res) => {
+    try {
+        const { email1, email2 } = req.query;
+        const result = await chatService.getGroupWith2Participants([email1, email2])
+        res.status(200).json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 exports.getEmployees = async (req, res) => {
     try {
         const { orgAbbr } = req.query;

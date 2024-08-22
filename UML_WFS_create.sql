@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-07-31 23:03:50.42
+-- Last modification date: 2024-08-21 23:16:21.881
 
 -- tables
 -- Table: availabletimes
@@ -78,6 +78,7 @@ CREATE TABLE organizations (
     abbreviation varchar(10)  NOT NULL,
     name varchar(80)  NOT NULL,
     address varchar(200)  NOT NULL,
+    start_date date  NOT NULL,
     CONSTRAINT Organization_uk_01 UNIQUE (name, address) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT organizations_pk PRIMARY KEY (abbreviation)
 );

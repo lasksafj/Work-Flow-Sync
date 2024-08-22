@@ -40,6 +40,19 @@ const addParticipantApi = async (groupId: string, participantEmails: string[]) =
     }
 }
 
+const getGroupWith2ParticipantsApi = async (email1: string, email2: string) => {
+    try {
+        let response = await api.get(
+            `/api/chat/get-group-with-2participants?email1=${email1}&&email2=${email2}`,
+        );
+        return response.data;
+    }
+    catch (err: any) {
+        console.log('getGroupWith2ParticipantsApi ERROR', err);
+        return null;
+    }
+}
+
 const getEmployeesApi = async (orgAbbr: string) => {
     try {
         let response = await api.get(`/api/chat/get-employees?orgAbbr=${orgAbbr}`);
@@ -76,6 +89,8 @@ const getParticipantsApi = async (groupId: string) => {
 export {
     getGroupsApi,
     createGroupApi,
+    getGroupWith2ParticipantsApi,
+
     addParticipantApi,
     getEmployeesApi,
     getMessagesApi,
