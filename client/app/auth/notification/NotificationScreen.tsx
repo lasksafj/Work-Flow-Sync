@@ -8,20 +8,15 @@ import {
     Text,
     TouchableOpacity,
     View,
-    Image,
-    SectionList,
     ActivityIndicator,
-    FlatList,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
 import InitialNameAvatar from "@/components/InitialNameAvatar";
 import { Avatar } from "@/components/Avatar";
+import { FlashList } from "@shopify/flash-list";
 
 const NotificationScreen = () => {
-    const [notifications, setNotifications] = useState<any[]>([
-        { title: "Today", data: [] },
-        { title: "Earlier", data: [] },
-    ]);
+    const [notifications, setNotifications] = useState<any[]>([]);
     const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
     const [moreData, setMoreData] = useState(true);
@@ -45,20 +40,11 @@ const NotificationScreen = () => {
                         res.data
                     );
                     setOffset(offset + limit);
-                    setNotifications((prevNotifications) => {
-                        const today = [
-                            ...prevNotifications[0]?.data,
-                            ...sortedNotifications[0]?.data,
-                        ];
-                        const earlier = [
-                            ...prevNotifications[1]?.data,
-                            ...sortedNotifications[1]?.data,
-                        ];
-                        return [
-                            { title: "Today", data: today },
-                            { title: "Earlier", data: earlier },
-                        ];
-                    });
+                    setNotifications((prevNotifications) => [
+                        ...prevNotifications,
+                        ...sortedNotifications,
+                    ]);
+
                 } else {
                     setMoreData(false);
                 }
@@ -70,11 +56,11 @@ const NotificationScreen = () => {
             });
     };
 
-    const sortNotificationsByDate = (notifications: any) => {
+    const sortNotificationsByDate = (noties: any) => {
         const today: any = [];
         const earlier: any = [];
 
-        notifications.forEach((notification: any) => {
+        noties.forEach((notification: any) => {
             const createdAt = new Date(notification.created_date);
             if (isToday(createdAt)) {
                 today.push(notification);
@@ -82,10 +68,24 @@ const NotificationScreen = () => {
                 earlier.push(notification);
             }
         });
-        return [
-            { title: "Today", data: today },
-            { title: "Earlier", data: earlier },
-        ];
+
+        const sortedData = [];
+
+        if (today.length > 0) {
+            if (notifications.length == 0) {
+                sortedData.push("Today");
+            }
+            sortedData.push(...today.map((item: any) => ({ type: "item", ...item })));
+        }
+
+        if (earlier.length > 0) {
+            if (notifications.findIndex((value) => value === "Earlier") == -1) {
+                sortedData.push("Earlier");
+            }
+            sortedData.push(...earlier.map((item: any) => ({ type: "item", ...item })));
+        }
+
+        return sortedData;
     };
 
     const getDateDifference = (createdDate: Date) => {
@@ -108,80 +108,75 @@ const NotificationScreen = () => {
         }
     };
 
-    const renderItem = ({ item, index }: any) => (
-        <TouchableOpacity
-            key={index}
-            onPress={() => {
-                router.push({
-                    pathname: "auth/notification/NotificationDetail",
-                    params: item,
-                });
-            }}
-        >
-            <View style={styles.card}>
-                {item.avatar ? (
-                    <Avatar img={item.avatar}
-                        style={styles.cardImg}
-                    />
-                ) : (
-                    <InitialNameAvatar
+    const RenderItem = ({ item, index }: any) => {
+
+        return (
+            <TouchableOpacity
+                key={index}
+                onPress={() => {
+                    router.push({
+                        pathname: "auth/notification/NotificationDetail",
+                        params: item,
+                    });
+                }}
+            >
+                <View style={styles.card}>
+                    <Avatar
                         name={item.first_name + " " + item.last_name}
+                        img={item.avatar}
                         style={styles.cardImg}
                     />
-                )}
 
-                <View>
-                    <Text>
-                        {item.content.length > 40
-                            ? `${item.content.substring(0, 40)}...`
-                            : item.content}
-                    </Text>
+                    <View>
+                        <Text>
+                            {item.content.length > 40
+                                ? `${item.content.substring(0, 40)}...`
+                                : item.content}
+                        </Text>
 
-                    <View style={styles.cardStats}>
-                        <View style={styles.cardStatsItem}>
-                            <FeatherIcon color="#636a73" name="clock" />
+                        <View style={styles.cardStats}>
+                            <View style={styles.cardStatsItem}>
+                                <FeatherIcon color="#636a73" name="clock" />
 
-                            <Text style={styles.cardStatsItemText}>
-                                {getDateDifference(item.created_date)}
-                            </Text>
-                            <Text style={styles.cardStatsItemText}>
-                                by{" "}
-                                <Text style={{ fontWeight: "bold" }}>
-                                    {item.first_name} {item.last_name}
+                                <Text style={styles.cardStatsItemText}>
+                                    {getDateDifference(item.created_date)}
                                 </Text>
-                            </Text>
+                                <Text style={styles.cardStatsItemText}>
+                                    by{" "}
+                                    <Text style={{ fontWeight: "bold" }}>
+                                        {item.first_name} {item.last_name}
+                                    </Text>
+                                </Text>
+                            </View>
                         </View>
                     </View>
                 </View>
-
-                {/* <View style={styles.cardAction}>
-                    <FeatherIcon
-                        color="#9ca3af"
-                        name="chevron-right"
-                        size={22}
-                    />
-                </View> */}
-            </View>
-        </TouchableOpacity>
-    );
-
-    const renderSectionHeader = ({
-        section: { title },
-    }: {
-        section: { title: string };
-    }) => <Text style={styles.sectionHeader}>{title}</Text>;
+            </TouchableOpacity>
+        )
+    };
 
     return (
-        <SafeAreaView style={{ backgroundColor: "#fff" }}>
+        <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
             <View style={styles.container}>
-                <Text style={styles.title}>Notifications</Text>
-                <SectionList
-                    sections={notifications}
-                    renderItem={renderItem}
+                {/* <Text style={styles.title}>Notifications</Text> */}
+                <FlashList
+                    data={notifications}
+                    renderItem={({ item }) => {
+                        if (typeof item === "string") {
+                            // Rendering header
+                            return <Text style={styles.sectionHeader}>{item}</Text>;
+                        } else {
+                            // Render item
+                            return <RenderItem item={item} />;
+                        }
+                    }}
+                    getItemType={(item) => {
+                        // To achieve better performance, specify the type based on the item
+                        return typeof item === "string" ? "sectionHeader" : "row";
+                    }}
+                    estimatedItemSize={100}
                     keyExtractor={(item, index) => index.toString()}
-                    renderSectionHeader={renderSectionHeader}
                     onEndReached={loadNotifications}
-                    // onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         loading ? (
                             <ActivityIndicator size="large" color="#0000ff" />
@@ -198,6 +193,7 @@ export default NotificationScreen;
 const styles = StyleSheet.create({
     container: {
         padding: 24,
+        flex: 1,
     },
     title: {
         fontSize: 32,
