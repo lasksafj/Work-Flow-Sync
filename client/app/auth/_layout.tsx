@@ -2,7 +2,7 @@ import { Tabs, useSegments } from 'expo-router';
 import React, { useEffect } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { connectSockets, disconnectSockets } from '@/socket/socket';
@@ -39,11 +39,20 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
+                name="clockinout"
+                options={{
+                    title: 'Clock In/Out',
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="progress-clock" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
                 name="schedule"
                 options={{
                     title: 'Schedule',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="calendar-account" color={color} size={size} />
                     ),
                 }}
             />
@@ -51,8 +60,8 @@ export default function TabLayout() {
                 name="dashboard"
                 options={{
                     title: 'Dashboard',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
                     ),
                 }}
             />
@@ -60,11 +69,8 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: "Profile",
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon
-                            name={focused ? "cube" : "cube-outline"}
-                            color={color}
-                        />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="account" color={color} size={size} />
                     ),
                 }}
             />
@@ -72,8 +78,8 @@ export default function TabLayout() {
                 name="chat"
                 options={{
                     title: 'Chat',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="chat" color={color} size={size} />
                     ),
                 }}
             />
@@ -81,12 +87,20 @@ export default function TabLayout() {
                 name="earnings"
                 options={{
                     title: 'Earnings',
-                    tabBarIcon: ({ color, focused }) => (
-                        // <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
-                        <MaterialIcons name="attach-money" size={24} color="black" />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="currency-usd" color={color} size={size} />
                     ),
                 }}
             />
+            <Tabs.Screen
+                name="notification"
+                options={{
+                    title: 'Notifications',
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="bell" color={color} size={size} />
+                    ),
+                    tabBarBadge: 3,
+                }} />
         </Tabs>
     );
 }

@@ -11,7 +11,6 @@ import {
     ActivityIndicator,
 } from "react-native";
 import FeatherIcon from "react-native-vector-icons/Feather";
-import InitialNameAvatar from "@/components/InitialNameAvatar";
 import { Avatar } from "@/components/Avatar";
 import { FlashList } from "@shopify/flash-list";
 
