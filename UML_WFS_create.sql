@@ -1,5 +1,5 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-07-25 19:37:56.039
+-- Last modification date: 2024-08-21 23:16:21.881
 
 -- tables
 -- Table: availabletimes
@@ -18,7 +18,8 @@ CREATE TABLE employees (
     role_name varchar(80)  NOT NULL,
     user_id int  NOT NULL,
     org_abbreviation varchar(10)  NOT NULL,
-    CONSTRAINT Employee_uk_01 UNIQUE (employee_number, user_id, org_abbreviation) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT Employee_uk_01 UNIQUE (user_id, org_abbreviation, role_name) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT employees_ak_2 UNIQUE (org_abbreviation, employee_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT employees_pk PRIMARY KEY (id)
 );
 
@@ -39,12 +40,13 @@ CREATE TABLE groups (
     id serial  NOT NULL,
     name varchar(80)  NOT NULL,
     created_at timestamp  NOT NULL,
+    img varchar(200)  NULL,
     CONSTRAINT groups_pk PRIMARY KEY (id)
 );
 
 -- Table: messages
 CREATE TABLE messages (
-    id serial  NOT NULL,
+    id varchar(50)  NOT NULL,
     content varchar(500)  NOT NULL,
     create_time timestamp  NOT NULL,
     user_id int  NOT NULL,
@@ -76,6 +78,7 @@ CREATE TABLE organizations (
     abbreviation varchar(10)  NOT NULL,
     name varchar(80)  NOT NULL,
     address varchar(200)  NOT NULL,
+    start_date date  NOT NULL,
     CONSTRAINT Organization_uk_01 UNIQUE (name, address) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT organizations_pk PRIMARY KEY (abbreviation)
 );
@@ -85,6 +88,7 @@ CREATE TABLE participants (
     joined_at date  NOT NULL,
     user_id int  NOT NULL,
     group_id int  NOT NULL,
+    last_active_time timestamp  NULL,
     CONSTRAINT participants_pk PRIMARY KEY (user_id,group_id)
 );
 
@@ -105,23 +109,12 @@ CREATE TABLE schedules (
     CONSTRAINT schedules_pk PRIMARY KEY (end_time,start_time,emp_id)
 );
 
--- Table: statuses
-CREATE TABLE statuses (
-    is_seen boolean  NOT NULL,
-    mes_id int  NOT NULL,
-    user_id int  NOT NULL,
-    group_id int  NOT NULL,
-    CONSTRAINT statuses_pk PRIMARY KEY (group_id,user_id,mes_id)
-);
-
-CREATE INDEX statuses_idx_1 on statuses (mes_id DESC);
-
 -- Table: timesheets
 CREATE TABLE timesheets (
     clock_in timestamp  NOT NULL,
     clock_out timestamp  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out)
+    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out,emp_id)
 );
 
 -- Table: users
@@ -216,22 +209,6 @@ ALTER TABLE participants ADD CONSTRAINT Participant_User
 ALTER TABLE schedules ADD CONSTRAINT Schedule_Employee
     FOREIGN KEY (emp_id)
     REFERENCES employees (id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Status_Message (table: statuses)
-ALTER TABLE statuses ADD CONSTRAINT Status_Message
-    FOREIGN KEY (mes_id)
-    REFERENCES messages (id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Status_Participant (table: statuses)
-ALTER TABLE statuses ADD CONSTRAINT Status_Participant
-    FOREIGN KEY (user_id, group_id)
-    REFERENCES participants (user_id, group_id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
