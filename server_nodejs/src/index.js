@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-<<<<<<< HEAD
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const requestLogger = require("./middlewares/loggerMiddleware");
@@ -9,21 +8,11 @@ const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const earningsRoutes = require("./routes/earningsRoutes"); // Anh
 const notificationsRoutes = require("./routes/notificationsRoutes"); // Long
-=======
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const requestLogger = require('./middlewares/loggerMiddleware');
-const userRoutes = require('./routes/userRoutes');
-const chatRoutes = require('./routes/chatRoutes');
-const earningsRoutes = require('./routes/earningsRoutes'); // Anh
-const notificationsRoutes = require('./routes/notificationsRoutes'); // Long
 const profileRoutes = require("./routes/profileRoutes");
 
-
-const socketConfig = require('./config/socket');
-const authSocketMiddleware = require('./middlewares/authSocketMiddleware');
-const chatSocket = require('./socket/chatSocket');
->>>>>>> main
+const socketConfig = require("./config/socket");
+const authSocketMiddleware = require("./middlewares/authSocketMiddleware");
+const chatSocket = require("./socket/chatSocket");
 
 const socketConfig = require("./config/socket");
 const authSocketMiddleware = require("./middlewares/authSocketMiddleware");
@@ -38,20 +27,12 @@ app.use(cors());
 app.use(requestLogger);
 
 // Routes
-<<<<<<< HEAD
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/earnings", earningsRoutes);
 app.use("/api/notifications", notificationsRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-=======
-app.use('/api/user', userRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/earnings', earningsRoutes);
-app.use('/api/notifications', notificationsRoutes);
 app.use("/api/profile", profileRoutes);
-
->>>>>>> main
 
 // Start the server
 const server = app.listen(PORT, "0.0.0.0", () => {
