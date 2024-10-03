@@ -39,11 +39,11 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="clockinout"
+                name="qrcode"
                 options={{
-                    title: 'Clock In/Out',
+                    title: 'QR Code',
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="progress-clock" color={color} size={size} />
+                        <MaterialCommunityIcons name="qrcode" color={color} size={size} />
                     ),
                 }}
             />

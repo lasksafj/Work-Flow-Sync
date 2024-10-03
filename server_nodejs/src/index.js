@@ -9,6 +9,7 @@ const chatRoutes = require('./routes/chatRoutes');
 const earningsRoutes = require('./routes/earningsRoutes'); // Anh
 const notificationsRoutes = require('./routes/notificationsRoutes'); // Long
 const profileRoutes = require("./routes/profileRoutes");
+const timesheetsRoutes = require('./routes/timesheetsRoutes');
 
 
 const socketConfig = require('./config/socket');
@@ -29,6 +30,8 @@ app.use('/api/chat', chatRoutes);
 app.use('/api/earnings', earningsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use("/api/profile", profileRoutes);
+app.use("/api/timesheets", timesheetsRoutes);
+
 
 
 // Start the server
