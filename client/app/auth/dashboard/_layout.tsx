@@ -5,6 +5,7 @@ export default function HomeLayout() {
     return (
         <Stack>
             <Stack.Screen name='DashboardScreen' />
+            <Stack.Screen name="ClockInOutScreen" options={{ headerTitle: "Clock in/out", headerBackTitleVisible: false }} />
         </Stack>
     )
 }

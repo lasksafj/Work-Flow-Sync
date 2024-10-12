@@ -18,21 +18,11 @@ const QRCodeGenerator = () => {
             />
 
             {orgAbbreviation ? (
-                <QRCode value={orgAbbreviation} />
+                <QRCode value={orgAbbreviation} /> // Display QR code for the entered abbreviation
             ) : (
                 <Text style={styles.placeholderText}>Enter an abbreviation to generate a QR code.</Text>
             )}
-
-            <TouchableOpacity 
-                style={styles.button} 
-                onPress={() => {
-                    router.push('auth/qrcode/ClockInOutScreen');
-                }}
-            >
-                <Text style={styles.buttonText}>Clock in/out</Text>
-            </TouchableOpacity>
         </View>
-        
     );
 };
 
@@ -59,23 +49,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: 'gray',
     },
-    button: {
-        backgroundColor: '#4CAF50',
-        paddingVertical: 15,
-        paddingHorizontal: 40,
-        borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 5,
-        marginTop: 20,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: 'bold',
-    }
 });
 
 export default QRCodeGenerator;

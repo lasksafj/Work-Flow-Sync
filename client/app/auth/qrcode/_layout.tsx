@@ -5,7 +5,6 @@ export default function QRCodeLayout() {
     return (
         <Stack>
             <Stack.Screen name="QRCode" options={{ headerTitle: "QR Code" }} />
-            <Stack.Screen name="ClockInOutScreen" options={{ headerTitle: "Clock in/out" }} />
         </Stack>
     );
 }

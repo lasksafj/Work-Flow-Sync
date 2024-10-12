@@ -1,56 +1,106 @@
 const db = require("../config/db");
 
-    exports.clockInOut = async (req, res) => {
-        try {
-            const user_id = req.user.id;
-            const { org_abbreviation } = req.body;
+// Controller function to get the clock-in status of an employee
+exports.getClockStatus = async (req, res) => {
+    try {
+        
+        const user_id = req.user.id; // Extract the user ID from the request object (populated by the authentication middleware)
+        const { org_abbreviation } = req.query; // Extract the organization abbreviation from the query parameters
 
-            // Get the employee data for the logged-in user
-            const empResult = await db.query(
-                `SELECT e.id, o.name 
-                FROM employees e INNER JOIN organizations o ON (e.org_abbreviation = o.abbreviation)
-                WHERE user_id = $1 and org_abbreviation = $2`,
-                [user_id, org_abbreviation]
-            );
+        // Validate that the organization abbreviation is provided
+        if (!org_abbreviation) {
+            return res.status(400).json({ error: "Organization code is required" });
+        }
 
-            const organizationName = empResult.rows[0].name;
+        // Get the employee ID and organization name
+        const empResult = await db.query(
+            `SELECT e.id AS emp_id, o.name AS org_name
+            FROM employees e
+            INNER JOIN organizations o ON e.org_abbreviation = o.abbreviation
+            WHERE e.user_id = $1 AND e.org_abbreviation = $2`,
+            [user_id, org_abbreviation]
+        );
 
-            if (empResult.rowCount === 0) {
-                return res.status(400).json({ error: 'You are not authorized for ', organizationName });
-            }
+        // Check if the employee exists in the specified organization
+        if (empResult.rows.length === 0) {
+            return res.status(404).json({ error: "Employee not found in the specified organization" });
+        }
 
-            const employee = empResult.rows[0];
-            const emp_id = employee.id;
+        const emp_id = empResult.rows[0].emp_id;
+        const org_name = empResult.rows[0].org_name;
 
-            // Get org_abbreviation from req.body
-            // const org_abbreviation_scanned = req.body.org_abbreviation;
-            // console.log("org_abbreviation_scanned", org_abbreviation_scanned);
-            // if (employee.org_abbreviation !== org_abbreviation_scanned) {
-            //     return res.status(403).json({ error: 'You are not authorized for this organization.' });
-            // }
+        // Check if the employee is currently clocked in
+        const timesheetResult = await db.query(
+            "SELECT * FROM timesheets WHERE emp_id = $1 AND clock_out IS NULL",
+            [emp_id]
+        );
 
-            // Check if the employee is clocking in or out
-            const existingTimesheet = await db.query(
-                "SELECT * FROM timesheets WHERE emp_id = $1 AND clock_out IS NULL", 
+        const isClockedIn = timesheetResult.rowCount > 0;
+
+        return res.status(200).json({ clockedIn: isClockedIn, org_name });
+    } catch (error) {
+        console.error("Error in getClockStatus:", error);
+        res.status(500).json({ error: "An error occurred while processing your request" });
+    }
+};
+
+// Controller function to handle clock-in and clock-out actions
+exports.clockInOut = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const { org_abbreviation } = req.body;
+
+        // Validate that the organization abbreviation is provided
+        if (!org_abbreviation) {
+            return res.status(400).json({ error: "Organization code is required" });
+        }
+
+        // Query to get the employee data for the logged-in user in the specified organization
+        const empResult = await db.query(
+            `SELECT e.id AS emp_id, o.name AS org_name
+            FROM employees e
+            INNER JOIN organizations o ON e.org_abbreviation = o.abbreviation
+            WHERE e.user_id = $1 AND e.org_abbreviation = $2`,
+            [user_id, org_abbreviation]
+        );
+
+        // Check if the employee exists in the specified organization
+        if (empResult.rows.length === 0) {
+            return res.status(404).json({ error: "Employee not found in the specified organization" });
+        }
+
+        const emp_id = empResult.rows[0].emp_id;
+        const org_name = empResult.rows[0].org_name;
+
+        // Check if the employee has an existing timesheet entry without a clock_out time (currently clocked in)
+        const timesheetResult = await db.query(
+            "SELECT * FROM timesheets WHERE emp_id = $1 AND clock_out IS NULL", 
+            [emp_id]
+        );
+
+        if (timesheetResult.rowCount > 0) {
+            // Employee is clocking out
+
+            // Update the existing timesheet with the current clock_out time
+            await db.query(
+                "UPDATE timesheets SET clock_out = NOW() WHERE emp_id = $1 AND clock_out IS NULL",
                 [emp_id]
             );
 
-            if (existingTimesheet.rowCount > 0) {
-                // Clocking out
-                await db.query(
-                    "UPDATE timesheets SET clock_out = $1 WHERE emp_id = $2 AND clock_out IS NULL", 
-                    [new Date(), emp_id]
-                );
-                res.status(200).json({ message: "Clocked out successfully" });
-            } else {
-                // Clocking in
-                await db.query(
-                    "INSERT INTO timesheets (emp_id, clock_in) VALUES ($1, $2)", 
-                    [emp_id, new Date()]
-                );
-                res.status(200).json({ message: "Clocked in successfully" });
-            }
-        } catch (error) {
-            res.status(400).json({ error: error.message });
+            return res.status(200).json({ message: `Clock-out successful! \nGoodbye from ${org_name}. \nEnjoy the rest of your day.` });
+        } else {
+            // Employee is clocking in
+
+            // Insert a new timesheet entry with the current clock_in time
+            await db.query(
+                "INSERT INTO timesheets (emp_id, clock_in) VALUES ($1, NOW())",
+                [emp_id]
+            );
+
+            return res.status(200).json({ message: `Clock-in successful! \nWelcome to ${org_name}. \nHave a great day at work.` });
         }
-    };
+    } catch (error) {
+        console.error("Error in clockInOut:", error);
+        res.status(500).json({ error: "An error occurred while processing your request" });
+    }
+};
