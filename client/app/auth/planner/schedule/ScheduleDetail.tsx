@@ -20,14 +20,12 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
         (state: RootState) => state.organization
     );
 
-    console.log("AAAAAAA", detail);
-
     useEffect(() => {
         let org = organization.abbreviation;
         let date = detail;
 
         const fetchData = () => {
-            api.get(`/api/schedule/schedule-get?org=${org}&&date=${date}`)
+            api.get(`/api/schedule/schedule-get?org=${org}&&chosedate=${date}`)
                 .then((res) => {
                     const data = res.data;
                     setListData(prev => data);

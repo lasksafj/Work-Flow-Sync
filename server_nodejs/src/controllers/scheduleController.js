@@ -4,9 +4,10 @@ const moment = require('moment');
 
 exports.scheduleGet = async (req, res) => {
     try {
-        const { org, date } = req.body;
-        const formattedDate = moment(date).format('YYYY-MM-DD');
-        console.log("AAAAAAAAAAAAA", formattedDate);
+        let org = req.query.org;
+        let chosedate = req.query.chosedate;
+
+        const formattedDate = moment(chosedate).format('YYYY-MM-DD');
 
         const data = await db.query(
             `select u.id, u.first_name, u.last_name, e.id, s.start_time, s.end_time, o.name from employees as e
@@ -16,7 +17,6 @@ exports.scheduleGet = async (req, res) => {
             where e.org_abbreviation = $1 and Date(start_time) = $2 `,
             [org, formattedDate]
         );
-        console.log("BBBBBBBBBBB", data.rows);
 
         res.status(200).json(data.rows);
     } catch (error) {
