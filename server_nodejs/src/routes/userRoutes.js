@@ -7,6 +7,7 @@ router.post('/register', userController.registerUser);
 router.post('/login', userController.loginUser);
 router.post('/refresh-token', userController.refreshToken);
 router.post('/verify', userController.verifyUser);
+router.post('/save-push-token', authMiddleware, userController.savePushToken);
 
 router.get('/protected', authMiddleware, (req, res) => {
     res.status(200).json({ number: req.query.number, message: 'This is a protected route' });

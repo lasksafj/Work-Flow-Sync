@@ -128,14 +128,14 @@ exports.addParticipants = async (groupId, participantEmails, userId) => {
 
 exports.getGroupWith2Participants = async (participantEmails) => {
     const res = await db.query(`
-        select g.id
-        from groups g inner join participants p on g.id = p.group_id
-            inner join users u on p.user_id = u.id
-        where u.email IN ($1, $2)
-        group by g.id
-        HAVING COUNT(DISTINCT u.id) = 2
+        SELECT p.group_id AS id
+        FROM participants p
+        JOIN users u ON p.user_id = u.id
+        GROUP BY p.group_id
+        HAVING COUNT(*) = 2
         AND COUNT(DISTINCT u.email) = 2
-        AND COUNT(*) = 2;`,
+        AND BOOL_AND(u.email IN ($1, $2));
+        `,
         participantEmails
     );
     return res.rows[0];

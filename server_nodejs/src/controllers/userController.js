@@ -47,3 +47,20 @@ exports.verifyUser = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
+
+exports.savePushToken = async (req, res) => {
+    const { pushToken } = req.body;
+    const userId = req.user.id;
+
+    if (!userId) {
+        return res.status(400).json({ error: 'user ID are required' });
+    }
+
+    try {
+        await userService.savePushToken(userId, pushToken);
+        res.status(200).json({ message: 'Push token saved successfully' });
+    } catch (error) {
+        console.error('Error saving push token:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
