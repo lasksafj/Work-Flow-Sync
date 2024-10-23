@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import ScheduleCard from './ScheduleCard';
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons } from '@expo/vector-icons';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import api from '@/apis/api';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 
 interface ScheduleDetailProps {
     detail: string;
@@ -13,37 +14,34 @@ interface ScheduleDetailProps {
 }
 
 const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onPress }) => {
-    const [listData, setListData] = useState([]);
-    const [height] = useState(new Animated.Value(isExpanded ? (listData.length ? listData.length * 100 : 50) : 0));
-
-    const organization = useAppSelector(
-        (state: RootState) => state.organization
-    );
+    const [listData, setListData] = useState<any[]>([]);
+    const heightAnim = useState(new Animated.Value(0))[0];
+    const organization = useAppSelector((state: RootState) => state.organization);
 
     useEffect(() => {
         let org = organization.abbreviation;
         let date = detail;
 
-        const fetchData = () => {
-            api.get(`/api/schedule/schedule-get?org=${org}&&chosedate=${date}`)
-                .then((res) => {
-                    const data = res.data;
-                    setListData(prev => data);
-                    Animated.timing(height, {
-                        toValue: data.length ? data.length * 100 : 50,
-                        duration: 300,
-                        useNativeDriver: false,
-                    }).start();
-                })
-                .catch((error) => {
-                    alert(error);
-                });
-        }
+        const fetchData = async () => {
+            try {
+                const res = await api.get(`/api/schedule/schedule-get?org=${org}&&chosedate=${date}`);
+                const data = res.data;
+                setListData(data);
 
-        if (isExpanded) {
+                Animated.timing(heightAnim, {
+                    toValue: isExpanded ? (listData.length ? listData.length * 100 : 50) : 0,
+                    duration: 300,
+                    useNativeDriver: false,
+                }).start();
+            } catch (error) {
+                alert(error);
+            }
+        };
+
+        if (isExpanded && !listData.length) {
             fetchData();
         } else {
-            Animated.timing(height, {
+            Animated.timing(heightAnim, {
                 toValue: isExpanded ? (listData.length ? listData.length * 100 : 50) : 0,
                 duration: 300,
                 useNativeDriver: false,
@@ -66,20 +64,21 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
         <View style={styles.container}>
             <TouchableOpacity onPress={onPress} style={styles.bar}>
                 <Text style={styles.barText}>{dateConvert(detail)}</Text>
-                {isExpanded ?
+                {isExpanded ? (
                     <Ionicons name='chevron-up' size={20} color={"white"} />
-                    :
+                ) : (
                     <Ionicons name='chevron-down' size={20} color={"white"} />
-                }
-
+                )}
             </TouchableOpacity>
-            <Animated.View style={[styles.details, { height }]}>
+
+            <Animated.View style={[styles.details, { height: heightAnim }]}>
                 {isExpanded && (
-                    listData.length > 0 ? (
-                        listData
-                            .map((item, index) => (
-                                <ScheduleCard detail={item} key={index} />
-                            ))
+                    listData.length !== 0 ? (
+                        listData.map((item, index) => (
+                            <ScheduleCard detail={item} key={index} />
+
+                        ))
+
                     ) : (
                         <View style={{ justifyContent: 'center', alignItems: 'flex-start', height: 50 }}>
                             <Text style={{ fontSize: 20, fontWeight: '300', paddingLeft: 8 }}>
@@ -95,28 +94,25 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
 
 const styles = StyleSheet.create({
     container: {
+        // padding: 10,
         margin: 3,
     },
     bar: {
-        backgroundColor: '#000000',
+        backgroundColor: '#008000',
         padding: 10,
         borderRadius: 5,
-        display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     barText: {
         color: '#FFFFFF',
         fontSize: 16,
-
     },
     details: {
+        // flexDirection: 'column',
         overflow: 'hidden',
-        backgroundColor: '#E0E0E0',
+        // backgroundColor: '#E0E0E0',
         borderRadius: 5,
-    },
-    detailContent: {
-        padding: 10,
     },
 });
 

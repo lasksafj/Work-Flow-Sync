@@ -1,10 +1,9 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, StyleSheet } from 'react-native';
 import WeekDays from './schedule/Weekdays';
 import ScheduleDetail from './schedule/ScheduleDetail';
 import moment from 'moment';
 import { useFocusEffect } from 'expo-router';
-
 
 const ScheduleScreen: React.FC = () => {
     const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
@@ -12,15 +11,6 @@ const ScheduleScreen: React.FC = () => {
     const scrollViewRef = useRef<ScrollView>(null);
     const itemRefs = useRef<{ [key: string]: View | null }>({});
 
-    const [trigger, setTrigger] = useState(0)
-    useFocusEffect(
-        useCallback(
-            () => {
-                // setExpandedDate(prev=>prev);
-                setTrigger(prev => prev + 1)
-            }
-            , [])
-    )
     const daysOfWeek = useMemo(
         () =>
             Array.from({ length: 7 }, (v, i) =>
@@ -29,11 +19,7 @@ const ScheduleScreen: React.FC = () => {
         [date]
     );
 
-    const [week, setWeek] = useState<string[]>(daysOfWeek);
-
-    useEffect(() => {
-        setWeek(daysOfWeek);
-    }, [date]);
+    const week = useMemo(() => daysOfWeek, [daysOfWeek]);
 
     useEffect(() => {
         // Scroll to the selected date and expand it
@@ -50,10 +36,8 @@ const ScheduleScreen: React.FC = () => {
         setDate(item); // Navigate to the date when the bar is pressed
     };
 
-    // console.log(week);
     return (
         <View style={styles.container}>
-
             <View style={styles.calendar}>
                 <WeekDays selectedDay={date} setSelectedDay={setDate} daysOfWeek={daysOfWeek} />
             </View>
@@ -78,12 +62,12 @@ const styles = StyleSheet.create({
         flex: 1
     },
     calendar: {
-        flex: 0.125,
-        backgroundColor: '#E1D5C9'
+        flex: 0.16,
+        backgroundColor: '#000000'
     },
     tabs: {
         paddingHorizontal: 2
     }
-})
+});
 
 export default ScheduleScreen;
