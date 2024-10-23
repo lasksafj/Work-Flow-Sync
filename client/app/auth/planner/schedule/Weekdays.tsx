@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from 'react';
+import React, { useCallback, memo, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView, Easing, PanResponder, Dimensions } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import moment from 'moment';

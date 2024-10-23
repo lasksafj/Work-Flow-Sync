@@ -81,16 +81,16 @@ const ScheduleCard = (props: any) => {
 const styles = StyleSheet.create({
     container: {
         margin: 2,
-        paddingHorizontal: 6,
-        height: 100,
+        paddingHorizontal: 4,
+        height: 80,
         backgroundColor: '#EAF0F6',
-        borderRadius: 10,
+        borderRadius: 8,
         justifyContent: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
+        shadowRadius: 3,
+        elevation: 2,
     },
     block: {
         flexDirection: 'row',
@@ -100,22 +100,22 @@ const styles = StyleSheet.create({
     first: {
         justifyContent: 'center',
         alignItems: 'center',
-        width: '20%',
+        width: '15%',
     },
     second: {
-        paddingLeft: 10,
+        paddingLeft: 6,
         textAlign: 'left',
         flexDirection: 'column',
         justifyContent: 'space-evenly',
-        width: '60%',
+        width: '65%',
     },
     secondTextPrimary: {
-        fontSize: 20,
+        fontSize: 16,
         fontWeight: '500',
         color: '#2C3E50',
     },
     secondTextSecondary: {
-        fontSize: 14,
+        fontSize: 12,
         fontWeight: '400',
         color: '#7F8C8D',
     },
@@ -130,10 +130,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     timeText: {
-        fontSize: 18,
+        fontSize: 14,
         fontWeight: '400',
         marginLeft: 4,
-        marginRight: 8,
+        marginRight: 6,
     }
 });
 

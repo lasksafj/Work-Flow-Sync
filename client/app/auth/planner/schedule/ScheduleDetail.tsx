@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import api from '@/apis/api';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native';
 
 interface ScheduleDetailProps {
     detail: string;
@@ -29,7 +29,7 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
                 setListData(data);
 
                 Animated.timing(heightAnim, {
-                    toValue: isExpanded ? (listData.length ? listData.length * 100 : 50) : 0,
+                    toValue: isExpanded ? 1 : 0,
                     duration: 300,
                     useNativeDriver: false,
                 }).start();
@@ -42,7 +42,7 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
             fetchData();
         } else {
             Animated.timing(heightAnim, {
-                toValue: isExpanded ? (listData.length ? listData.length * 100 : 50) : 0,
+                toValue: isExpanded ? 1 : 0,
                 duration: 300,
                 useNativeDriver: false,
             }).start();
@@ -71,14 +71,14 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
                 )}
             </TouchableOpacity>
 
-            <Animated.View style={[styles.details, { height: heightAnim }]}>
+            <Animated.View style={[styles.details, { opacity: heightAnim }]}>
                 {isExpanded && (
                     listData.length !== 0 ? (
-                        listData.map((item, index) => (
-                            <ScheduleCard detail={item} key={index} />
-
-                        ))
-
+                        <FlatList
+                            data={listData}
+                            renderItem={({ item }) => <ScheduleCard detail={item} />}
+                            keyExtractor={(item, index) => index.toString()}
+                        />
                     ) : (
                         <View style={{ justifyContent: 'center', alignItems: 'flex-start', height: 50 }}>
                             <Text style={{ fontSize: 20, fontWeight: '300', paddingLeft: 8 }}>
@@ -94,7 +94,6 @@ const ScheduleDetail: React.FC<ScheduleDetailProps> = ({ detail, isExpanded, onP
 
 const styles = StyleSheet.create({
     container: {
-        // padding: 10,
         margin: 3,
     },
     bar: {
@@ -109,9 +108,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     details: {
-        // flexDirection: 'column',
         overflow: 'hidden',
-        // backgroundColor: '#E0E0E0',
         borderRadius: 5,
     },
 });
