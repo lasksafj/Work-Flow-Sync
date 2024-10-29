@@ -3,6 +3,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
 const requestLogger = require('./middlewares/loggerMiddleware');
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
@@ -17,10 +19,28 @@ const chatSocket = require('./socket/chatSocket');
 
 
 const PORT = process.env.PORT || 3000;
+const allowedOrigins = [
+    'http://localhost:3000', // Web client
+    'http://localhost:8081', // React Native app on local network
+    'http://your-ngrok-url' // If you're using ngrok for React Native mobile
+];
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // Allow credentials like cookies
+}));
+
+app.use(cookieParser());
 app.use(requestLogger);
 
 // Routes

@@ -77,7 +77,7 @@ const EditProfile = ({
             lastName: user.profile.lastName,
             email: user.profile.email,
             phoneNumber: user.profile.phoneNumber,
-            dateOfBirth: user.profile.dateOfBirth,
+            dateOfBirth: user.profile.dateOfBirth ? new Date(user.profile.dateOfBirth) : new Date(),
         },
     });
 
@@ -88,7 +88,7 @@ const EditProfile = ({
             lastName: user.profile.lastName,
             email: user.profile.email,
             phoneNumber: user.profile.phoneNumber,
-            dateOfBirth: user.profile.dateOfBirth,
+            dateOfBirth: user.profile.dateOfBirth ? new Date(user.profile.dateOfBirth) : new Date(),
         });
     };
 

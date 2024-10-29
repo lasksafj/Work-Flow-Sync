@@ -12,11 +12,41 @@ exports.registerUser = async (req, res) => {
 exports.loginUser = async (req, res) => {
     try {
         const { accessToken, refreshToken, profile } = await userService.loginUser(req.body);
-        res.status(200).json({
-            access: accessToken,
-            refresh: refreshToken,
-            profile
-        });
+
+        const client = req.body.client;
+        if (client && client === 'web') {
+            // Set access token cookie
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === 'production',
+                // sameSite: 'Strict',
+                secure: true,
+                sameSite: 'None',
+                maxAge: 15 * 60 * 1000, // 15 minutes
+            });
+
+            // Set refresh token cookie
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === 'production',
+                // sameSite: 'Strict',
+                secure: true,
+                sameSite: 'None',
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            });
+
+            res.status(200).json({
+                profile
+            });
+        }
+        else {
+            res.status(200).json({
+                access: accessToken,
+                refresh: refreshToken,
+                profile
+            });
+        }
+
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -25,10 +55,41 @@ exports.loginUser = async (req, res) => {
 exports.refreshToken = async (req, res) => {
     try {
         const { accessToken, refreshToken } = await userService.refreshToken(req.body.refresh);
-        res.status(200).json({
-            access: accessToken,
-            refresh: refreshToken
-        });
+
+        const client = req.body.client;
+        if (client && client === 'web') {
+            // Set access token cookie
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === 'production',
+                // sameSite: 'Strict',
+                secure: true,
+                sameSite: 'None',
+                maxAge: 15 * 60 * 1000, // 15 minutes
+            });
+
+            // Set refresh token cookie
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                // secure: process.env.NODE_ENV === 'production',
+                // sameSite: 'Strict',
+                secure: true,
+                sameSite: 'None',
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+            });
+
+            res.status(200).json({
+                message: "refresh token successfully"
+            });
+        }
+        else {
+            res.status(200).json({
+                access: accessToken,
+                refresh: refreshToken
+            });
+        }
+
+
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -36,17 +97,29 @@ exports.refreshToken = async (req, res) => {
 
 exports.verifyUser = async (req, res) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const accessToken = authHeader && authHeader.split(' ')[1];
-        const { profile } = await userService.verifyUser(accessToken);
-        res.status(200).json({
-            access: accessToken,
-            profile
-        });
+        const client = req.body.client;
+        if (client && client === 'web') {
+            const accessToken = req.cookies.accessToken;
+            const { profile } = await userService.verifyUser(accessToken);
+            res.status(200).json({
+                profile
+            });
+        }
+        else {
+            const authHeader = req.headers['authorization'];
+            const accessToken = authHeader && authHeader.split(' ')[1];
+            const { profile } = await userService.verifyUser(accessToken);
+            res.status(200).json({
+                access: accessToken,
+                profile
+            });
+        }
+
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
+
 
 exports.savePushToken = async (req, res) => {
     const { pushToken } = req.body;
@@ -63,4 +136,18 @@ exports.savePushToken = async (req, res) => {
         console.error('Error saving push token:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+
+exports.logout = async (req, res) => {
+    res.clearCookie('accessToken', {
+        httpOnly: true,
+        secure: true, // Must be true if SameSite is 'None'
+        sameSite: 'None',
+    });
+    res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true, // Must be true if SameSite is 'None'
+        sameSite: 'None',
+    });
+    res.json({ message: 'Logged out successfully' });
+
 }
