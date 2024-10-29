@@ -12,9 +12,17 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { store } from '@/store/store'
 import { Provider } from 'react-redux'
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import * as Notifications from 'expo-notifications';
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 // SplashScreen.preventAutoHideAsync();
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
 
 export default function RootLayout() {
     // const colorScheme = useColorScheme();
@@ -31,6 +39,10 @@ export default function RootLayout() {
     // if (!loaded) {
     //   return null;
     // }
+
+    useEffect(() => {
+        Notifications.requestPermissionsAsync();
+    }, []);
 
     return (
         <Provider store={store}>

@@ -1,209 +1,180 @@
-import { SafeAreaView, FlatList, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import Charts from './charts'
-import Pays from './pays'
+// PayrollScreen.js
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
+import DonutChart from './charts'; // Import the DonutChart component
 import api from '@/apis/api';
-
-// const DATA = [
-//   {
-//     id: '1',
-//     workHours: 75,
-//     date: 'Jun 1 - Jun 15',
-//     payment: 2345,
-//     chartSize: 180,
-//     dateSize: 20,
-//     paymentSize: 18,
-//     isCurrentChart: true,
-//     isCurrentHour: true
-//   },
-//   {
-//     id: '2',
-//     workHours: 35,
-//     date: 'May 15 - May 30',
-//     payment: 3456,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-//   {
-//     id: '3',
-//     workHours: 15,
-//     date: 'May 1 - May 15',
-//     payment: 4567,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-//   {
-//     id: '4',
-//     workHours: 15,
-//     date: 'May 1 - May 15',
-//     payment: 4567,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-//   {
-//     id: '5',
-//     workHours: 15,
-//     date: 'May 1 - May 15',
-//     payment: 4567,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-//   {
-//     id: '6',
-//     workHours: 15,
-//     date: 'May 1 - May 15',
-//     payment: 4567,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-//   {
-//     id: '7',
-//     workHours: 15,
-//     date: 'May 1 - May 15',
-//     payment: 4567,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-//   {
-//     id: '8',
-//     workHours: 15,
-//     date: 'May 1 - May 15',
-//     payment: 4567,
-//     chartSize: 90,
-//     dateSize: 16,
-//     paymentSize: 14,
-//     isCurrentChart: false,
-//     isCurrentHour: false
-//   },
-// ];
-
-const Item = ({ workHours, date, payment, chartSize, dateSize, paymentSize, isCurrentChart, isCurrentHour }: any) => (
-  <View style={styles.containerMain}>
-    <View style={styles.chartContainerMain}>
-      <Charts workHours={workHours} heightNum={chartSize} widthNum={chartSize} isCurrentChart={isCurrentChart} />
-    </View>
-    <View style={styles.payContainerMain}>
-      <Pays workHours={workHours} date={date} payment={payment} fontSizeDate={dateSize} fontSizePayment={paymentSize} isCurrentHour={isCurrentHour} />
-    </View>
-  </View>
-);
-
-type ItemProps = {
-  id: string,
-  workHours: number,
-  date: string,
-  payment: number,
-  chartSize: number,
-  dateSize: number,
-  paymentSize: number,
-  isCurrentChart: boolean,
-  isCurrentHour: boolean
-};
-
-const Index = () => {
-  const [data, setData] = useState<ItemProps[]>([])
-  useEffect(() => {
-    api.get('/api/earnings/earning')
-      .then(response => {
-        let a = response.data as ItemProps[];
-        // console.log(a
-        a[0] = {
-          ...a[0], id: '0',
-          chartSize: 180,
-          dateSize: 20,
-          paymentSize: 18,
-          isCurrentChart: true,
-          isCurrentHour: true
-        }
-
-        for (let i = 1; i < a.length; i++) {
-          a[i] = {
-            ...a[i], id: i.toString(),
-            chartSize: 90,
-            dateSize: 16,
-            paymentSize: 14,
-            isCurrentChart: false,
-            isCurrentHour: false
-          }
-        }
-        setData(a);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }, [])
-  return (
-    <SafeAreaView style={styles.container}>
-      {/* <Text style={styles.pageName}>Earnings</Text> */}
-      <FlatList
-        data={data}
-        renderItem={({ item }) =>
-          <Item workHours={item.workHours}
-            date={item.date}
-            payment={item.payment}
-            chartSize={item.chartSize}
-            dateSize={item.dateSize}
-            paymentSize={item.paymentSize}
-            isCurrentChart={item.isCurrentChart}
-            isCurrentHour={item.isCurrentHour} />}
+import { FlashList } from '@shopify/flash-list';
+import { useAppSelector } from '@/store/hooks';
+import { RootState } from '@/store/store';
+import { Colors } from '@/constants/Colors';
 
 
-        keyExtractor={item => item.id}
-      />
-    </SafeAreaView>
-  )
+function convertHourToHourMinutes(decimalHours: number) {
+    const hours = Math.floor(decimalHours);  // Extract the whole hours
+    const minutes = Math.round((decimalHours - hours) * 60);  // Convert the decimal part to minutes
+
+    return `${hours} hrs ${minutes} min`;
 }
 
-export default Index
+const PayrollScreen = () => {
+    const [data, setData] = useState<any[]>([]);
+    const limit = 15;
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const [dataAvailable, setDataAvailable] = useState(true);
+    const [refreshing, setRefreshing] = useState(false); // New state for refreshing
+
+    const organization = useAppSelector(
+        (state: RootState) => state.organization
+    );
+
+    const fetchData = async (offset: number) => {
+        setIsLoadingMore(true);
+        try {
+            let response = await api.get(`/api/earnings/earning?org=${organization.abbreviation}&&limit=${limit}&&offset=${offset}`);
+            let res = response.data;
+            if (res) {
+                if (res.length < limit) {
+                    setDataAvailable(false);
+                }
+
+                res = res.map((elem: any, index: number) => {
+                    let n_elem = { ...elem, id: index + data.length };
+
+                    return n_elem;
+                });
+
+                setData(prevData => {
+                    return [...prevData, ...res];
+                });
+            }
+        }
+        catch (err: any) {
+            console.log('Fetch Payroll Error', err);
+            alert('Network Error');
+        }
+        setIsLoadingMore(false);
+    };
+
+    const handleLoadMore = () => {
+        if (!isLoadingMore && dataAvailable) {
+            fetchData(data.length);
+        }
+    };
+
+    const renderFooter = () => {
+        if (!isLoadingMore || refreshing) return null;
+        return <ActivityIndicator size="large" color={Colors.primary} />;
+    };
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        setData([]); // Clear existing data
+        setDataAvailable(true); // Reset data availability
+        await fetchData(0); // Fetch fresh data
+        setRefreshing(false);
+    };
+
+    useEffect(() => {
+        fetchData(data.length);
+    }, []);
+
+    const renderItem = ({ item }: any) => {
+        const chartData = [
+            {
+                value: item.normalWorkHours,
+                color: '#4caf50', // Green for normal hours
+            },
+            {
+                value: item.overtimeWorkHours,
+                color: '#f44336', // Red for overtime hours
+            },
+        ];
+
+        return (
+            <View style={styles.card}>
+                <View style={styles.row}>
+                    <DonutChart data={chartData} size={80} strokeWidth={10} />
+                    <View style={styles.infoContainer}>
+                        <Text style={styles.date}>{item.date}</Text>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Normal:</Text>
+                            <Text style={styles.value}>{convertHourToHourMinutes(item.normalWorkHours)}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Overtime:</Text>
+                            <Text style={styles.value}>{convertHourToHourMinutes(item.overtimeWorkHours)}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.label}>Gross payment:</Text>
+                            <Text style={styles.value}>${item.payment}</Text>
+                        </View>
+                    </View>
+                </View>
+            </View>
+        );
+    };
+
+    return (
+        <FlashList
+            data={data}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={renderItem}
+            estimatedItemSize={100} // Set estimated item size for better performance
+            contentContainerStyle={styles.container}
+
+            onEndReached={dataAvailable ? handleLoadMore : null}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+
+            refreshing={refreshing} // Add refreshing state
+            onRefresh={handleRefresh} // Add onRefresh handler
+        />
+    );
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  pageName: {
-    fontSize: 20,
-    textAlign: "center",
-    fontWeight: "600",
-    paddingBottom: 10,
-  },
-  containerMain: {
-    flexDirection: 'row',
-    paddingTop: 15,
-  },
-  eachContainer: {
-    flexDirection: 'row',
-    paddingBottom: 10,
-  },
-  chartContainerMain: {
-    flex: 5,
-  },
-  eachChartContainer: {
-    flex: 3
-  },
-  payContainerMain: {
-    justifyContent: 'center',
-    flex: 5,
-  },
-  eachPayContainer: {
-    justifyContent: 'center',
-    flex: 7
-  }
-})
+    container: {
+        padding: 16,
+    },
+    card: {
+        backgroundColor: '#ffffff',
+        padding: 16,
+        marginBottom: 12,
+        borderRadius: 8,
+        // Shadows and elevation
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center', // Align items vertically centered
+    },
+    infoContainer: {
+        flex: 1,
+        marginLeft: 16,
+    },
+    date: {
+        fontSize: 18,
+        fontWeight: '600',
+        marginBottom: 8,
+    },
+    infoRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 4,
+    },
+    label: {
+        fontSize: 16,
+        color: '#555',
+    },
+    value: {
+        fontSize: 16,
+        fontWeight: '500',
+    },
+});
+
+
+export default PayrollScreen;
