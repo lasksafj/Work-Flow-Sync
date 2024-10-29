@@ -148,6 +148,12 @@ export default function TabLayout() {
                     title: 'Schedule',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="calendar-account" color={color} size={size} />
+                name="planner"
+                options={{
+                    title: "Planner",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="schedule" color={color} size={size} />
+
                     ),
                 }}
             />
