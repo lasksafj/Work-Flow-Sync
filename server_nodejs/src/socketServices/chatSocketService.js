@@ -1,5 +1,6 @@
 const logger = require('../utils/logger');
 const chatService = require('../services/chatService');
+const notification = require('../utils/sendNotification')
 
 exports.sendMessage = async (io, data) => {
     try {
@@ -23,6 +24,19 @@ exports.sendMessage = async (io, data) => {
                 groupImg: groupInfo.img
             };
             io.to('ChatList:' + participant.email).emit('ChatList:newMessage', dataToEmit);
+
+            let notificationData = {
+                title: 'From: ' + newMessage.user.name,
+                body: newMessage.text,
+                data: {
+                    path: 'chat',
+                    groupId: groupId,
+                    groupName: groupInfo.name,
+                    groupImg: groupInfo.img,
+                }
+            }
+            let receriverInfo = { receiverId: '', receiverEmail: participant.email };
+            notification.sendPushNotification(userId, receriverInfo, notificationData);
         }
     }
     catch (error) {

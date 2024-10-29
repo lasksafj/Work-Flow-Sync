@@ -101,7 +101,7 @@ const connectSockets = async () => {
                 }
                 else {
                     alert('Unauthorized access. Please log in.');
-                    router.replace('');
+                    router.dismissAll();
                     logout();
                 }
             }

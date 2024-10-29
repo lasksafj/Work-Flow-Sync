@@ -70,3 +70,11 @@ exports.verifyUser = async (accessToken) => {
     }
     return { profile };
 }
+
+exports.savePushToken = async (userId, pushToken) => {
+    const result = await db.query(
+        `UPDATE users
+        SET expo_push_token = $1
+        WHERE id = $2`,
+        [pushToken, userId]);
+}
