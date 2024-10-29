@@ -10,6 +10,7 @@ const earningsRoutes = require('./routes/earningsRoutes'); // Anh
 const notificationsRoutes = require('./routes/notificationsRoutes'); // Long
 const profileRoutes = require("./routes/profileRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
+const scheduleRoutess = require("./routes/userSchedules");
 
 
 const socketConfig = require('./config/socket');
@@ -31,7 +32,7 @@ app.use('/api/earnings', earningsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/schedule", scheduleRoutes);
-
+scheduleRoutess(app)
 
 // Start the server
 const server = app.listen(PORT, '0.0.0.0', () => {
