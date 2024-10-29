@@ -3,6 +3,7 @@ import axios, { AxiosInstance } from "axios";
 
 import { hostDomain } from '@/.config/config'
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { registerForPushNotificationsAsync } from "@/utils/pushNotification";
 
 const loginLocal = async (email: string, password: string) => {
     try {
@@ -18,6 +19,18 @@ const loginLocal = async (email: string, password: string) => {
         );
         await AsyncStorage.setItem('accessToken', response.data.access);
         await AsyncStorage.setItem('refreshToken', response.data.refresh);
+
+        let token = await registerForPushNotificationsAsync();
+        await axios.post(hostDomain + '/api/user/save-push-token', {
+            pushToken: token,
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${response.data.access}`,
+            },
+        });
+
+
         return response;
     }
     catch (err: any) {
@@ -90,8 +103,23 @@ const validateToken = async () => {
 
 
 const logout = async () => {
-    await AsyncStorage.setItem('accessToken', '');
-    await AsyncStorage.setItem('refreshToken', '');
+    try {
+        let access = await AsyncStorage.getItem('accessToken');
+        await axios.post(hostDomain + '/api/user/save-push-token', {
+            pushToken: '',
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${access}`,
+            },
+        });
+
+        await AsyncStorage.setItem('accessToken', '');
+        await AsyncStorage.setItem('refreshToken', '');
+    } catch (error) {
+        console.log('LOGOUT ERROR', error);
+    }
+
 }
 
 export {

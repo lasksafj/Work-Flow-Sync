@@ -69,9 +69,9 @@ export default function HomeScreen() {
             </ThemedView>
 
             <Button title="Logout" onPress={() => {
+                router.dismissAll();
                 logout();
                 dispatch(userLogout());
-                router.replace('');
             }} />
 
 

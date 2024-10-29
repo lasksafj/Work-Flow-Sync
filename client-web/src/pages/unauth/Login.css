@@ -1,0 +1,86 @@
+.login-container {
+    background-color: #f5f6fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-inner-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    color: #2f3640;
+    text-align: center;
+}
+
+.textInput {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #dcdde1;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    font-size: 16px;
+    color: #2f3640;
+    box-sizing: border-box;
+}
+
+.button {
+    width: 100%;
+    background-color: #3498db;
+    padding: 15px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 2px 5px rgba(41, 128, 185, 0.5);
+}
+
+.button:hover {
+    opacity: 0.8;
+}
+
+.loader {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.registerContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+    align-items: center;
+}
+
+.registerText {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-right: 5px;
+}
+
+.registerButtonText {
+    font-size: 16px;
+    color: #3498db;
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.registerButtonText:hover {
+    text-decoration: underline;
+}
