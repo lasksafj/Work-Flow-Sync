@@ -4,12 +4,13 @@ import { format, isBefore, startOfToday } from 'date-fns';
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, TouchableHighlight, Modal, SafeAreaView, ActivityIndicator } from 'react-native';
 import ChatScreen from './ChatScreen';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useFocusEffect, useLocalSearchParams, usePathname } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import { useAppSelector } from '@/store/hooks';
 import { RootState } from '@/store/store';
 import { chatSocket } from '@/socket/socket';
 import { Avatar } from '@/components/Avatar';
+import * as Notifications from 'expo-notifications';
 
 type chatType = {
     groupId: string,
@@ -87,9 +88,11 @@ const ChatListScreen = () => {
     const limit = 15;
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [chatsAvailable, setChatsAvailable] = useState(true);
+    const [refreshing, setRefreshing] = useState(false); // New state for refreshing
 
 
     let { groupId, groupName, groupImg, groupCreatedAt } = useLocalSearchParams();
+
     if (groupId)
         console.log('groupId useLocalSearchParams ', groupId, groupName, groupImg, groupCreatedAt);
     else
@@ -97,9 +100,11 @@ const ChatListScreen = () => {
 
 
     const openChat = (group: any) => {
-        // console.log('open chat', group);
+        if (modalChatVisible) {
+            setModalChatVisible(false);
+        }
         setSelectedGroup(group);
-        setModalChatVisible(true);
+        setModalChatVisible(prev => { return true; });
     };
 
     const closeChat = () => {
@@ -110,11 +115,8 @@ const ChatListScreen = () => {
             )
         );
         setSelectedGroup({ groupId: '', groupName: '', groupImg: '', otherParticipantName: '' });
-        router.setParams({
-            groupId: '',
-            groupName: '',
-            groupImg: ''
-        });
+
+        // router.setParams({});
     };
 
     const createGroupNameImg = async (groupId: string) => {
@@ -220,14 +222,22 @@ const ChatListScreen = () => {
     };
 
     const renderFooter = () => {
-        if (!isLoadingMore) return null;
+        if (!isLoadingMore || refreshing) return null;
         return <ActivityIndicator size="large" color={Colors.primary} />;
+    };
+
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        setChats([]); // Clear existing data
+        setChatsAvailable(true); // Reset data availability
+        await fetchGroups(0); // Fetch fresh data
+        setRefreshing(false);
     };
 
     // open group chat from useLocalSearchParams: groupId, groupName, groupImg, groupCreatedAt
     useEffect(() => {
         async function initGroup() {
-            if (groupId && groupId != '') {
+            if (groupId) {
                 const { gname, gImg } = await createGroupNameImg(groupId as string);
                 if (!groupName || !groupImg) {
                     groupName = groupName || gname;
@@ -238,12 +248,33 @@ const ChatListScreen = () => {
                     onChatListNewMessage({ groupId, groupName, groupImg, lastMessageTime: groupCreatedAt });
             }
         }
+
         initGroup();
     }, [groupId]);
 
     useEffect(() => {
         fetchGroups(chats.length);
     }, []);
+
+    useEffect(() => {
+        const subscription = Notifications.addNotificationReceivedListener(response => {
+            if (response) {
+                const { data } = response.request.content;
+
+                if (data.path === 'chat') {
+                    if (selectedGroup.groupId == data.groupId) {
+                        // User is already viewing the chat for this groupId
+                        // Dismiss the notification
+                        Notifications.dismissNotificationAsync(response.request.identifier);
+                        return;
+                    }
+                }
+            }
+        });
+        return () => {
+            subscription.remove();
+        };
+    }, [selectedGroup]);
 
     useEffect(() => {
         chatSocket.emit('ChatList:join', user.profile.email);
@@ -305,6 +336,9 @@ const ChatListScreen = () => {
                 onEndReached={chatsAvailable ? handleLoadMore : null}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={renderFooter}
+
+                refreshing={refreshing} // Add refreshing state
+                onRefresh={handleRefresh} // Add onRefresh handler
 
             // style={styles.container}
             />
