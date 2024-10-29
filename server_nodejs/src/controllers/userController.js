@@ -136,6 +136,7 @@ exports.savePushToken = async (req, res) => {
         console.error('Error saving push token:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}
 
 exports.logout = async (req, res) => {
     res.clearCookie('accessToken', {
