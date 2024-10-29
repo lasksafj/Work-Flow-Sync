@@ -3,4 +3,3 @@ node_modules
 combined.log
 error.log
 package.json
-package-lock.json
