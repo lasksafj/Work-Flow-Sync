@@ -38,8 +38,8 @@ export default function HomeScreen() {
             });
 
         dispatch(updateOrganization({
-            abbreviation: 'ORG1',
-            name: 'Organization One',
+            abbreviation: 'ORG3',
+            name: 'Organization Three',
             address: '123 Main St'
         }));
     }, []);

@@ -134,11 +134,11 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="schedule"
+                name="planner"
                 options={{
-                    title: 'Schedule',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    title: "Planner",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="schedule" color={color} size={size} />
                     ),
                 }}
             />
