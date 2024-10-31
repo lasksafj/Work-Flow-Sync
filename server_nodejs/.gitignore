@@ -3,4 +3,5 @@ node_modules
 combined.log
 error.log
 package.json
+package-lock.json
 workflow-sync-3f3bf-firebase-adminsdk-uuja1-ee0c14861d.json
