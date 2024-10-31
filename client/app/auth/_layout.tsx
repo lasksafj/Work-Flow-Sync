@@ -2,7 +2,7 @@ import { router, Tabs, useSegments } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { connectSockets, disconnectSockets } from '@/socket/socket';
@@ -147,7 +147,7 @@ export default function TabLayout() {
                 options={{
                     title: "Planner",
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="schedule" color={color} size={size} />
+                        <MaterialCommunityIcons name="calendar-account" color={color} size={size} />
                     ),
                 }}
             />
