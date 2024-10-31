@@ -14,6 +14,7 @@ const profileRoutes = require("./routes/profileRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const scheduleRoutess = require("./routes/userSchedules");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const notificationCRUDRoutes = require('./routes/notificationCRUDRoutes');
 
 
 const socketConfig = require('./config/socket');
@@ -55,6 +56,7 @@ app.use("/api/profile", profileRoutes);
 app.use("/api/schedule", scheduleRoutes);
 scheduleRoutess(app)
 app.use("/api/dashboard", dashboardRoutes);
+app.use('/api/notificationCRUD', notificationCRUDRoutes);
 
 // Start the server
 const server = app.listen(PORT, '0.0.0.0', () => {
