@@ -143,17 +143,11 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="schedule"
-                options={{
-                    title: 'Schedule',
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="calendar-account" color={color} size={size} />
                 name="planner"
                 options={{
                     title: "Planner",
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="schedule" color={color} size={size} />
-
                     ),
                 }}
             />
