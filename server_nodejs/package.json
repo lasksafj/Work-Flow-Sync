@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "tunnel": "start cmd /K ngrok http --domain=witty-briefly-bee.ngrok-free.app 4000 && nodemon src",
+        "tunnel": "start node start-tunnel.js && nodemon src",
         "start": "nodemon src"
     },
     "keywords": [],
@@ -28,6 +28,7 @@
         "winston": "^3.13.0"
     },
     "devDependencies": {
+        "cross-env": "^7.0.3",
         "jest": "^29.7.0",
         "supertest": "^7.0.0"
     }
