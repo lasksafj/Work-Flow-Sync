@@ -3,6 +3,11 @@ const router = express.Router();
 const scheduleController = require("../controllers/scheduleController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
-router.get("/schedule-get", authMiddleware, scheduleController.scheduleGet);
+const scheduleRoutes = (app) => {
+    router.get("/schedule-get", authMiddleware, scheduleController.scheduleGet);
 
-module.exports = router;
+    return app.use("/api/schedule", router);
+}
+
+
+module.exports = scheduleRoutes;
