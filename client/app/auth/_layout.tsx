@@ -29,16 +29,23 @@ function useNotificationObserver() {
                     },
                 };
 
-                if (segments[segments.length - 1] == 'ChatListScreen') {
-                    router.replace(destination);
-                }
-                else {
-                    // this does not change local params
-                    router.push(destination);
+                // if (segments[segments.length - 1] == 'ChatListScreen') {
+                //     router.replace('/auth/chat/ChatListScreen');
+                //     // router.replace(destination);
+                // }
+                // else {
+                //     // this does not change local params
+                //     router.replace('/auth/chat/ChatListScreen');
 
-                    // // so add replace to enforce the app change local params, so that ChatListScreen initGroup can run 
-                    // router.replace(destination);
-                }
+                //     // router.push(destination);
+
+                //     // // so add replace to enforce the app change local params, so that ChatListScreen initGroup can run 
+                //     // router.replace(destination);
+                // }
+                router.replace('/auth/chat/ChatListScreen');
+                setTimeout(() => {
+                    router.replace(destination);
+                }, 500);
             }
         }
 

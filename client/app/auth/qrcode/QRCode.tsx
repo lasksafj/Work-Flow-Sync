@@ -9,7 +9,7 @@ const QRCodeGenerator = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>QR Code Generator</Text>
-            
+
             <TextInput
                 style={styles.input}
                 placeholder="Enter Organization Abbreviation"
