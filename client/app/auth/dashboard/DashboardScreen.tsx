@@ -105,7 +105,7 @@ export default function DashboardScreen() {
         api.get(`/api/dashboard/get-detail-shift?orgAbbr=${organization.abbreviation}`)
             .then((res) => {
                 const data = res.data;
-                let newShiftDetail = sampleDetails.map((detail:any) => ({
+                let newShiftDetail = sampleDetails.map((detail: any) => ({
                     ...detail,
                 }));
 
@@ -329,7 +329,7 @@ export default function DashboardScreen() {
                     onPress={() => {
                         logout(); // Call logout API
                         dispatch(userLogout()); // Update Redux state
-                        router.replace(""); // Navigate back to the login screen
+                        router.dismissAll(); // Navigate back to the login screen
                     }}
                 />
             </ScrollView>

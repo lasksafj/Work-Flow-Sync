@@ -2,7 +2,7 @@ const { log } = require("winston");
 const db = require("../config/db");
 
 exports.profileGetRole = async (req, res) => {
-    console.log(req.user);
+    // console.log(req.user);
     try {
         const data = await db.query(
             `SELECT e.role_name as role
@@ -17,7 +17,7 @@ exports.profileGetRole = async (req, res) => {
 };
 
 exports.profileGetOrg = async (req, res) => {
-    console.log(req.user);
+    // console.log(req.user);
     try {
         const data = await db.query(
             `select e.id as id, o.abbreviation as abbreviation, o.name as name, o.address as address
@@ -72,7 +72,7 @@ exports.profilePut = async (req, res) => {
             phoneNumber: user.phone_number,
             dateOfBirth: user.date_of_birth,
         };
-        console.log(profile);
+        // console.log(profile);
         res.status(200).json(profile);
     } catch (error) {
         res.status(400).json({ error: error.message });

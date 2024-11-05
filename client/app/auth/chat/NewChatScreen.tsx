@@ -269,6 +269,3 @@ const defaultStyles = StyleSheet.create({
 
 export default NewChatScreen;
 
-function dispatch(arg0: any) {
-    throw new Error('Function not implemented.');
-}

@@ -2,9 +2,9 @@ import { router, Tabs, useSegments } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+// import { useColorScheme } from '@/hooks/useColorScheme';
 import { connectSockets, disconnectSockets } from '@/socket/socket';
 import * as Notifications from 'expo-notifications';
 
@@ -29,16 +29,23 @@ function useNotificationObserver() {
                     },
                 };
 
-                if (segments[segments.length - 1] == 'ChatListScreen') {
-                    router.replace(destination);
-                }
-                else {
-                    // this does not change local params
-                    router.navigate('auth/chat/ChatListScreen');
+                // if (segments[segments.length - 1] == 'ChatListScreen') {
+                //     router.replace('/auth/chat/ChatListScreen');
+                //     // router.replace(destination);
+                // }
+                // else {
+                //     // this does not change local params
+                //     router.replace('/auth/chat/ChatListScreen');
 
-                    // so add replace to enforce the app change local params, so that ChatListScreen initGroup can run 
+                //     // router.push(destination);
+
+                //     // // so add replace to enforce the app change local params, so that ChatListScreen initGroup can run 
+                //     // router.replace(destination);
+                // }
+                router.replace('/auth/chat/ChatListScreen');
+                setTimeout(() => {
                     router.replace(destination);
-                }
+                }, 500);
             }
         }
 
@@ -134,11 +141,21 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="schedule"
+                name="qrcode"
                 options={{
-                    title: 'Schedule',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    title: 'QR Code',
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="qrcode" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="planner"
+                options={{
+                    title: "Planner",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialIcons name="schedule" color={color} size={size} />
+
                     ),
                 }}
             />
@@ -146,8 +163,8 @@ export default function TabLayout() {
                 name="dashboard"
                 options={{
                     title: 'Dashboard',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
                     ),
                 }}
             />
@@ -155,11 +172,8 @@ export default function TabLayout() {
                 name="profile"
                 options={{
                     title: "Profile",
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon
-                            name={focused ? "cube" : "cube-outline"}
-                            color={color}
-                        />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="account" color={color} size={size} />
                     ),
                 }}
             />
@@ -167,8 +181,8 @@ export default function TabLayout() {
                 name="chat"
                 options={{
                     title: 'Chat',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="chat" color={color} size={size} />
                     ),
                 }}
             />
@@ -176,10 +190,19 @@ export default function TabLayout() {
                 name="earnings"
                 options={{
                     title: 'Earnings',
-                    tabBarIcon: ({ color, focused }) => (
-                        // <TabBarIcon name={focused ? 'cube' : 'cube-outline'} color={color} />
-                        <MaterialIcons name="attach-money" size={24} color="black" />
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="currency-usd" color={color} size={size} />
                     ),
+                }}
+            />
+            <Tabs.Screen
+                name="notification"
+                options={{
+                    title: 'Notifications',
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="bell" color={color} size={size} />
+                    ),
+                    tabBarBadge: 3,
                 }}
             />
         </Tabs>

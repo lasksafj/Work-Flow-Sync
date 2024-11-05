@@ -54,10 +54,9 @@ exports.loginUser = async (req, res) => {
 
 exports.refreshToken = async (req, res) => {
     try {
-        const { accessToken, refreshToken } = await userService.refreshToken(req.body.refresh);
-
         const client = req.body.client;
         if (client && client === 'web') {
+            const { accessToken, refreshToken } = await userService.refreshToken(req.cookies.refreshToken);
             // Set access token cookie
             res.cookie('accessToken', accessToken, {
                 httpOnly: true,
@@ -83,6 +82,7 @@ exports.refreshToken = async (req, res) => {
             });
         }
         else {
+            const { accessToken, refreshToken } = await userService.refreshToken(req.body.refresh);
             res.status(200).json({
                 access: accessToken,
                 refresh: refreshToken

@@ -167,7 +167,7 @@ const ProfileScreen = () => {
         setLogOutVisible(false);
         logout();
         dispatch(userLogout());
-        router.replace("");
+        router.dismissAll();
         // alert("Logged out!");
     };
 
