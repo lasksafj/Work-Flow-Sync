@@ -4,17 +4,10 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
 const requestLogger = require('./middlewares/loggerMiddleware');
-const userRoutes = require('./routes/userRoutes');
-const chatRoutes = require('./routes/chatRoutes');
-const earningsRoutes = require('./routes/earningsRoutes'); // Anh
-const notificationsRoutes = require('./routes/notificationsRoutes'); // Long
-const profileRoutes = require("./routes/profileRoutes");
-const scheduleRoutes = require("./routes/scheduleRoutes");
-const scheduleRoutess = require("./routes/userSchedules");
-const dashboardRoutes = require("./routes/dashboardRoutes");
-const notificationCRUDRoutes = require('./routes/notificationCRUDRoutes');
+const fs = require('fs');
+const path = require('path');
+
 
 
 const socketConfig = require('./config/socket');
@@ -48,15 +41,13 @@ app.use(cookieParser());
 app.use(requestLogger);
 
 // Routes
-app.use('/api/user', userRoutes);
-app.use('/api/chat', chatRoutes);
-app.use('/api/earnings', earningsRoutes);
-app.use('/api/notifications', notificationsRoutes);
-app.use("/api/profile", profileRoutes);
-app.use("/api/schedule", scheduleRoutes);
-scheduleRoutess(app)
-app.use("/api/dashboard", dashboardRoutes);
-app.use('/api/notificationCRUD', notificationCRUDRoutes);
+const routesPath = path.join(__dirname, 'routes');
+fs.readdirSync(routesPath).forEach(file => {
+    if (file.endsWith('.js')) {
+        const route = require(path.join(routesPath, file));
+        route(app);
+    }
+});
 
 // Start the server
 const server = app.listen(PORT, '0.0.0.0', () => {

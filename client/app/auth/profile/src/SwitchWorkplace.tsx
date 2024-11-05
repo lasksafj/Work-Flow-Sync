@@ -44,8 +44,9 @@ const SwitchWorkplace = ({
     useEffect(() => {
         api.get("/api/profile/profile-getOrg")
             .then((response) => {
-                const data = response.data;
-                console.log(data);
+                let data = response.data;
+                data = data.filter((workplace: any) => workplace.abbreviation !== organization.abbreviation);
+                // console.log(data);
                 setWorkplaces(data);
             })
             .catch((error) => {

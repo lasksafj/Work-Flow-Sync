@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+// import { useColorScheme } from '@/hooks/useColorScheme';
 import { connectSockets, disconnectSockets } from '@/socket/socket';
 import * as Notifications from 'expo-notifications';
 
@@ -29,16 +29,23 @@ function useNotificationObserver() {
                     },
                 };
 
-                if (segments[segments.length - 1] == 'ChatListScreen') {
-                    router.replace(destination);
-                }
-                else {
-                    // this does not change local params
-                    router.navigate('auth/chat/ChatListScreen');
+                // if (segments[segments.length - 1] == 'ChatListScreen') {
+                //     router.replace('/auth/chat/ChatListScreen');
+                //     // router.replace(destination);
+                // }
+                // else {
+                //     // this does not change local params
+                //     router.replace('/auth/chat/ChatListScreen');
 
-                    // so add replace to enforce the app change local params, so that ChatListScreen initGroup can run 
+                //     // router.push(destination);
+
+                //     // // so add replace to enforce the app change local params, so that ChatListScreen initGroup can run 
+                //     // router.replace(destination);
+                // }
+                router.replace('/auth/chat/ChatListScreen');
+                setTimeout(() => {
                     router.replace(destination);
-                }
+                }, 500);
             }
         }
 
@@ -143,11 +150,6 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="schedule"
-                options={{
-                    title: 'Schedule',
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="calendar-account" color={color} size={size} />
                 name="planner"
                 options={{
                     title: "Planner",
@@ -201,7 +203,8 @@ export default function TabLayout() {
                         <MaterialCommunityIcons name="bell" color={color} size={size} />
                     ),
                     tabBarBadge: 3,
-                }} />
+                }}
+            />
         </Tabs>
     );
 }
