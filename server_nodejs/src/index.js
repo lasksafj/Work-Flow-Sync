@@ -12,6 +12,7 @@ const earningsRoutes = require('./routes/earningsRoutes'); // Anh
 const notificationsRoutes = require('./routes/notificationsRoutes'); // Long
 const profileRoutes = require("./routes/profileRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const workplaceRoutes = require("./routes/workplaceRoutes");
 
 
 const socketConfig = require('./config/socket');
@@ -51,6 +52,7 @@ app.use('/api/earnings', earningsRoutes);
 app.use('/api/notifications', notificationsRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/workplace", workplaceRoutes);
 
 // Start the server
 const server = app.listen(PORT, '0.0.0.0', () => {
