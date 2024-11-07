@@ -1,23 +1,31 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { useState } from 'react';
 import '../css/request.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { format } from 'date-fns';
+import ConfirmationModal from './ConfirmationModal';
 
 const dropShift = [
     {
         requestType: 'drop',
         shiftId: 2,
         employeeName: 'Long Dao',
-        shiftStart: '2024-11-06 09:30',
-        shiftEnd: '2024-11-06 14:30',
+        shiftStart: '2024-11-06T10:30:00',
+        shiftEnd: '2024-11-06T15:30:00',
         reason: "Personal",
-        requestDate: '2024-11-06',
+        requestDate: '2024-11-06T09:00:00',
         status: 'pending'
     },
 ];
 
 const DropShift = () => {
+    const [showModal, setShowModal] = useState(false);
+    const [selectedRequest, setSelectedRequest] = useState<number | null>(null);
+
+    const openModal = (index: number) => {
+        setSelectedRequest(index);
+        setShowModal(true);
+    }
+
     return (
         <div className='request'>
             <div className='container'>
@@ -30,12 +38,14 @@ const DropShift = () => {
                                         {request.employeeName}
                                     </div>
                                     <div className='card-body'>
-                                        <h5>From: {request.shiftStart}</h5>
-                                        <h5>To: {request.shiftEnd}</h5>
+                                        <h5>From: {format(new Date(request.shiftStart), 'yyyy-MM-dd hh:mm')}</h5>
+                                        <h5>To: {format(new Date(request.shiftEnd), 'yyyy-MM-dd hh:mm')}</h5>
                                         <p>Reason: {request.reason}</p>
-                                        <button type="button" className="btn btn-primary btn-sm" >Accept</button>
-                                        <button type="button" className="btn btn-primary btn-sm">Deny</button>
-                                        <h6>Request Date: {request.requestDate}</h6>
+                                        <h5>To: {format(new Date(request.shiftEnd), 'yyyy-MM-dd')}</h5>
+                                    </div>
+                                    <div className="button-container">
+                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index)}>Accept</button>
+                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index)}>Deny</button>
                                     </div>
                                 </div>
                             </div>
@@ -43,8 +53,8 @@ const DropShift = () => {
                     })}
                 </div>
             </div>
+            <ConfirmationModal showModal={showModal} setShowModal={setShowModal} />
         </div>
-
     )
 }
 
