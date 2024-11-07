@@ -1,0 +1,40 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container1 {
+    display: flex;
+    flex-direction: column;
+}
+
+.tabs {
+    padding: 15px;
+    width: 20%;
+    background: #5ce65c;
+}
+
+.content {
+    display: none;
+}
+
+.show-content {
+    display: block;
+}
+
+.request {
+    padding: 30px;
+}
+
+.request-item {
+    padding: 10px;
+}
+
+h6 {
+    font-size: x-small;
+}
+
+btn {
+    padding: 20px;
+}
