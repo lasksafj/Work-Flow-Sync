@@ -1,0 +1,117 @@
+.notifications-page {
+    width: 80%;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+.create-notification {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.notification-input {
+    width: 100%;
+    max-width: 500px;
+    height: 100px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    resize: none;
+}
+
+.btn-create {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-create:hover {
+    background-color: #0056b3;
+}
+
+.notification-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.notification-item {
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.notification-content {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.notification-sender,
+.notification-date {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.error-message {
+    color: red;
+    text-align: center;
+}
+
+.spinner {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+    margin-top: 20px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination-btn {
+    margin: 0 5px;
+    padding: 8px 12px;
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.pagination-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination-btn:hover:not(.active) {
+    background-color: #ddd;
+}
+
+.organization-select {
+    margin-bottom: 10px;
+}
+
+.organization-select select {
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+

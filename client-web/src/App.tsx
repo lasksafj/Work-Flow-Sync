@@ -5,7 +5,7 @@ import { AuthProvider } from './AuthContext';
 import PrivateRoute from './PrivateRoute';
 import Dashboard from './pages/auth/Dashboard';
 import Profile from './pages/auth/Profile';
-import NotificationPage from './pages/auth/notification/NotificationPage';
+import NotificationPage from './pages/auth/notification/NotificationsPage';
 import Login from './pages/unauth/Login';
 import Register from './pages/unauth/Register';
 import NavBar from './pages/NavBar';
