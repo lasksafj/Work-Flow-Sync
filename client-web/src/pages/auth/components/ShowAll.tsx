@@ -1,29 +1,44 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import '../css/request.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { format } from 'date-fns';
 import ConfirmationModal from './ConfirmationModal';
+import { RootState } from '../../../store/store';
+import { useAppSelector } from '../../../store/hooks';
+import api from '../../../apis/api';
 
-const dropShift = [
-    {
-        requestType: 'drop',
-        shiftId: 2,
-        employeeName: 'Long Dao',
-        shiftStart: '2024-11-06T10:30:00',
-        shiftEnd: '2024-11-06T15:30:00',
-        reason: "Personal",
-        requestDate: '2024-11-06T09:00:00',
-        status: 'pending'
-    },
-];
-
-interface DropShiftProps {
+interface ShowAllProps {
     abbreviation: string;
 }
 
-const DropShift: React.FC<DropShiftProps> = ({ abbreviation }) => {
+const ShowAll: React.FC<ShowAllProps> = ({ abbreviation }) => {
+    const [allRequestsData, setAllRequestsData] = useState<any[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState<number | null>(null);
+
+    const formatDate = (dateString: any) => {
+        const date = new Date(dateString);
+        return isNaN(date.getTime()) ? 'Invalid Date' : format(date, 'yyyy-MM-dd HH:mm');
+    }
+
+    useEffect(() => {
+        let org = abbreviation;
+
+        const fetchData = async () => {
+            try {
+                const res = await api.get(`/api/request/get-allRequests?org=${org}`);
+                const data = res.data;
+
+                setAllRequestsData(data);
+
+            } catch (error) {
+                alert(error);
+            }
+        };
+
+        fetchData();
+
+    }, [abbreviation]);
 
     const openModal = (index: number) => {
         setSelectedRequest(index);
@@ -34,21 +49,21 @@ const DropShift: React.FC<DropShiftProps> = ({ abbreviation }) => {
         <div className='request'>
             <div className='container'>
                 <div className='row'>
-                    {dropShift.map((request, index) => {
+                    {allRequestsData.map((request, index) => {
                         return (
                             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12 request-item' key={index}>
                                 <div className='card'>
                                     <div className='card-header'>
-                                        {request.employeeName}
+                                        {request.fullname}
                                     </div>
                                     <div className='card-body'>
-                                        <h5>From: {format(new Date(request.shiftStart), 'yyyy-MM-dd hh:mm')}</h5>
-                                        <h5>To: {format(new Date(request.shiftEnd), 'yyyy-MM-dd hh:mm')}</h5>
+                                        <h5>From: {formatDate(request.start_time)}</h5>
+                                        <h5>To: {formatDate(request.end_time)}</h5>
                                         <p>Reason: {request.reason}</p>
-                                        <h5>To: {format(new Date(request.shiftEnd), 'yyyy-MM-dd')}</h5>
+                                        <h6>Request Date: {formatDate(request.request_time)}</h6>
                                     </div>
                                     <div className="button-container">
-                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index)}>Accept</button>
+                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index)} >Accept</button>
                                         <button type="button" className="btn btn-primary" onClick={() => openModal(index)}>Deny</button>
                                     </div>
                                 </div>
@@ -62,4 +77,4 @@ const DropShift: React.FC<DropShiftProps> = ({ abbreviation }) => {
     )
 }
 
-export default DropShift;
+export default ShowAll;

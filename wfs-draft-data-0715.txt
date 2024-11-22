@@ -1,16 +1,16 @@
 -- 8/21/2024
 
-INSERT INTO users (email, password, last_name, first_name, phone_number, date_of_birth, avatar) VALUES
-('aaa@gmail.com', '$2b$10$IVSrdc7fG.vSZBMOOWiYbeMT9zzm4Dwtb8kxxO7KrNvrP220hZLxG', 'Doe', 'John', '1234567890', '1980-01-01', NULL),
-('bbb@gmail.com', '$2b$10$X2pD687COL1Wr4aH5wBB2uHxOipNZRRzh0xr995WIIMIw/vbnyajq', 'Smith', 'Jane', '0987654321', '1990-02-02', NULL),
-('ccc@gmail.com', '$2b$10$QbGkqVSoouPxa/lwc2nqye9SDF6wgToEotmwXSG2zrEWz6g6N5ExC', 'Brown', 'Alice', '1112223333', '1985-03-03', NULL),
-('bob.brown@example.com', 'password123', 'Brown', 'Bob', '4567890123', '1985-04-01', NULL),
-('carol.white@example.com', 'password123', 'White', 'Carol', '5678901234', '1975-05-01', NULL),
-('david.green@example.com', 'password123', 'Green', 'David', '6789012345', '1982-06-01', NULL),
-('erin.black@example.com', 'password123', 'Black', 'Erin', '7890123456', '1988-07-01', NULL),
-('frank.gray@example.com', 'password123', 'Gray', 'Frank', '8901234567', '1992-08-01', NULL),
-('grace.hill@example.com', 'password123', 'Hill', 'Grace', '9012345678', '1995-09-01', NULL),
-('hank.ford@example.com', 'password123', 'Ford', 'Hank', '0123456789', '1991-10-01', NULL);
+INSERT INTO users (email, password, last_name, first_name, phone_number, date_of_birth, avatar, expo_push_token) VALUES
+('aaa@gmail.com', '$2b$10$IVSrdc7fG.vSZBMOOWiYbeMT9zzm4Dwtb8kxxO7KrNvrP220hZLxG', 'Doe', 'John', '1234567890', '1980-01-01', NULL, 'ExponentPushToken[b39nbKOJq7leldmn9FBRNq]'),
+('bbb@gmail.com', '$2b$10$X2pD687COL1Wr4aH5wBB2uHxOipNZRRzh0xr995WIIMIw/vbnyajq', 'Smith', 'Jane', '0987654321', '1990-02-02', NULL, 'ExponentPushToken[b39nbKOJq7leldmn9FBRNq]'),
+('ccc@gmail.com', '$2b$10$QbGkqVSoouPxa/lwc2nqye9SDF6wgToEotmwXSG2zrEWz6g6N5ExC', 'Brown', 'Alice', '1112223333', '1985-03-03', NULL, 'ExponentPushToken[b39nbKOJq7leldmn9FBRNq]'),
+('bob.brown@example.com', 'password123', 'Brown', 'Bob', '4567890123', '1985-04-01', NULL, NULL),
+('carol.white@example.com', 'password123', 'White', 'Carol', '5678901234', '1975-05-01', NULL, NULL),
+('david.green@example.com', 'password123', 'Green', 'David', '6789012345', '1982-06-01', NULL, NULL),
+('erin.black@example.com', 'password123', 'Black', 'Erin', '7890123456', '1988-07-01', NULL, NULL),
+('frank.gray@example.com', 'password123', 'Gray', 'Frank', '8901234567', '1992-08-01', NULL, NULL),
+('grace.hill@example.com', 'password123', 'Hill', 'Grace', '9012345678', '1995-09-01', NULL, NULL),
+('hank.ford@example.com', 'password123', 'Ford', 'Hank', '0123456789', '1991-10-01', NULL, NULL);
 
 -- Insert data into organizations table
 INSERT INTO organizations (abbreviation, name, address, start_date) VALUES

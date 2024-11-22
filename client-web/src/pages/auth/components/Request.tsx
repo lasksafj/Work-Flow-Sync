@@ -1,14 +1,23 @@
 // components/Profile.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
-import RequestOff from './RequestOff';
+import ShowAll from './ShowAll';
 import DropShift from './DropShift';
 import SwapShift from './SwapShift';
 import '../css/request.css';
+import api from '../../../apis/api';
+
+interface AllOrgsProps {
+    abbreviation: string,
+    name: string,
+}
 
 const Request: React.FC = () => {
+    const user = useSelector((state: RootState) => state.user);
+    const [allOrgs, setAllOrgs] = useState<AllOrgsProps[]>([]);
     const [toggle, setToggle] = useState(1);
+    const [abbreviation, setAbbreviation] = useState('');
 
     function updateToggle(id: number) {
         setToggle(id);
@@ -16,16 +25,51 @@ const Request: React.FC = () => {
 
     const renderTabContent = () => {
         switch (toggle) {
-            case 1: return <RequestOff />;
-            case 2: return <SwapShift />;
-            case 3: return <DropShift />;
+            case 1: return <ShowAll abbreviation={abbreviation} />;
+            case 2: return <SwapShift abbreviation={abbreviation} />;
+            case 3: return <DropShift abbreviation={abbreviation} />;
             default: return null;
         }
     }
 
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await api.get(`/api/request/get-org`);
+                const data = res.data;
+
+                setAllOrgs(data);
+            } catch (error) {
+                alert(error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const onChange = (event: any) => {
+        const selectedIndex = event.target.value;
+        const selected = allOrgs[selectedIndex].abbreviation;
+        setAbbreviation(selected);
+
+    };
+
     return (
         <>
             <div className='container1'>
+                <div>Workplace Name</div>
+                <select
+                    className="form-select"
+                    aria-label="Default select example"
+                    onChange={onChange}
+                >
+                    <option value='' selected disabled>Please choose the work place</option>
+                    {allOrgs.map((org, index) => {
+                        return (
+                            <option value={index}>{org.name} </option>
+                        )
+                    })}
+                </select>
                 <div className='bloc-tab'>
                     <button
                         className={`tabs ${toggle === 1 ? 'active' : ''}`}
@@ -33,7 +77,7 @@ const Request: React.FC = () => {
                         role='tab'
                         aria-selected={toggle === 1}
                     >
-                        Request Off
+                        All Requests
                     </button>
                     <button
                         className={`tabs ${toggle === 2 ? 'active' : ''}`}
@@ -41,7 +85,7 @@ const Request: React.FC = () => {
                         role='tab'
                         aria-selected={toggle === 2}
                     >
-                        Swap Shift
+                        Swap Shifts
                     </button>
                     <button
                         className={`tabs ${toggle === 3 ? 'active' : ''}`}
@@ -49,7 +93,7 @@ const Request: React.FC = () => {
                         role='tab'
                         aria-selected={toggle === 3}
                     >
-                        Drop Shift
+                        Drop Shifts
                     </button>
                 </div>
                 <div className='content-wrapper'>

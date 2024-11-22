@@ -1,0 +1,87 @@
+INSERT INTO users (email, password, last_name, first_name, phone_number, date_of_birth, avatar, expo_push_token) VALUES
+('aaa@gmail.com', '$2b$10$IVSrdc7fG.vSZBMOOWiYbeMT9zzm4Dwtb8kxxO7KrNvrP220hZLxG', 'Doe', 'John', '1234567890', '1980-01-01', NULL, 'ExponentPushToken[b39nbKOJq7leldmn9FBRNq]'),
+('bbb@gmail.com', '$2b$10$X2pD687COL1Wr4aH5wBB2uHxOipNZRRzh0xr995WIIMIw/vbnyajq', 'Smith', 'Jane', '0987654321', '1990-02-02', NULL, 'ExponentPushToken[b39nbKOJq7leldmn9FBRNq]'),
+('ccc@gmail.com', '$2b$10$QbGkqVSoouPxa/lwc2nqye9SDF6wgToEotmwXSG2zrEWz6g6N5ExC', 'Brown', 'Alice', '1112223333', '1985-03-03', NULL, 'ExponentPushToken[b39nbKOJq7leldmn9FBRNq]'),
+('bob.brown@example.com', 'password123', 'Brown', 'Bob', '4567890123', '1985-04-01', NULL, NULL),
+('carol.white@example.com', 'password123', 'White', 'Carol', '5678901234', '1975-05-01', NULL, NULL),
+('david.green@example.com', 'password123', 'Green', 'David', '6789012345', '1982-06-01', NULL, NULL),
+('erin.black@example.com', 'password123', 'Black', 'Erin', '7890123456', '1988-07-01', NULL, NULL),
+('frank.gray@example.com', 'password123', 'Gray', 'Frank', '8901234567', '1992-08-01', NULL, NULL),
+('grace.hill@example.com', 'password123', 'Hill', 'Grace', '9012345678', '1995-09-01', NULL, NULL),
+('hank.ford@example.com', 'password123', 'Ford', 'Hank', '0123456789', '1991-10-01', NULL, NULL);
+
+-- Insert data into organizations table
+INSERT INTO organizations (abbreviation, name, address, start_date) VALUES
+('ORG1', 'Organization One', '123 Main St', '2024-01-01'),
+('ORG2', 'Organization Two', '456 Market St', '2024-01-01'),
+('ORG3', 'Organization Three', '789 Elm St', '2024-01-01'),
+('ORG4', 'Organization Four', '101 Pine St', '2024-01-01'),
+('ORG5', 'Organization Five', '202 Oak St', '2024-01-01'),
+('ORG6', 'Organization Six', '303 Maple St', '2024-01-01'),
+('ORG7', 'Organization Seven', '404 Birch St', '2024-01-01');
+
+-- Insert data into roles table
+INSERT INTO roles (name, description, org_abbreviation) VALUES
+('Manager', 'Manages the team', 'ORG3'),
+('Server', 'Serves customers', 'ORG3'),
+('Cook', 'Prepares food', 'ORG3'),
+('Foodrunner', 'Delivers food to tables', 'ORG3'),
+('Host', 'Welcomes guests', 'ORG3'),
+('Busser', 'Clears tables', 'ORG3'),
+('Dishwasher', 'Cleans dishes', 'ORG3');
+
+-- Insert data into employees table
+INSERT INTO employees (employee_number, pay_rate, role_name, user_id, org_abbreviation) VALUES
+(101, 15.00, 'Manager', 1, 'ORG3'),
+(102, 12.00, 'Server', 2, 'ORG3'),
+(103, 13.00, 'Foodrunner', 3, 'ORG3'),
+(104, 11.00, 'Host', 3, 'ORG3'),
+(105, 10.00, 'Busser', 4, 'ORG3'),
+(106, 14.00, 'Dishwasher', 5, 'ORG3'),
+(107, 15.00, 'Dishwasher', 6, 'ORG3');
+
+-- Populating the 'shifts' table (updated column name to 'org_abbreviation')
+INSERT INTO shifts (day_of_week, start_time, end_time, org_abbreviation) VALUES
+('Monday', '09:00:00', '12:00:00', 'ORG3'),
+('Monday', '13:00:00', '21:00:00', 'ORG3'),
+('Tuesday', '09:00:00', '12:00:00', 'ORG3'),
+('Tuesday', '13:00:00', '21:00:00', 'ORG3'),
+('Wednesday', '09:00:00', '12:00:00', 'ORG3'),
+('Wednesday', '13:00:00', '21:00:00', 'ORG3'),
+('Thursday', '09:00:00', '12:00:00', 'ORG3'),
+('Thursday', '13:00:00', '21:00:00', 'ORG3'),
+('Friday', '09:00:00', '12:00:00', 'ORG3'),
+('Friday', '13:00:00', '21:00:00', 'ORG3'),
+('Saturday', '09:00:00', '12:00:00', 'ORG3'),
+('Saturday', '13:00:00', '21:00:00', 'ORG3'),
+('Sunday', '09:00:00', '12:00:00', 'ORG3'),
+('Sunday', '13:00:00', '21:00:00', 'ORG3');
+
+-- Populating the 'schedules' table (no changes)
+INSERT INTO schedules (emp_id, start_time, end_time, create_at, shift_id) VALUES
+(1, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(2, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(3, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(4, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(5, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(6, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(7, '2024-11-22 09:00:00', '2024-11-22 12:00:00', '2024-11-19 10:00:00', 9),
+(1, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11),
+(2, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11),
+(3, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11),
+(4, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11),
+(5, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11),
+(6, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11),
+(7, '2024-11-23 09:00:00', '2024-11-23 12:00:00', '2024-11-19 10:00:00', 11);
+
+-- Populating the 'request' table (updated column name to 'employee_id')
+INSERT INTO request (schedules_id, status, reason, request_time, manager_id, approved_time, employee_id) VALUES
+(2, 'Pending', 'Personal', '2024-11-20 10:00:00', NULL, NULL, 2),
+(3, 'Pending', 'Family', '2024-11-20 10:00:00', NULL, NULL, 3),
+(4, 'Pending', 'Need to swap shift', '2024-11-20 10:00:00', NULL, NULL, 4),
+(5, 'Pending', 'Need to swap shift', '2024-11-20 10:00:00', NULL, NULL, 5);
+
+-- Populating the 'exchange' table (updated column name to 'employee_id')
+INSERT INTO exchange (request_id, employee_id, schedules_id) VALUES
+(3, 4, 4),
+(4, 5, 5);

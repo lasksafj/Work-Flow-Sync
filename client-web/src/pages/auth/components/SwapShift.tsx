@@ -77,7 +77,11 @@ const swapShift = [
     },
 ];
 
-const SwapShift = () => {
+interface SwapShiftProps {
+    abbreviation: string;
+}
+
+const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState<number | null>(null);
 
