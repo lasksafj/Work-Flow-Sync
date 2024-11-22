@@ -6,6 +6,8 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const requestRoutes = (app) => {
     router.get('/get-org', authMiddleware, requestController.getOrg);
     router.get('/get-allRequests', authMiddleware, requestController.getAllRequests);
+    router.get('/get-dropshifts', authMiddleware, requestController.getDropShifts);
+    router.get('/get-swapshifts', authMiddleware, requestController.getSwapShifts);
     return app.use('/api/request', router);
 }
 

@@ -1,7 +1,5 @@
 // components/Profile.tsx
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../store/store';
 import ShowAll from './ShowAll';
 import DropShift from './DropShift';
 import SwapShift from './SwapShift';
@@ -14,7 +12,6 @@ interface AllOrgsProps {
 }
 
 const Request: React.FC = () => {
-    const user = useSelector((state: RootState) => state.user);
     const [allOrgs, setAllOrgs] = useState<AllOrgsProps[]>([]);
     const [toggle, setToggle] = useState(1);
     const [abbreviation, setAbbreviation] = useState('');

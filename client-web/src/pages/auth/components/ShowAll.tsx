@@ -3,8 +3,6 @@ import '../css/request.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { format } from 'date-fns';
 import ConfirmationModal from './ConfirmationModal';
-import { RootState } from '../../../store/store';
-import { useAppSelector } from '../../../store/hooks';
 import api from '../../../apis/api';
 
 interface ShowAllProps {
@@ -30,14 +28,12 @@ const ShowAll: React.FC<ShowAllProps> = ({ abbreviation }) => {
                 const data = res.data;
 
                 setAllRequestsData(data);
-
             } catch (error) {
                 alert(error);
             }
         };
 
         fetchData();
-
     }, [abbreviation]);
 
     const openModal = (index: number) => {
