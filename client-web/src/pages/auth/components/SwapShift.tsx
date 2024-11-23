@@ -13,6 +13,7 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
     const [swapShiftsData, setSwapShiftsData] = useState<any[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState<number | null>(null);
+    const [actionType, setActionType] = useState<string>('');
 
     const formatDate = (dateString: any) => {
         const date = new Date(dateString);
@@ -36,10 +37,40 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
         fetchData();
     }, [abbreviation]);
 
-    const openModal = (index: number) => {
+    const openModal = (index: number, action: string) => {
         setSelectedRequest(index);
+        setActionType(action);
         setShowModal(true);
     }
+
+    const handleAction = async () => {
+        if (selectedRequest === null) return;
+
+        const requestId = swapShiftsData[selectedRequest].id;
+        const scheduleId1 = swapShiftsData[selectedRequest].scheduleid1;
+        const scheduleId2 = swapShiftsData[selectedRequest].scheduleid2;
+        const empid1 = swapShiftsData[selectedRequest].empid1;
+        const empid2 = swapShiftsData[selectedRequest].empid2;
+
+        try {
+            // Call the appropriate API endpoint
+            await api.put('/api/request/update-swapshifts',
+                { requestId, swapStatus: actionType, scheduleId1, scheduleId2, empid1, empid2 });
+
+            // Update the UI by removing the processed request
+            setSwapShiftsData(prevData =>
+                prevData.filter((_, index) => index !== selectedRequest)
+            );
+
+            alert(`Request ${actionType}ed successfully!`);
+        } catch (error: any) {
+            alert(`Failed to ${actionType.toLowerCase()} request: ${error.message}`);
+        } finally {
+            setShowModal(false);
+            setSelectedRequest(null);
+            setActionType('');
+        }
+    };
 
     return (
         <div className='request'>
@@ -66,8 +97,8 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
                                         <h6>Request Date: {formatDate(request.request_time)}</h6>
                                     </div>
                                     <div className="button-container">
-                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index)}>Accept</button>
-                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index)}>Deny</button>
+                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index, 'Accept')}>Accept</button>
+                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index, 'Deny')}>Deny</button>
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +106,12 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
                     })}
                 </div>
             </div>
-            <ConfirmationModal showModal={showModal} setShowModal={setShowModal} />
+            <ConfirmationModal
+                showModal={showModal}
+                setShowModal={setShowModal}
+                onConfirm={handleAction}
+                actionType={actionType}
+            />
         </div>
     )
 }

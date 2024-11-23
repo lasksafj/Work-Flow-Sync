@@ -2,22 +2,24 @@ import React from 'react';
 import '../css/request.css';
 import { Modal, Button } from 'react-bootstrap';
 
-type ModalProps = {
+interface ConfirmationModalProps {
     showModal: boolean;
-    setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setShowModal: (show: boolean) => void;
+    onConfirm: () => void;
+    actionType: string;
 };
 
-const ConfirmationModal = ({
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     showModal,
     setShowModal,
-}: ModalProps) => {
-    function dispatch(arg0: any) {
-        throw new Error("Function not implemented.");
-    }
+    onConfirm,
+    actionType
+}: ConfirmationModalProps) => {
+
     return (
         <Modal show={showModal} onHide={() => setShowModal(false)} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Are you sure?</Modal.Title>
+                <Modal.Title>Do you {actionType.toLowerCase()}?</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Modal.Title>Remember: After choosing, you cannot change it.</Modal.Title>
@@ -28,7 +30,10 @@ const ConfirmationModal = ({
                 </Button>
                 <Button
                     variant="success"
-                    onClick={() => alert('You chose it!')}
+                    onClick={() => {
+                        onConfirm();
+                        setShowModal(false);
+                    }}
                 >
                     OK
                 </Button>

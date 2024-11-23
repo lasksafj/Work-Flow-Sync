@@ -1,6 +1,5 @@
 // components/Profile.tsx
 import React, { useEffect, useState } from 'react';
-import ShowAll from './ShowAll';
 import DropShift from './DropShift';
 import SwapShift from './SwapShift';
 import '../css/request.css';
@@ -22,9 +21,8 @@ const Request: React.FC = () => {
 
     const renderTabContent = () => {
         switch (toggle) {
-            case 1: return <ShowAll abbreviation={abbreviation} />;
-            case 2: return <SwapShift abbreviation={abbreviation} />;
-            case 3: return <DropShift abbreviation={abbreviation} />;
+            case 1: return <SwapShift abbreviation={abbreviation} />;
+            case 2: return <DropShift abbreviation={abbreviation} />;
             default: return null;
         }
     }
@@ -74,21 +72,13 @@ const Request: React.FC = () => {
                         role='tab'
                         aria-selected={toggle === 1}
                     >
-                        All Requests
+                        Swap Shifts
                     </button>
                     <button
                         className={`tabs ${toggle === 2 ? 'active' : ''}`}
                         onClick={() => updateToggle(2)}
                         role='tab'
                         aria-selected={toggle === 2}
-                    >
-                        Swap Shifts
-                    </button>
-                    <button
-                        className={`tabs ${toggle === 3 ? 'active' : ''}`}
-                        onClick={() => updateToggle(3)}
-                        role='tab'
-                        aria-selected={toggle === 3}
                     >
                         Drop Shifts
                     </button>
