@@ -27,15 +27,17 @@ const Request: React.FC = () => {
         }
     }
 
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const res = await api.get(`/api/request/get-org`);
-                const data = res.data;
-
-                setAllOrgs(data);
+                setAllOrgs(res.data);
             } catch (error) {
                 alert(error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -52,37 +54,46 @@ const Request: React.FC = () => {
     return (
         <>
             <div className='container1'>
-                <div>Workplace Name</div>
-                <select
-                    className="form-select"
-                    aria-label="Default select example"
-                    onChange={onChange}
-                >
-                    <option value='' selected disabled>Please choose the work place</option>
-                    {allOrgs.map((org, index) => {
-                        return (
-                            <option value={index}>{org.name} </option>
-                        )
-                    })}
-                </select>
-                <div className='bloc-tab'>
+                {isLoading ? (
+                    <div className="loader" aria-live="polite">
+                        Loading workplaces...
+                    </div>
+                ) : (
+                    <select
+                        className="form-select custom-select"
+                        aria-label="Select a workplace"
+                        onChange={onChange}
+                    >
+                        <option value='' disabled selected>
+                            Select a workplace
+                        </option>
+                        {allOrgs.map((org, index) => (
+                            <option key={index} value={index}>
+                                {org.name}
+                            </option>
+                        ))}
+                    </select>
+                )}
+
+                <div className="bloc-tab">
                     <button
                         className={`tabs ${toggle === 1 ? 'active' : ''}`}
                         onClick={() => updateToggle(1)}
-                        role='tab'
+                        role="tab"
                         aria-selected={toggle === 1}
                     >
-                        Swap Shifts
+                        <span className="tab-icon">🔄</span> Swap Shifts
                     </button>
                     <button
                         className={`tabs ${toggle === 2 ? 'active' : ''}`}
                         onClick={() => updateToggle(2)}
-                        role='tab'
+                        role="tab"
                         aria-selected={toggle === 2}
                     >
-                        Drop Shifts
+                        <span className="tab-icon">❌</span> Drop Shifts
                     </button>
                 </div>
+
                 <div className='content-wrapper'>
                     <div className={'content  show-content'}>
                         {renderTabContent()}

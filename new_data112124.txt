@@ -28,7 +28,9 @@ INSERT INTO roles (name, description, org_abbreviation) VALUES
 ('Foodrunner', 'Delivers food to tables', 'ORG3'),
 ('Host', 'Welcomes guests', 'ORG3'),
 ('Busser', 'Clears tables', 'ORG3'),
-('Dishwasher', 'Cleans dishes', 'ORG3');
+('Dishwasher', 'Cleans dishes', 'ORG3'),
+('Manager', 'Manages the team', 'ORG1'),
+('Manager', 'Manages the team', 'ORG2');
 
 -- Insert data into employees table
 INSERT INTO employees (employee_number, pay_rate, role_name, user_id, org_abbreviation) VALUES
@@ -38,7 +40,9 @@ INSERT INTO employees (employee_number, pay_rate, role_name, user_id, org_abbrev
 (104, 11.00, 'Host', 3, 'ORG3'),
 (105, 10.00, 'Busser', 4, 'ORG3'),
 (106, 14.00, 'Dishwasher', 5, 'ORG3'),
-(107, 15.00, 'Dishwasher', 6, 'ORG3');
+(107, 15.00, 'Dishwasher', 6, 'ORG3'),
+(108, 15.00, 'Manager', 1, 'ORG1'),
+(109, 15.00, 'Manager', 1, 'ORG2');
 
 -- Populating the 'shifts' table (updated column name to 'org_abbreviation')
 INSERT INTO shifts (day_of_week, start_time, end_time, org_abbreviation) VALUES
