@@ -8,6 +8,7 @@ import Profile from './pages/auth/Profile';
 import Login from './pages/unauth/Login';
 import Register from './pages/unauth/Register';
 import NavBar from './pages/NavBar';
+import ShiftAssignment from './pages/auth/scheduler/ShiftAssignment';
 
 
 
@@ -20,6 +21,8 @@ const App: React.FC = () => {
                     {/* Protected Routes */}
                     <Route path="/" element={<PrivateRoute component={Dashboard} />} />
                     <Route path="/profile" element={<PrivateRoute component={Profile} />} />
+                    <Route path='/shift' element={<PrivateRoute component={ShiftAssignment} />} />
+
                     <Route path="/logout" element={<PrivateRoute component={() => null} />} />
 
                     {/* Public Routes */}

@@ -1,13 +1,14 @@
 -- Created by Vertabelo (http://vertabelo.com)
--- Last modification date: 2024-09-20 20:34:33.842
+-- Last modification date: 2024-11-22 00:38:48.495
 
 -- tables
 -- Table: availabletimes
 CREATE TABLE availabletimes (
-    start_time timestamp  NOT NULL,
-    end_time timestamp  NOT NULL,
-    emp_id int  NOT NULL,
-    CONSTRAINT availabletimes_pk PRIMARY KEY (emp_id,end_time,start_time)
+    start_time time  NOT NULL,
+    end_time time  NOT NULL,
+    employee_id int  NOT NULL,
+    day_of_week varchar(20)  NOT NULL,
+    CONSTRAINT availabletimes_pk PRIMARY KEY (employee_id,day_of_week,end_time,start_time)
 );
 
 -- Table: employees
@@ -15,17 +16,23 @@ CREATE TABLE employees (
     id serial  NOT NULL,
     employee_number int  NOT NULL,
     pay_rate decimal(7,2)  NOT NULL,
-    role_name varchar(80)  NOT NULL,
     user_id int  NOT NULL,
+    role_name varchar(80)  NOT NULL,
     org_abbreviation varchar(10)  NOT NULL,
-    CONSTRAINT Employee_uk_01 UNIQUE (user_id, org_abbreviation, role_name) NOT DEFERRABLE  INITIALLY IMMEDIATE,
-    CONSTRAINT Employee_uk_02 UNIQUE (org_abbreviation, employee_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT Employee_uk_01 UNIQUE (user_id, org_abbreviation, employee_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT employees_uk_2 UNIQUE (user_id, org_abbreviation, role_name) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT employees_pk PRIMARY KEY (id)
 );
 
 CREATE INDEX employees_idx_1 on employees (user_id ASC);
 
-CREATE INDEX employees_idx_2 on employees (org_abbreviation ASC);
+-- Table: exchange
+CREATE TABLE exchange (
+    request_id int  NOT NULL,
+    employee_id int  NOT NULL,
+    schedules_id int  NOT NULL,
+    CONSTRAINT exchange_pk PRIMARY KEY (request_id,employee_id,schedules_id)
+);
 
 -- Table: feedbacks
 CREATE TABLE feedbacks (
@@ -95,19 +102,56 @@ CREATE TABLE participants (
 
 CREATE INDEX participants_idx_1 on participants (group_id ASC);
 
+-- Table: request
+CREATE TABLE request (
+    id serial  NOT NULL,
+    schedules_id int  NOT NULL,
+    status varchar(20)  NOT NULL,
+    reason varchar(200)  NOT NULL,
+    request_time timestamp  NOT NULL,
+    manager_id int  NULL,
+    approved_time timestamp  NULL,
+    employee_id int  NOT NULL,
+    CONSTRAINT request_pk PRIMARY KEY (id)
+);
+
 -- Table: roles
 CREATE TABLE roles (
     name varchar(80)  NOT NULL,
     description varchar(200)  NOT NULL,
-    CONSTRAINT roles_pk PRIMARY KEY (name)
+    org_abbreviation varchar(10)  NOT NULL,
+    CONSTRAINT roles_pk PRIMARY KEY (name,org_abbreviation)
+);
+
+-- Table: roleshifts
+CREATE TABLE roleshifts (
+    role_name varchar(80)  NOT NULL,
+    org_abbreviation varchar(10)  NOT NULL,
+    shift_id int  NOT NULL,
+    quantity int  NOT NULL,
+    CONSTRAINT roleshifts_pk PRIMARY KEY (shift_id,role_name)
 );
 
 -- Table: schedules
 CREATE TABLE schedules (
+    id serial  NOT NULL,
+    emp_id int  NOT NULL,
     start_time timestamp  NOT NULL,
     end_time timestamp  NOT NULL,
-    emp_id int  NOT NULL,
-    CONSTRAINT schedules_pk PRIMARY KEY (end_time,start_time,emp_id)
+    create_at timestamp  NOT NULL,
+    shift_id int  NOT NULL,
+    CONSTRAINT schedules_pk PRIMARY KEY (id)
+);
+
+-- Table: shifts
+CREATE TABLE shifts (
+    id serial  NOT NULL,
+    day_of_week varchar(20)  NOT NULL,
+    start_time time  NOT NULL,
+    end_time time  NOT NULL,
+    org_abbreviation varchar(10)  NOT NULL,
+    CONSTRAINT shifts_uk_1 UNIQUE (day_of_week, start_time, end_time, org_abbreviation) NOT DEFERRABLE  INITIALLY IMMEDIATE,
+    CONSTRAINT shifts_pk PRIMARY KEY (id)
 );
 
 -- Table: timesheets
@@ -115,7 +159,7 @@ CREATE TABLE timesheets (
     clock_in timestamp  NOT NULL,
     clock_out timestamp  NOT NULL,
     emp_id int  NOT NULL,
-    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,clock_out,emp_id)
+    CONSTRAINT timesheets_pk PRIMARY KEY (clock_in,emp_id)
 );
 
 -- Table: users
@@ -128,6 +172,7 @@ CREATE TABLE users (
     phone_number varchar(10)  NOT NULL,
     date_of_birth date  NOT NULL,
     avatar varchar(200)  NULL,
+    expo_push_token varchar(200)  NULL,
     CONSTRAINT User_uk_01 UNIQUE (email) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT User_uk_02 UNIQUE (phone_number) NOT DEFERRABLE  INITIALLY IMMEDIATE,
     CONSTRAINT users_pk PRIMARY KEY (id)
@@ -136,24 +181,8 @@ CREATE TABLE users (
 -- foreign keys
 -- Reference: AvailableTime_Employee (table: availabletimes)
 ALTER TABLE availabletimes ADD CONSTRAINT AvailableTime_Employee
-    FOREIGN KEY (emp_id)
+    FOREIGN KEY (employee_id)
     REFERENCES employees (id)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Employee_Organization (table: employees)
-ALTER TABLE employees ADD CONSTRAINT Employee_Organization
-    FOREIGN KEY (org_abbreviation)
-    REFERENCES organizations (abbreviation)  
-    NOT DEFERRABLE 
-    INITIALLY IMMEDIATE
-;
-
--- Reference: Employee_Role (table: employees)
-ALTER TABLE employees ADD CONSTRAINT Employee_Role
-    FOREIGN KEY (role_name)
-    REFERENCES roles (name)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -214,10 +243,58 @@ ALTER TABLE schedules ADD CONSTRAINT Schedule_Employee
     INITIALLY IMMEDIATE
 ;
 
+-- Reference: Table_25_roles (table: roleshifts)
+ALTER TABLE roleshifts ADD CONSTRAINT Table_25_roles
+    FOREIGN KEY (role_name, org_abbreviation)
+    REFERENCES roles (name, org_abbreviation)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: Table_25_shifts (table: roleshifts)
+ALTER TABLE roleshifts ADD CONSTRAINT Table_25_shifts
+    FOREIGN KEY (shift_id)
+    REFERENCES shifts (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
 -- Reference: TimeSheet_Employee (table: timesheets)
 ALTER TABLE timesheets ADD CONSTRAINT TimeSheet_Employee
     FOREIGN KEY (emp_id)
     REFERENCES employees (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: employees_roles (table: employees)
+ALTER TABLE employees ADD CONSTRAINT employees_roles
+    FOREIGN KEY (role_name, org_abbreviation)
+    REFERENCES roles (name, org_abbreviation)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: exchange_employees (table: exchange)
+ALTER TABLE exchange ADD CONSTRAINT exchange_employees
+    FOREIGN KEY (employee_id)
+    REFERENCES employees (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: exchange_request (table: exchange)
+ALTER TABLE exchange ADD CONSTRAINT exchange_request
+    FOREIGN KEY (request_id)
+    REFERENCES request (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: exchange_schedules (table: exchange)
+ALTER TABLE exchange ADD CONSTRAINT exchange_schedules
+    FOREIGN KEY (schedules_id)
+    REFERENCES schedules (id)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;
@@ -242,6 +319,54 @@ ALTER TABLE notification_receivers ADD CONSTRAINT notification_receivers_employe
 ALTER TABLE notification_receivers ADD CONSTRAINT notification_receivers_notifications
     FOREIGN KEY (notification_id)
     REFERENCES notifications (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: request_employees (table: request)
+ALTER TABLE request ADD CONSTRAINT request_employees
+    FOREIGN KEY (employee_id)
+    REFERENCES employees (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: request_managers (table: request)
+ALTER TABLE request ADD CONSTRAINT request_managers
+    FOREIGN KEY (manager_id)
+    REFERENCES employees (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: request_schedules (table: request)
+ALTER TABLE request ADD CONSTRAINT request_schedules
+    FOREIGN KEY (schedules_id)
+    REFERENCES schedules (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: roles_organizations (table: roles)
+ALTER TABLE roles ADD CONSTRAINT roles_organizations
+    FOREIGN KEY (org_abbreviation)
+    REFERENCES organizations (abbreviation)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: schedules_shifts (table: schedules)
+ALTER TABLE schedules ADD CONSTRAINT schedules_shifts
+    FOREIGN KEY (shift_id)
+    REFERENCES shifts (id)  
+    NOT DEFERRABLE 
+    INITIALLY IMMEDIATE
+;
+
+-- Reference: shifts_organizations (table: shifts)
+ALTER TABLE shifts ADD CONSTRAINT shifts_organizations
+    FOREIGN KEY (org_abbreviation)
+    REFERENCES organizations (abbreviation)  
     NOT DEFERRABLE 
     INITIALLY IMMEDIATE
 ;

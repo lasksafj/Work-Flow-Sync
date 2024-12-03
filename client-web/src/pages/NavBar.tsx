@@ -18,6 +18,7 @@ const NavBar: React.FC = () => {
             {isAuthenticated ? (
                 <>
                     <Link to="/">Dashboard</Link> | <Link to="/profile">Profile</Link> |{' '}
+                    <Link to="/shift">Shift Assignment</Link> |{' '}
                     <LogoutButton />
                 </>
             ) : (
