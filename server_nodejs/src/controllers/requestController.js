@@ -1,6 +1,7 @@
 const { log } = require("winston");
 const db = require("../config/db");
 
+// Fetch organizations associated with the user
 exports.getOrg = async (req, res) => {
     try {
         const userId = req.user.id;
@@ -13,7 +14,6 @@ exports.getOrg = async (req, res) => {
                 WHERE u.id = $1`,
             [userId]
         );
-        // console.log("SVSVE", data.rows[0].org_abbreviation);
 
         res.status(200).json(data.rows);
     } catch (error) {
@@ -21,6 +21,7 @@ exports.getOrg = async (req, res) => {
     }
 };
 
+// Fetch pending drop shift requests for a specific organization
 exports.getDropShifts = async (req, res) => {
     try {
         let org = req.query.org;
@@ -44,13 +45,14 @@ exports.getDropShifts = async (req, res) => {
                 WHERE r.status = 'Pending' AND e.org_abbreviation = $1`,
             [org]
         );
-        // console.log(data.rows[0]);
+
         res.status(200).json(data.rows);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
+// Fetch pending swap shift requests for a specific organization
 exports.getSwapShifts = async (req, res) => {
     try {
         let org = req.query.org;
@@ -72,13 +74,14 @@ exports.getSwapShifts = async (req, res) => {
             WHERE r1.status = 'Pending' AND e1.org_abbreviation = $1`,
             [org]
         );
-        // console.log(data.rows[0]);
+
         res.status(200).json(data.rows);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
+// Update the status of a drop shift request
 exports.updateDropShifts = async (req, res) => {
     try {
         let { requestId, scheduleId, dropStatus } = req.body;
@@ -90,9 +93,8 @@ exports.updateDropShifts = async (req, res) => {
              WHERE id=$3`,
             [dropStatus, userId, requestId]
         );
-        // console.log("AAAAA", swapStatus);
-        // console.log("BBBB", scheduleId);
 
+        // If the request is accepted, delete the corresponding schedule
         if (dropStatus === 'Accept') {
             await db.query(
                 `DELETE FROM schedules
@@ -106,6 +108,7 @@ exports.updateDropShifts = async (req, res) => {
     }
 };
 
+//Update the status of a swap shift request
 exports.updateSwapShifts = async (req, res) => {
     try {
         let { requestId, swapStatus, scheduleId1, scheduleId2, empid1, empid2 } = req.body;
@@ -117,13 +120,8 @@ exports.updateSwapShifts = async (req, res) => {
              WHERE id=$3`,
             [swapStatus, userId, requestId]
         );
-        console.log("AAAAA", scheduleId1);
-        console.log("BBBB", scheduleId2);
-        console.log("CCCCC", empid1);
-        console.log("DDDD", empid2);
 
-
-
+        // If the request is accepted, swap the employees assigned to the schedules
         if (swapStatus === 'Accept') {
             await db.query(
                 `UPDATE schedules
@@ -138,10 +136,9 @@ exports.updateSwapShifts = async (req, res) => {
                 [scheduleId2, empid1]
             );
         }
+
         res.status(200).json({ message: `Request ${swapStatus} successfully!` });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-
-

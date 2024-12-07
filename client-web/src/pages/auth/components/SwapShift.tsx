@@ -5,21 +5,25 @@ import { format } from 'date-fns';
 import ConfirmationModal from './ConfirmationModal';
 import api from '../../../apis/api';
 
+// Define the interface for the SwapShift component
 interface SwapShiftProps {
     abbreviation: string;
 }
 
+// SwapShift component
 const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
     const [swapShiftsData, setSwapShiftsData] = useState<any[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState<number | null>(null);
     const [actionType, setActionType] = useState<string>('');
 
+    // Format a date string
     const formatDate = (dateString: any) => {
         const date = new Date(dateString);
         return isNaN(date.getTime()) ? 'Invalid Date' : format(date, 'yyyy-MM-dd HH:mm');
     }
 
+    // Fetch swap shift requests whenever the `abbreviation` changes
     useEffect(() => {
         let org = abbreviation;
 
@@ -37,12 +41,14 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
         fetchData();
     }, [abbreviation]);
 
+    // Open the confirmation modal
     const openModal = (index: number, action: string) => {
         setSelectedRequest(index);
         setActionType(action);
         setShowModal(true);
     }
 
+    // Handle the action (Accept/Deny) on the selected request
     const handleAction = async () => {
         if (selectedRequest === null) return;
 
@@ -53,11 +59,11 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
         const empid2 = swapShiftsData[selectedRequest].empid2;
 
         try {
-            // Call the appropriate API endpoint
+            // Call the API to update the drop shift request status
             await api.put('/api/request/update-swapshifts',
                 { requestId, swapStatus: actionType, scheduleId1, scheduleId2, empid1, empid2 });
 
-            // Update the UI by removing the processed request
+            // Remove the processed request from the UI
             setSwapShiftsData(prevData =>
                 prevData.filter((_, index) => index !== selectedRequest)
             );
@@ -72,10 +78,13 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
         }
     };
 
+    // Render the SwapShift component
     return (
         <div className='request'>
             <div className='container'>
                 <div className='row'>
+
+                    {/* Render each swap shift request as a card */}
                     {swapShiftsData.map((request, index) => {
                         return (
                             <div className='col-xl-3 col-lg-4 col-md-6 col-sm-12 request-item' key={index}>
@@ -97,8 +106,10 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
                                         <h6>Request Date: {formatDate(request.request_time)}</h6>
                                     </div>
                                     <div className="button-container">
-                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index, 'Accept')}>Accept</button>
-                                        <button type="button" className="btn btn-primary" onClick={() => openModal(index, 'Deny')}>Deny</button>
+                                        <button type="button" className="btn btn-primary"
+                                            onClick={() => openModal(index, 'Accept')}>Accept</button>
+                                        <button type="button" className="btn btn-primary"
+                                            onClick={() => openModal(index, 'Deny')}>Deny</button>
                                     </div>
                                 </div>
                             </div>
@@ -106,6 +117,8 @@ const SwapShift: React.FC<SwapShiftProps> = ({ abbreviation }) => {
                     })}
                 </div>
             </div>
+
+            {/* Confirmation modal */}
             <ConfirmationModal
                 showModal={showModal}
                 setShowModal={setShowModal}
