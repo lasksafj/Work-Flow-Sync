@@ -1,31 +1,32 @@
 import React from "react";
-import { router, Stack } from "expo-router";
+import { router } from "expo-router";
 import { Text, StyleSheet, View, Modal, Button } from "react-native";
 import { logout } from "@/apis/authorize/login";
 import { userLogout } from "@/store/slices/userSlice";
+import { useAppDispatch } from "@/store/hooks";
 
+// Props type definition for controlling the modal visibility
 type LogoutProps = {
     logOutVisible: boolean;
     setLogOutVisible: React.Dispatch<React.SetStateAction<boolean>>;
-    handleLogout: () => void;
 };
 
+// Component to render the logout modal
 const Logout = ({
     logOutVisible,
     setLogOutVisible,
-    handleLogout,
 }: LogoutProps) => {
-    function dispatch(arg0: any) {
-        throw new Error("Function not implemented.");
-    }
+    // Redux dispatch hook
+    const dispatch = useAppDispatch();
 
+    // Render the modal
     return (
         <Modal
             animationType="slide"
             transparent={true}
             visible={logOutVisible}
             onRequestClose={() => {
-                setLogOutVisible(!logOutVisible);
+                setLogOutVisible(false);
             }}
         >
             <View style={styles.modalOverlay}>
@@ -35,7 +36,17 @@ const Logout = ({
                         Are you sure you want to log out?
                     </Text>
                     <View style={styles.modalButtons}>
-                        <Button title="Yes" onPress={handleLogout} />
+                        {/* Logout confirmation buttons */}
+                        <Button
+                            title="Yes"
+                            onPress={async () => {
+                                setLogOutVisible(false);
+                                await logout();
+                                router.replace('');
+                                dispatch(userLogout());
+                            }}
+                        />
+                        {/* Cancel logout */}
                         <Button
                             title="No"
                             onPress={() => setLogOutVisible(false)}
@@ -47,6 +58,7 @@ const Logout = ({
     );
 };
 
+// Styles
 const styles = StyleSheet.create({
     modalOverlay: {
         flex: 1,

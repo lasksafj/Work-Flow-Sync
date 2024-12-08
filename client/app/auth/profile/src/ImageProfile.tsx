@@ -1,17 +1,16 @@
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, TouchableOpacity, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Avatar } from "@/components/Avatar";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const ImageProfile = () => {
     const user = useAppSelector((state: RootState) => state.user);
     const [selectedImage, setSelectedImage] = useState<string | null>(
         user.profile.avatar || null
     );
-    // console.log("selectedImage2222222222", selectedImage);
 
     const pickImage = async () => {
         // Request permission to access the library
@@ -67,7 +66,7 @@ const ImageProfile = () => {
             { cancelable: true }
         );
     };
-    // console.log("selectedImage3333333333333", selectedImage);
+
     return (
         <View style={styles.container}>
             <View style={styles.profile}>
@@ -77,6 +76,12 @@ const ImageProfile = () => {
                         " " +
                         user.profile.lastName
                     } size={100} />
+                    <MaterialCommunityIcons
+                        name="camera-outline"
+                        size={24}
+                        color="#000"
+                        style={styles.cameraIcon}
+                    />
                 </TouchableOpacity>
             </View>
         </View>
@@ -94,5 +99,13 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         backgroundColor: "#fff",
+    },
+    cameraIcon: {
+        position: 'absolute',
+        bottom: 0, // Adjust for position inside the circle
+        right: 0,  // Adjust for position inside the circle
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 2, // Add padding for the background behind the icon
     },
 });
