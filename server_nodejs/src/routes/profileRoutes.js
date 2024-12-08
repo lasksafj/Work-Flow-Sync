@@ -3,6 +3,7 @@ const router = express.Router();
 const profileController = require("../controllers/profileController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
+// Define the request-related routes and middleware
 const profileRoutes = (app) => {
     router.get(
         "/profile-getRole",
@@ -16,9 +17,9 @@ const profileRoutes = (app) => {
         profileController.profileGetAllUsers
     );
     router.put("/profile-put", authMiddleware, profileController.profilePut);
+    router.put("/profile-putChangePassword", authMiddleware, profileController.profilePutPassword);
 
-    app.use("/api/profile", router);
+    return app.use("/api/profile", router);
 }
-
 
 module.exports = profileRoutes;
