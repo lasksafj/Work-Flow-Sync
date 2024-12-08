@@ -1,0 +1,162 @@
+/* All */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*Request.tsx*/
+.container1 {
+    max-width: 100%;
+    padding: 20px;
+    margin: 0 auto;
+}
+
+.loader {
+    font-size: 16px;
+    color: #007bff;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.bloc-tab {
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.tabs {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fff;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    margin: 10px;
+}
+
+.tabs:hover {
+    background-color: #f0f0f0;
+}
+
+.tabs.active {
+    background-color: #007bff;
+    color: #fff;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+    border-color: #007bff;
+}
+
+.tabs:hover:not(.active) {
+    background-color: #e0e0e0;
+}
+
+.tab-icon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.content-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.show-content {
+    display: block;
+}
+
+/* Components */
+/* Container Style*/
+.request {
+    padding: 30px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Card Styles*/
+.request-item {
+    padding: 10px;
+}
+
+.card {
+    background-color: #ade1cb !important;
+    box-shadow: 0 4px 8px rgba(49, 160, 114, 0.1);
+    border: none;
+    border-radius: 8px;
+    margin: 15px 0;
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.02);
+}
+
+.card-header {
+    background-color: #46ac82 !important;
+    color: #fff;
+    font-weight: bold;
+    padding: 12px 16px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.card-body h5,
+.card-body p,
+.card-body h6 {
+    margin: 4px 0;
+}
+
+/* Button Styles */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.custom-select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    font-size: 16px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.custom-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.6);
+}
