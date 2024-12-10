@@ -139,4 +139,3 @@ export {
     DoubleAvatar,
     Avatar
 }
-

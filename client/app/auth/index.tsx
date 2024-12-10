@@ -38,8 +38,8 @@ export default function HomeScreen() {
             });
 
         dispatch(updateOrganization({
-            abbreviation: 'ORG1',
-            name: 'Organization One',
+            abbreviation: 'ABC',
+            name: 'ABC Corporation',
             address: '123 Main St'
         }));
     }, []);
