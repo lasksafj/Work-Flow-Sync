@@ -1,4 +1,4 @@
-import { router, Tabs, useSegments } from 'expo-router';
+import { RelativePathString, router, Tabs, useSegments } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 
 import { TabBarIcon } from '@/components/navigation/TabBarIcon';
@@ -20,7 +20,7 @@ function useNotificationObserver() {
             const { data } = notification.request.content;
             if (data.path == 'chat') {
                 const destination = {
-                    pathname: '/auth/chat/ChatListScreen',
+                    pathname: '/auth/chat/ChatListScreen' as RelativePathString,
                     params: {
                         groupId: data.groupId,
                         groupName: data.groupName,

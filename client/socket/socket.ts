@@ -88,11 +88,11 @@ const connectSockets = async () => {
 
     const handleTokenExpired = async (socket: Socket) => {
         socket.on('connect_error', async (error) => {
-            console.log('SOCKKET error', error);
+            //console.log('SOCKKET error', error);
             if (error.message === 'Authentication error') {
                 let res = await getNewAccessToken();
                 if (res) {
-                    console.log('SOCKET RECONNECT', res);
+                    //console.log('SOCKET RECONNECT', res);
 
                     socket.io.opts.query = {
                         token: res.access
