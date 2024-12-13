@@ -28,7 +28,7 @@ const handleUpdateSchedule = async (userId, workingData, orgId) => {
 
     try {
         const empQuery = 'SELECT id FROM employees WHERE user_id = $1 AND org_abbreviation = $2';
-        const empResult = await db.query(empQuery, [userId, 'ORG1']);
+        const empResult = await db.query(empQuery, [userId, 'ABC']);
         const employeeId = empResult.rows[0].id;
 
         await db.query('BEGIN');
