@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Stack } from 'expo-router'
+import { Link, router, Stack } from 'expo-router'
 import { TouchableOpacity, View, Image, Text } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import { Colors } from '@/constants/Colors'
@@ -27,11 +27,17 @@ export default function ChatLayout() {
                             <TouchableOpacity>
                                 <Ionicons name="camera-outline" color={Colors.primary} size={30} />
                             </TouchableOpacity>
-                            <Link href="auth/chat/NewChatScreen" asChild>
-                                <TouchableOpacity>
-                                    <Ionicons name="add-circle" color={Colors.primary} size={30} />
-                                </TouchableOpacity>
-                            </Link>
+                            {/* <Link href="/auth/chat/NewChatScreen" asChild>
+                                
+                            </Link> */}
+                            <TouchableOpacity
+                                onPressIn={() => {
+                                    router.push("/auth/chat/NewChatScreen");
+                                }}
+                            >
+                                <Ionicons name="add-circle" color={Colors.primary} size={30} />
+                            </TouchableOpacity>
+
                         </View>
                     ),
                     headerStyle: {

@@ -33,7 +33,7 @@ const NewChatScreen = () => {
         navigation.setOptions({
             headerRight: () =>
                 <TouchableOpacity
-                    onPress={createGroup}
+                    onPressIn={createGroup}
                 >
                     <Text style={{ fontSize: 20 }}>Create</Text>
                 </TouchableOpacity>
@@ -66,7 +66,7 @@ const NewChatScreen = () => {
             let group = await getGroupWith2ParticipantsApi(user.profile.email, selectedParticipants[0].email);
             if (group) {
                 router.replace({
-                    pathname: 'auth/chat/ChatListScreen',
+                    pathname: '/auth/chat/ChatListScreen',
                     params: {
                         groupId: group.id,
                         groupName: '',
@@ -102,7 +102,7 @@ const NewChatScreen = () => {
             return;
 
         router.replace({
-            pathname: 'auth/chat/ChatListScreen',
+            pathname: '/auth/chat/ChatListScreen',
             params: {
                 groupId: group.id,
                 groupName: group.name,

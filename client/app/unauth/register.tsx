@@ -89,7 +89,7 @@ const RegisterScreen = () => {
                 const loginRes = await loginLocal(email, password);
                 if (loginRes.status) {
                     dispatch(userLogin(loginRes.data));
-                    router.push('auth');
+                    router.push('/auth');
                 }
             }
         } catch (error: any) {
@@ -224,7 +224,7 @@ const RegisterScreen = () => {
                 )}
                 <View style={styles.loginContainer}>
                     <Text style={styles.loginText}>Already have an account?</Text>
-                    <TouchableOpacity onPress={() => router.replace('unauth/login')}>
+                    <TouchableOpacity onPress={() => router.replace('/unauth/login')}>
                         <Text style={styles.loginButtonText}> Login</Text>
                     </TouchableOpacity>
                 </View>
