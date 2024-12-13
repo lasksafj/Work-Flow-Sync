@@ -4,10 +4,12 @@ const notificationCreationController = require('../controllers/notificationCreat
 const authMiddleware = require('../middlewares/authMiddleware');
 
 const notificationCreationRoutes = (app) => {
-    router.get('/notification-fetch', authMiddleware, notificationCreationController.fetchNotifications);
+    router.get('/notifications-fetch', authMiddleware, notificationCreationController.fetchNotifications);
     router.post('/notification-create', authMiddleware, notificationCreationController.createNotification);
-    router.get('/employees-fetch', authMiddleware, notificationCreationController.fetchEmployeesByOrg);
-
+    router.get('/organizations-fetch', authMiddleware, notificationCreationController.fetchOrganizations);
+    router.get('/organization-details-fetch', authMiddleware, notificationCreationController.fetchOrganizationDetails);
+    router.get('/employees-fetch', authMiddleware, notificationCreationController.fetchEmployees);
+    router.get('/employee-id-fetch', authMiddleware, notificationCreationController.fetchEmployeeId);
 
     return app.use('/api/notification', router);
 }
