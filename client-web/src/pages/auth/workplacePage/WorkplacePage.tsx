@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import api from '../../../apis/api'; // Custom API for making HTTP requests
 import {
     AppBar, Toolbar, Typography, Button, TextField, Select, MenuItem,
-    InputLabel, FormControl, Card, CardContent, List, ListItem,
-    ListItemButton, Dialog, DialogTitle, DialogContent, DialogActions,
-    Snackbar, IconButton, Container, Box, Divider, CircularProgress, ListItemText
+    InputLabel, FormControl, Card, CardContent,
+    Dialog, DialogTitle, DialogContent, DialogActions,
+    Snackbar, IconButton, Container, Box, Divider, CircularProgress
 } from '@mui/material'; // Material-UI components
 import Grid from '@mui/material/Grid'; // Grid layout system from Material-UI
 import CloseIcon from '@mui/icons-material/Close'; // Icons for UI actions
@@ -16,6 +16,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar } from '../../../components/Avatar';
+import SelectWorkplace from '../../../components/SelectWorkplace';
 
 
 // Define structure for an Employee object with optional avatar property
@@ -47,6 +48,7 @@ interface Role {
 const WorkplacePage: React.FC = () => {
     // State hooks for managing workplaces, employees, and form inputs
     const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
+
     const [selectedWorkplace, setSelectedWorkplace] = useState<Workplace | null>(null);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isAddingWorkplace, setIsAddingWorkplace] = useState(false);
@@ -293,37 +295,9 @@ const WorkplacePage: React.FC = () => {
 
             <Container>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={4}>
-                        <Typography variant="h5" gutterBottom>
-                            Workplaces
-                        </Typography>
-                        <Card variant="outlined">
-                            {loadingWorkplaces ? (
-                                <Box display="flex" justifyContent="center" alignItems="center" sx={{ p: 2 }}>
-                                    <CircularProgress />
-                                </Box>
-                            ) : (
-                                <List sx={{ maxHeight: '70vh', overflow: 'auto' }}>
-                                    {workplaces.map((workplace) => (
-                                        <ListItem key={workplace.abbreviation} disablePadding>
-                                            <ListItemButton
-                                                selected={
-                                                    selectedWorkplace?.abbreviation === workplace.abbreviation
-                                                }
-                                                onClick={() => { handleSelectWorkplace(workplace) }}
-                                            >
-                                                <ListItemText
-                                                    primary={workplace.name}
-                                                    secondary={workplace.address}
-                                                />
-                                            </ListItemButton>
-                                        </ListItem>
-                                    ))}
-                                </List>
-                            )}
-                        </Card>
-                    </Grid>
-
+                    <SelectWorkplace
+                        onSelectWorkplace={handleSelectWorkplace}
+                    />
                     {/* Workplace Details Section */}
                     <Grid item xs={12} md={8}>
                         {selectedWorkplace ? (
