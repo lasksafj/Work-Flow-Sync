@@ -18,6 +18,7 @@ const profileRoutes = (app) => {
     );
     router.put("/profile-put", authMiddleware, profileController.profilePut);
     router.put("/profile-putChangePassword", authMiddleware, profileController.profilePutPassword);
+    router.put("/change-avatar", authMiddleware, profileController.avatarPut);
 
     return app.use("/api/profile", router);
 }

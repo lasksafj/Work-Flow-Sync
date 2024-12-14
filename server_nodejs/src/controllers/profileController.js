@@ -83,6 +83,40 @@ exports.profilePut = async (req, res) => {
     }
 };
 
+// Handler to update a user's profile information
+exports.avatarPut = async (req, res) => {
+    try {
+        let {avatar} = req.body;
+        
+        // Update the user's profile data
+        const data = await db.query(
+            `UPDATE users
+             SET avatar = $1
+             WHERE id=$2`,
+            [avatar, req.user.id]
+        );
+        
+        // Fetch the updated data from the database to return it in the response
+        const result = await db.query("SELECT * FROM users WHERE id = $1", [
+            req.user.id,
+        ]);
+        const user = result.rows[0];
+
+        // Construct the profile object to return updated data
+        const profile = {
+            email: user.email,
+            lastName: user.last_name,
+            firstName: user.first_name,
+            phoneNumber: user.phone_number,
+            dateOfBirth: user.date_of_birth,
+            avatar: user.avatar,
+        };
+        res.status(200).json(profile);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
 // Handler to change a user's password
 exports.profilePutPassword = async (req, res) => {
     try {
