@@ -1,0 +1,276 @@
+-- Insert sample data into the 'organizations' table
+INSERT INTO organizations (abbreviation, name, address, start_date) VALUES
+('ORG1', 'Greenfelder, Abbott and Kutch', '352 Jacobson Rue, Port Nancy, GA 11351', '2018-11-04'),
+('ORG2', 'Murphy Group', '789 Freeman Field, Suite 570, Johnsonfort, TX 23255', '2015-07-22'),
+('ORG3', 'Fadel, Doyle and Dicki', '5427 Keith Street, East Michelle, IN 53401', '2022-08-08');
+
+-- Insert sample data into the 'roles' table
+INSERT INTO roles (name, description, org_abbreviation) VALUES
+('Technician', 'Maintains equipment and technical systems', 'ORG1'),
+('HR Specialist', 'Manages human resources tasks and employee relations', 'ORG2'),
+('Accountant', 'Handles financial records and transactions', 'ORG3'),
+('Sales Representative', 'Handles client interactions and sales tasks', 'ORG1'),
+('Marketing Manager', 'Plans and executes marketing strategies', 'ORG2'),
+('Data Analyst', 'Analyzes and interprets data for decision-making', 'ORG3'),
+('Research Scientist', 'Conducts research and development', 'ORG1'),
+('Customer Support', 'Assists clients with inquiries and technical issues', 'ORG2'),
+('Logistics Coordinator', 'Oversees logistics and supply chain management', 'ORG3'),
+('IT Administrator', 'Manages IT systems and networks', 'ORG1'),
+('Product Manager', 'Oversees product lifecycle and development', 'ORG2'),
+('Quality Assurance', 'Ensures product/service quality standards', 'ORG3'),
+('Operations Manager', 'Oversees daily operational activities', 'ORG1'),
+('Software Engineer', 'Designs and develops software systems', 'ORG2'),
+('Project Manager', 'Manages and coordinates project execution', 'ORG3');
+
+
+-- Insert sample data into the 'users' table
+INSERT INTO users (email, password, last_name, first_name, phone_number, date_of_birth) VALUES
+('aaa@gmail.com', '$2b$10$IVSrdc7fG.vSZBMOOWiYbeMT9zzm4Dwtb8kxxO7KrNvrP220hZLxG', 'Doe', 'John', '1234567890', '1980-01-01'),
+('bbb@gmail.com', '$2b$10$X2pD687COL1Wr4aH5wBB2uHxOipNZRRzh0xr995WIIMIw/vbnyajq', 'Smith', 'Jane', '0987654321', '1990-02-02'),
+('ccc@gmail.com', '$2b$10$QbGkqVSoouPxa/lwc2nqye9SDF6wgToEotmwXSG2zrEWz6g6N5ExC', 'Brown', 'Alice', '1112223333', '1985-03-03'),
+('bob.jones@example.com', 'mypassword', 'Jones', 'Bob', '5647382910', '1988-02-27'),
+('carol.white@example.com', 'safe1234', 'White', 'Carol', '6473829105', '1992-11-15'),
+('david.harris@example.com', 'pass7890', 'Harris', 'David', '8372615940', '1987-05-18'),
+('eve.clark@example.com', '1234secure', 'Clark', 'Eve', '7263940185', '1993-07-22'),
+('frank.lee@example.com', 'mypassword1', 'Lee', 'Frank', '5647382019', '1989-04-10'),
+('grace.moore@example.com', 'securepass2', 'Moore', 'Grace', '1928374056', '1994-03-30'),
+('henry.thomas@example.com', 'password5678', 'Thomas', 'Henry', '4738291056', '1991-09-05'),
+('isla.davis@example.com', 'password890', 'Davis', 'Isla', '2948375610', '1986-01-19'),
+('jack.evans@example.com', 'secure4567', 'Evans', 'Jack', '5847293016', '1997-12-25'),
+('karen.hall@example.com', 'mypassword123', 'Hall', 'Karen', '8392016475', '1990-08-09'),
+('leo.adams@example.com', 'password12345', 'Adams', 'Leo', '2948372016', '1992-02-14'),
+('mia.turner@example.com', 'mypassword1234', 'Turner', 'Mia', '5647382091', '1985-06-07');
+
+-- Insert sample data into the 'employees' table
+INSERT INTO employees (employee_number, pay_rate, user_id, role_name, org_abbreviation) VALUES
+(1234, 45.00, 1, 'Technician', 'ORG1'),
+(5678, 40.00, 2, 'Sales Representative', 'ORG1'),
+(9101, 42.50, 3, 'IT Administrator', 'ORG1'),
+(1415, 50.00, 4, 'Marketing Manager', 'ORG2'),
+(1617, 48.25, 5, 'Software Engineer', 'ORG2'),
+(1819, 39.50, 6, 'Customer Support', 'ORG2'),
+(2223, 41.75, 7, 'Logistics Coordinator', 'ORG3'),
+(2425, 46.50, 8, 'Data Analyst', 'ORG3'),
+(2627, 43.00, 9, 'Quality Assurance', 'ORG3'),
+(3031, 35.50, 10, 'Research Scientist', 'ORG1'),
+(3233, 39.00, 11, 'Technician', 'ORG1'),
+(3435, 36.75, 12, 'Operations Manager', 'ORG1'),
+(3839, 47.25, 13, 'Product Manager', 'ORG2'),
+(4041, 38.00, 14, 'Customer Support', 'ORG2'),
+(4243, 37.50, 15, 'HR Specialist', 'ORG2'),
+(4647, 42.00, 1, 'Accountant', 'ORG3'),
+(4849, 50.50, 2, 'Logistics Coordinator', 'ORG3'),
+(5051, 45.75, 3, 'Data Analyst', 'ORG3'),
+(5455, 35.25, 4, 'Sales Representative', 'ORG1'),
+(5859, 41.50, 5, 'Technician', 'ORG1'),
+(6263, 39.75, 6, 'Research Scientist', 'ORG1'),
+(6465, 43.25, 7, 'IT Administrator', 'ORG1');
+
+
+
+-- Insert sample data into the 'shifts' table
+INSERT INTO shifts (day_of_week, start_time, end_time, org_abbreviation) VALUES
+('Monday', '09:00:00', '17:00:00', 'ORG1'),
+('Tuesday', '09:00:00', '17:00:00', 'ORG2');
+
+-- Insert sample data into the 'schedules' table
+INSERT INTO schedules (emp_id, start_time, end_time, create_at, shift_id) VALUES
+(1, '2024-11-22 09:00:00', '2024-11-22 17:00:00', '2024-11-21 12:00:00', 1),
+(2, '2024-11-22 09:00:00', '2024-11-22 17:00:00', '2024-11-21 13:00:00', 2);
+
+-- Insert sample data into the 'availabletimes' table
+INSERT INTO availabletimes (start_time, end_time, employee_id, day_of_week) VALUES
+('09:00:00', '17:00:00', 1, 'Monday'),
+('09:00:00', '17:00:00', 2, 'Tuesday');
+
+-- Insert sample data into the 'feedbacks' table
+INSERT INTO feedbacks (content, created_date, emp_id) VALUES
+('Great performance!', '2024-11-20 14:30:00', 1),
+('Needs improvement in coding.', '2024-11-21 09:45:00', 2);
+
+-- Insert sample data into the 'notifications' table
+INSERT INTO notifications (content, created_date, sender_id, is_read) VALUES
+('Meeting at 10 AM', '2024-11-22 08:00:00', 1, FALSE),
+('Reminder: Meeting scheduled at 3 PM today.', '2024-11-20 10:00:00', 1, FALSE),
+('System maintenance scheduled for this weekend.', '2024-11-19 15:30:00', 1, TRUE),
+('New company policy updates available.', '2024-11-18 09:00:00', 2, FALSE),
+('Congratulations! You have been selected as Employee of the Month.', '2024-11-17 14:15:00', 2, TRUE),
+('Please submit your timesheets by the end of the day.', '2024-11-16 08:45:00', 2, FALSE),
+('Quarterly team meeting scheduled for Monday.', '2024-11-15 11:30:00', 3, FALSE),
+('Your vacation request has been approved.', '2024-11-14 16:00:00', 3, TRUE),
+('Important: Update your emergency contact information.', '2024-11-13 13:20:00', 3, FALSE),
+('Training session scheduled for next Wednesday.', '2024-11-12 10:15:00', 4, TRUE),
+('Team outing planned for Friday evening.', '2024-11-11 17:45:00', 4, FALSE),
+('Client feedback on recent project delivery.', '2024-11-10 09:30:00', 4, TRUE),
+('Security alert: Update your password.', '2024-11-09 14:00:00', 5, FALSE),
+('New feature released: Check your dashboard.', '2024-11-08 12:30:00', 5, TRUE),
+('Reminder: Submit your annual self-evaluation.', '2024-11-07 11:15:00', 5, FALSE),
+('Lunch and Learn session on leadership skills.', '2024-11-06 13:00:00', 1, TRUE),
+('System downtime scheduled for midnight.', '2024-11-05 23:30:00', 1, FALSE),
+('Congratulations on your promotion!', '2024-11-04 10:30:00', 1, TRUE),
+('New benefits package updates are live.', '2024-11-03 09:00:00', 2, FALSE),
+('Project deadline extended by two days.', '2024-11-02 16:45:00', 2, TRUE),
+('Mandatory compliance training due Friday.', '2024-11-01 10:30:00', 2, FALSE),
+('Your profile information has been updated.', '2024-10-31 15:00:00', 3, TRUE),
+('Office hours adjusted for the holiday season.', '2024-10-30 14:30:00', 3, FALSE),
+('Client meeting scheduled for next Monday.', '2024-10-29 11:45:00', 3, TRUE),
+('Important: Submit your project update.', '2024-10-28 13:15:00', 1, FALSE),
+('Congratulations on achieving your sales target!', '2024-10-27 10:00:00', 1, TRUE),
+('New course available on the training portal.', '2024-10-26 09:30:00', 1, FALSE),
+('HR policy updates: Review the changes.', '2024-10-25 08:45:00', 2, TRUE),
+('Your performance review is scheduled.', '2024-10-24 14:00:00', 2, FALSE),
+('Team building activity planned for Friday.', '2024-10-23 16:30:00', 2, TRUE),
+('Submit your feedback for the annual survey.', '2024-10-22 10:15:00', 1, FALSE),
+('Reminder: Weekly check-in meeting tomorrow.', '2024-10-21 09:00:00', 1, TRUE),
+('Holiday party RSVP by next Wednesday.', '2024-10-20 15:00:00', 1, FALSE),
+('Monthly newsletter now available.', '2024-10-19 14:30:00', 1, TRUE),
+('Important: Deadline approaching for compliance.', '2024-10-18 13:00:00', 2, FALSE),
+('Your reimbursement request has been processed.', '2024-10-17 11:45:00', 2, TRUE),
+('New client added to the project.', '2024-10-16 08:30:00', 2, FALSE),
+('System upgrade scheduled for tomorrow.', '2024-10-15 17:15:00', 2, TRUE),
+('Your leave request has been denied.', '2024-10-14 12:00:00', 2, FALSE),
+('New policies on work-from-home announced.', '2024-10-13 10:30:00', 1, TRUE),
+('Reminder: Upload your project documents.', '2024-10-12 14:15:00', 1, FALSE);
+
+-- Insert sample data into the 'notification_receivers' table
+INSERT INTO notification_receivers (notification_id, receiver_id) VALUES
+(1, 2),
+(1, 3),
+(1, 10),
+(2, 2),
+(2, 3),
+(2, 10),
+(3, 4),
+(3, 6),
+(3, 12),
+(4, 4),
+(4, 6),
+(4, 12),
+(5, 8),
+(5, 9),
+(5, 14),
+(6, 8),
+(6, 9),
+(6, 14),
+(7, 2),
+(7, 3),
+(7, 11),
+(8, 4),
+(8, 6),
+(8, 13),
+(9, 8),
+(9, 9),
+(9, 15),
+(10, 2),
+(10, 3),
+(10, 10),
+(11, 4),
+(11, 6),
+(11, 12),
+(12, 8),
+(12, 9),
+(12, 14),
+(13, 4),
+(13, 6),
+(13, 13),
+(14, 8),
+(14, 9),
+(14, 15),
+(15, 2),
+(15, 3),
+(15, 10),
+(16, 4),
+(16, 6),
+(16, 11),
+(17, 8),
+(17, 9),
+(17, 12),
+(18, 2),
+(18, 3),
+(18, 13),
+(19, 4),
+(19, 6),
+(19, 14),
+(20, 8),
+(20, 9),
+(20, 15),
+(21, 3),
+(21, 6),
+(21, 11),
+(22, 4),
+(22, 7),
+(22, 13),
+(23, 9),
+(23, 12),
+(23, 15),
+(24, 2),
+(24, 5),
+(24, 10),
+(25, 6),
+(25, 8),
+(25, 12),
+(26, 9),
+(26, 14),
+(26, 15),
+(27, 3),
+(27, 4),
+(27, 10),
+(28, 6),
+(28, 7),
+(28, 13),
+(29, 9),
+(29, 12),
+(29, 15),
+(30, 2),
+(30, 5),
+(30, 10),
+(31, 3),
+(31, 6),
+(31, 11),
+(32, 8),
+(32, 9),
+(32, 14),
+(33, 2),
+(33, 4),
+(33, 10),
+(34, 6),
+(34, 7),
+(34, 13),
+(35, 9),
+(35, 12),
+(35, 15),
+(36, 3),
+(36, 5),
+(36, 10),
+(37, 6),
+(37, 8),
+(37, 11),
+(38, 9),
+(38, 13),
+(38, 14),
+(39, 2),
+(39, 4),
+(39, 10),
+(40, 6),
+(40, 7),
+(40, 12);
+
+-- Insert sample data into the 'groups' table
+INSERT INTO groups (name, created_at, img) VALUES
+('Engineering Team', '2024-11-15 09:00:00', NULL),
+('Healthcare Staff', '2024-11-16 10:00:00', NULL);
+
+-- Insert sample data into the 'participants' table
+INSERT INTO participants (joined_at, user_id, group_id, last_active_time) VALUES
+('2024-11-15', 1, 1, '2024-11-21 18:00:00'),
+('2024-11-16', 2, 2, '2024-11-20 16:00:00');
+
+-- Insert sample data into the 'messages' table
+INSERT INTO messages (id, content, create_time, user_id, group_id) VALUES
+('msg1', 'Hello Team!', '2024-11-22 09:30:00', 1, 1),
+('msg2', 'Good Morning!', '2024-11-22 09:45:00', 2, 2);
+
+-- Insert sample data into the 'timesheets' table
+INSERT INTO timesheets (clock_in, clock_out, emp_id) VALUES
+('2024-11-21 09:00:00', '2024-11-21 17:00:00', 1),
+('2024-11-21 09:00:00', '2024-11-21 17:00:00', 2);

@@ -132,20 +132,11 @@ export default function TabLayout() {
                 // }
             }}>
             <Tabs.Screen
-                name="index"
+                name="dashboard"
                 options={{
-                    title: 'Home',
-                    tabBarIcon: ({ color, focused }) => (
-                        <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="qrcode"
-                options={{
-                    title: 'QR Code',
+                    title: 'Dashboard',
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="qrcode" color={color} size={size} />
+                        <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
                     ),
                 }}
             />
@@ -155,16 +146,6 @@ export default function TabLayout() {
                     title: "Planner",
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="schedule" color={color} size={size} />
-
-                    ),
-                }}
-            />
-            <Tabs.Screen
-                name="dashboard"
-                options={{
-                    title: 'Dashboard',
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="view-dashboard" color={color} size={size} />
                     ),
                 }}
             />
@@ -189,7 +170,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="earnings"
                 options={{
-                    title: 'Earnings',
+                    title: 'Payroll',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="currency-usd" color={color} size={size} />
                     ),
@@ -202,7 +183,6 @@ export default function TabLayout() {
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="bell" color={color} size={size} />
                     ),
-                    tabBarBadge: 3,
                 }}
             />
         </Tabs>

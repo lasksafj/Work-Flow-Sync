@@ -39,7 +39,7 @@ exports.getClockStatus = async (req, res) => {
 
         return res.status(200).json({ clockedIn: isClockedIn, org_name });
     } catch (error) {
-        console.error("Error in getClockStatus:", error);
+        console.log("Error in getClockStatus:", error);
         res.status(500).json({ error: "An error occurred while processing your request" });
     }
 };
@@ -100,7 +100,7 @@ exports.clockInOut = async (req, res) => {
             return res.status(200).json({ message: `Clock-in successful! \nWelcome to ${org_name}. \nHave a great day at work.` });
         }
     } catch (error) {
-        console.error("Error in clockInOut:", error);
+        console.log("Error in clockInOut:", error);
         res.status(500).json({ error: "An error occurred while processing your request" });
     }
 };
