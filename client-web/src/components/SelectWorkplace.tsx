@@ -22,8 +22,9 @@ import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { updateOrganization } from '../store/slices/organizationSlice';
+import { RootState } from '../store/store';
 
 
 interface Workplace {
@@ -37,8 +38,10 @@ interface SelectWorkplaceProps {
 }
 
 const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) => {
+    const organization = useAppSelector((state: RootState) => state.organization);
+
     const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
-    const [selectedWorkplace, setSelectedWorkplace] = useState<Workplace | null>(null);
+    const [selectedWorkplace, setSelectedWorkplace] = useState<Workplace | null>(organization);
     const [error, setError] = useState<string | null>(null);
     const [loadingWorkplaces, setLoadingWorkplaces] = useState(false);
     const [isAddingWorkplace, setIsAddingWorkplace] = useState(false);
