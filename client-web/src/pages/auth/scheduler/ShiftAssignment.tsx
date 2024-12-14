@@ -38,6 +38,17 @@ import {
     OutlinedInput,
     SelectChangeEvent,
 } from '@mui/material';
+import SelectWorkplace from '../../../components/SelectWorkplace';
+import { useAppSelector } from '../../../store/hooks';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
+
+// Define structure for a Workplace object
+interface Workplace {
+    abbreviation: string;
+    name: string;
+    address: string;
+}
 
 interface Availability {
     day_of_week: string;
@@ -95,7 +106,8 @@ const ShiftAssignment: React.FC = () => {
         quantity: 1,
     });
 
-    const [organizationAbbreviation, setOrganizationAbbreviation] = useState<string>('ABC'); // Default value or user-selected value
+    const organization = useSelector((state: RootState) => state.organization);
+    const [organizationAbbreviation, setOrganizationAbbreviation] = useState<string>(organization.abbreviation); // Default value or user-selected value
 
     useEffect(() => {
         // Fetch data from the server
@@ -425,313 +437,330 @@ const ShiftAssignment: React.FC = () => {
     // Define the border style for table cells
     const cellBorderStyle = { borderRight: '1px solid rgba(224, 224, 224, 1)' };
 
+    // Function to select a workplace and fetch its associated employees
+    const handleSelectWorkplace = (workplace: Workplace) => {
+        setOrganizationAbbreviation(workplace.abbreviation);
+    };
+
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Typography variant="h4" gutterBottom>
-                Shift Assignments
-            </Typography>
-
-            {/* Snackbar for Success Messages */}
-            <Snackbar
-                open={!!success}
-                autoHideDuration={6000}
-                onClose={() => setSuccess('')}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
-                    {success}
-                </Alert>
-            </Snackbar>
-
-            {/* Snackbar for Error Messages */}
-            <Snackbar
-                open={!!error}
-                autoHideDuration={6000}
-                onClose={() => setError('')}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-                    {error}
-                </Alert>
-            </Snackbar>
-
-            {/* Add New Shift Form */}
-            <Box component="form" onSubmit={handleAddShift} sx={{ mb: 4 }}>
-                <Typography variant="h6" gutterBottom>
-                    Add New Shift
-                </Typography>
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} sm={6} md={3}>
-                        <FormControl fullWidth required>
-                            <InputLabel id="role-label">Role</InputLabel>
-                            <Select
-                                labelId="role-label"
-                                name="role"
-                                value={newShift.role || ''}
-                                label="Role"
-                                onChange={handleNewShiftChange}
-                            >
-                                {roles.map((role) => (
-                                    <MenuItem key={role.name} value={role.name}>
-                                        {role.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={3}>
-                        <FormControl fullWidth>
-                            <InputLabel id="day-of-week-label">Day of Week</InputLabel>
-                            <Select
-                                labelId="day-of-week-label"
-                                name="day_of_week"
-                                value={newShift.day_of_week || 'Monday'}
-                                label="Day of Week"
-                                onChange={handleNewShiftChange}
-                            >
-                                {daysOfWeek.map((day) => (
-                                    <MenuItem key={day} value={day}>
-                                        {day}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={2}>
-                        <TextField
-                            label="Start Time"
-                            name="start_time"
-                            type="time"
-                            value={newShift.start_time || ''}
-                            onChange={handleNewShiftChange}
-                            required
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            inputProps={{
-                                step: 300, // 5 min
-                            }}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={2}>
-                        <TextField
-                            label="End Time"
-                            name="end_time"
-                            type="time"
-                            value={newShift.end_time || ''}
-                            onChange={handleNewShiftChange}
-                            required
-                            InputLabelProps={{
-                                shrink: true,
-                            }}
-                            inputProps={{
-                                step: 300, // 5 min
-                            }}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={1}>
-                        <TextField
-                            label="Quantity"
-                            name="quantity"
-                            type="number"
-                            value={newShift.quantity !== undefined ? newShift.quantity : ''}
-                            onChange={handleNewShiftChange}
-                            required
-                            inputProps={{ min: 1 }}
-                            fullWidth
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={1}>
-                        <Button
-                            type="submit"
-                            variant="contained"
-                            color="primary"
-                            fullWidth
-                            disabled={loading}
-                        >
-                            {loading ? <CircularProgress size={24} /> : 'Add'}
-                        </Button>
-                    </Grid>
+        <Container>
+            <Grid container spacing={3}>
+                <Grid item xs={3} md={3}>
+                    <SelectWorkplace
+                        onSelectWorkplace={handleSelectWorkplace}
+                    />
                 </Grid>
-            </Box>
 
-            {/* Action Buttons */}
-            <Box sx={{ mb: 4 }}>
-                <Grid container spacing={2}>
-                    <Grid item>
-                        <Button
-                            variant="outlined"
-                            color="secondary"
-                            onClick={handleAutoAssign}
-                            disabled={loading || shifts.length === 0 || employees.length === 0}
-                        >
-                            Auto-Assign Shifts
-                        </Button>
-                    </Grid>
-                    <Grid item>
-                        <Button
-                            variant="contained"
-                            color="success"
-                            onClick={handleApplyAssignments}
-                            disabled={loading || Object.keys(assignments).length === 0}
-                        >
-                            {loading ? <CircularProgress size={24} /> : 'Apply Assignments'}
-                        </Button>
-                    </Grid>
-                </Grid>
-            </Box>
+                <Grid item xs={9} md={9}>
+                    <Container maxWidth="lg" sx={{ py: 4 }}>
+                        <Typography variant="h4" gutterBottom>
+                            Shift Assignments
+                        </Typography>
 
-            {/* Employee Availability */}
-            <Typography variant="h6" gutterBottom>
-                Employee Availability
-            </Typography>
-            <TableContainer component={Paper} sx={{ mb: 4 }}>
-                <Table sx={{ borderCollapse: 'collapse' }}>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell sx={cellBorderStyle}><strong>Employee</strong></TableCell>
-                            {daysOfWeek.map((day, index) => (
-                                <TableCell
-                                    key={day}
-                                    align="center"
-                                    sx={index < daysOfWeek.length - 1 ? cellBorderStyle : {}}
-                                >
-                                    <strong>{day}</strong>
-                                </TableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {employees.map((emp) => (
-                            <TableRow key={emp.employee_id}>
-                                <TableCell sx={cellBorderStyle}>{emp.name}</TableCell>
-                                {daysOfWeek.map((day, index) => {
-                                    const availabilities = emp.availability.filter(a => a.day_of_week === day);
-                                    return (
-                                        <TableCell
-                                            key={day}
-                                            align="center"
-                                            sx={index < daysOfWeek.length - 1 ? cellBorderStyle : {}}
+                        {/* Snackbar for Success Messages */}
+                        <Snackbar
+                            open={!!success}
+                            autoHideDuration={6000}
+                            onClose={() => setSuccess('')}
+                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                        >
+                            <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
+                                {success}
+                            </Alert>
+                        </Snackbar>
+
+                        {/* Snackbar for Error Messages */}
+                        <Snackbar
+                            open={!!error}
+                            autoHideDuration={6000}
+                            onClose={() => setError('')}
+                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                        >
+                            <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+                                {error}
+                            </Alert>
+                        </Snackbar>
+
+                        {/* Add New Shift Form */}
+                        <Box component="form" onSubmit={handleAddShift} sx={{ mb: 4 }}>
+                            <Typography variant="h6" gutterBottom>
+                                Add New Shift
+                            </Typography>
+                            <Grid container spacing={2} alignItems="center">
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <FormControl fullWidth required>
+                                        <InputLabel id="role-label">Role</InputLabel>
+                                        <Select
+                                            labelId="role-label"
+                                            name="role"
+                                            value={newShift.role || ''}
+                                            label="Role"
+                                            onChange={handleNewShiftChange}
                                         >
-                                            {availabilities.length > 0 ? (
-                                                availabilities.map((avail, index) => (
-                                                    <Typography variant="body2" key={index}>
-                                                        {format(parse(avail.start_time, 'HH:mm:ss', new Date()), 'hh:mm a')} - {format(parse(avail.end_time, 'HH:mm:ss', new Date()), 'hh:mm a')} ({emp.role})
-                                                    </Typography>
-                                                ))
-                                            ) : (
-                                                <Typography variant="body2">-</Typography>
-                                            )}
-                                        </TableCell>
-                                    );
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                            {roles.map((role) => (
+                                                <MenuItem key={role.name} value={role.name}>
+                                                    {role.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={3}>
+                                    <FormControl fullWidth>
+                                        <InputLabel id="day-of-week-label">Day of Week</InputLabel>
+                                        <Select
+                                            labelId="day-of-week-label"
+                                            name="day_of_week"
+                                            value={newShift.day_of_week || 'Monday'}
+                                            label="Day of Week"
+                                            onChange={handleNewShiftChange}
+                                        >
+                                            {daysOfWeek.map((day) => (
+                                                <MenuItem key={day} value={day}>
+                                                    {day}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={2}>
+                                    <TextField
+                                        label="Start Time"
+                                        name="start_time"
+                                        type="time"
+                                        value={newShift.start_time || ''}
+                                        onChange={handleNewShiftChange}
+                                        required
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        inputProps={{
+                                            step: 300, // 5 min
+                                        }}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={2}>
+                                    <TextField
+                                        label="End Time"
+                                        name="end_time"
+                                        type="time"
+                                        value={newShift.end_time || ''}
+                                        onChange={handleNewShiftChange}
+                                        required
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                        inputProps={{
+                                            step: 300, // 5 min
+                                        }}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={1}>
+                                    <TextField
+                                        label="Quantity"
+                                        name="quantity"
+                                        type="number"
+                                        value={newShift.quantity !== undefined ? newShift.quantity : ''}
+                                        onChange={handleNewShiftChange}
+                                        required
+                                        inputProps={{ min: 1 }}
+                                        fullWidth
+                                    />
+                                </Grid>
+                                <Grid item xs={12} sm={6} md={1}>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        color="primary"
+                                        fullWidth
+                                        disabled={loading}
+                                    >
+                                        {loading ? <CircularProgress size={24} /> : 'Add'}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
 
-            {/* Shift Assignments */}
-            <Typography variant="h6" gutterBottom>
-                Shift Assignments
-            </Typography>
-            <TableContainer component={Paper}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell><strong>Day</strong></TableCell>
-                            <TableCell><strong>Role</strong></TableCell>
-                            <TableCell><strong>Time</strong></TableCell>
-                            <TableCell><strong>Assigned Employees</strong></TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {Object.keys(shiftsByDay).map((day) => {
-                            const shiftsForDay = shiftsByDay[day];
-                            return shiftsForDay.map((shift, index) => {
-                                const shiftKey = `${shift.shift_id}_${shift.role}`;
-                                const allEmployeesForShift = employees.filter(
-                                    (employee) => employee.role === shift.role
-                                );
-                                return (
-                                    <TableRow key={shiftKey}>
-                                        {index === 0 && (
-                                            <TableCell rowSpan={shiftsForDay.length}>
-                                                {shift.day_of_week}
+                        {/* Action Buttons */}
+                        <Box sx={{ mb: 4 }}>
+                            <Grid container spacing={2}>
+                                <Grid item>
+                                    <Button
+                                        variant="outlined"
+                                        color="secondary"
+                                        onClick={handleAutoAssign}
+                                        disabled={loading || shifts.length === 0 || employees.length === 0}
+                                    >
+                                        Auto-Assign Shifts
+                                    </Button>
+                                </Grid>
+                                <Grid item>
+                                    <Button
+                                        variant="contained"
+                                        color="success"
+                                        onClick={handleApplyAssignments}
+                                        disabled={loading || Object.keys(assignments).length === 0}
+                                    >
+                                        {loading ? <CircularProgress size={24} /> : 'Apply Assignments'}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+
+                        {/* Employee Availability */}
+                        <Typography variant="h6" gutterBottom>
+                            Employee Availability
+                        </Typography>
+                        <TableContainer component={Paper} sx={{ mb: 4 }}>
+                            <Table sx={{ borderCollapse: 'collapse' }}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell sx={cellBorderStyle}><strong>Employee</strong></TableCell>
+                                        {daysOfWeek.map((day, index) => (
+                                            <TableCell
+                                                key={day}
+                                                align="center"
+                                                sx={index < daysOfWeek.length - 1 ? cellBorderStyle : {}}
+                                            >
+                                                <strong>{day}</strong>
                                             </TableCell>
-                                        )}
-                                        <TableCell>{shift.role}</TableCell>
-                                        <TableCell>
-                                            {format(parse(shift.start_time, 'HH:mm:ss', new Date()), 'hh:mm a')} -{' '}
-                                            {format(parse(shift.end_time, 'HH:mm:ss', new Date()), 'hh:mm a')}
-                                        </TableCell>
-                                        <TableCell>
-                                            <FormControl sx={{ width: 300 }}>
-                                                <InputLabel id={`assign-label-${shiftKey}`}>Assign Employees</InputLabel>
-                                                <Select<number[]>
-                                                    labelId={`assign-label-${shiftKey}`}
-                                                    multiple
-                                                    value={
-                                                        assignments[shiftKey]
-                                                            ? assignments[shiftKey].map((assignment) => assignment.employee_id)
-                                                            : []
-                                                    }
-                                                    onChange={(e: SelectChangeEvent<number[]>) => {
-                                                        const value = e.target.value as number[];
-                                                        handleAssignmentChange(shiftKey, value);
-                                                    }}
-                                                    input={<OutlinedInput label="Assign Employees" />}
-                                                    renderValue={(selected) => {
-                                                        const selectedIds = selected as number[];
-                                                        const names = selectedIds.map((id) => {
-                                                            const emp = employees.find((e) => e.employee_id === id);
-                                                            return emp ? emp.name : '';
-                                                        });
-                                                        return names.join(', ');
-                                                    }}
-                                                    MenuProps={MenuProps}
-                                                >
-                                                    {allEmployeesForShift.map((emp) => (
-                                                        <MenuItem key={emp.employee_id} value={emp.employee_id}>
-                                                            <Checkbox checked={assignments[shiftKey]?.some(a => a.employee_id === emp.employee_id) || false} />
-                                                            <ListItemText primary={emp.name} />
-                                                        </MenuItem>
-                                                    ))}
-                                                </Select>
-                                            </FormControl>
-                                            <Typography variant="caption" display="block" sx={{ mt: 1 }}>
-                                                Assigned: {assignments[shiftKey]?.length || 0}/{shift.quantity}
-                                            </Typography>
-                                        </TableCell>
+                                        ))}
                                     </TableRow>
-                                );
-                            });
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                                </TableHead>
+                                <TableBody>
+                                    {employees.map((emp) => (
+                                        <TableRow key={emp.employee_id}>
+                                            <TableCell sx={cellBorderStyle}>{emp.name}</TableCell>
+                                            {daysOfWeek.map((day, index) => {
+                                                const availabilities = emp.availability.filter(a => a.day_of_week === day);
+                                                return (
+                                                    <TableCell
+                                                        key={day}
+                                                        align="center"
+                                                        sx={index < daysOfWeek.length - 1 ? cellBorderStyle : {}}
+                                                    >
+                                                        {availabilities.length > 0 ? (
+                                                            availabilities.map((avail, index) => (
+                                                                <Typography variant="body2" key={index}>
+                                                                    {format(parse(avail.start_time, 'HH:mm:ss', new Date()), 'hh:mm a')} - {format(parse(avail.end_time, 'HH:mm:ss', new Date()), 'hh:mm a')} ({emp.role})
+                                                                </Typography>
+                                                            ))
+                                                        ) : (
+                                                            <Typography variant="body2">-</Typography>
+                                                        )}
+                                                    </TableCell>
+                                                );
+                                            })}
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
 
-            {/* Loading Indicator Overlay */}
-            {loading && (
-                <Box
-                    sx={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        bgcolor: 'rgba(0, 0, 0, 0.5)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 1300,
-                    }}
-                >
-                    <CircularProgress color="inherit" size={80} />
-                </Box>
-            )}
+                        {/* Shift Assignments */}
+                        <Typography variant="h6" gutterBottom>
+                            Shift Assignments
+                        </Typography>
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell><strong>Day</strong></TableCell>
+                                        <TableCell><strong>Role</strong></TableCell>
+                                        <TableCell><strong>Time</strong></TableCell>
+                                        <TableCell><strong>Assigned Employees</strong></TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {Object.keys(shiftsByDay).map((day) => {
+                                        const shiftsForDay = shiftsByDay[day];
+                                        return shiftsForDay.map((shift, index) => {
+                                            const shiftKey = `${shift.shift_id}_${shift.role}`;
+                                            const allEmployeesForShift = employees.filter(
+                                                (employee) => employee.role === shift.role
+                                            );
+                                            return (
+                                                <TableRow key={shiftKey}>
+                                                    {index === 0 && (
+                                                        <TableCell rowSpan={shiftsForDay.length}>
+                                                            {shift.day_of_week}
+                                                        </TableCell>
+                                                    )}
+                                                    <TableCell>{shift.role}</TableCell>
+                                                    <TableCell>
+                                                        {format(parse(shift.start_time, 'HH:mm:ss', new Date()), 'hh:mm a')} -{' '}
+                                                        {format(parse(shift.end_time, 'HH:mm:ss', new Date()), 'hh:mm a')}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <FormControl sx={{ width: 300 }}>
+                                                            <InputLabel id={`assign-label-${shiftKey}`}>Assign Employees</InputLabel>
+                                                            <Select<number[]>
+                                                                labelId={`assign-label-${shiftKey}`}
+                                                                multiple
+                                                                value={
+                                                                    assignments[shiftKey]
+                                                                        ? assignments[shiftKey].map((assignment) => assignment.employee_id)
+                                                                        : []
+                                                                }
+                                                                onChange={(e: SelectChangeEvent<number[]>) => {
+                                                                    const value = e.target.value as number[];
+                                                                    handleAssignmentChange(shiftKey, value);
+                                                                }}
+                                                                input={<OutlinedInput label="Assign Employees" />}
+                                                                renderValue={(selected) => {
+                                                                    const selectedIds = selected as number[];
+                                                                    const names = selectedIds.map((id) => {
+                                                                        const emp = employees.find((e) => e.employee_id === id);
+                                                                        return emp ? emp.name : '';
+                                                                    });
+                                                                    return names.join(', ');
+                                                                }}
+                                                                MenuProps={MenuProps}
+                                                            >
+                                                                {allEmployeesForShift.map((emp) => (
+                                                                    <MenuItem key={emp.employee_id} value={emp.employee_id}>
+                                                                        <Checkbox checked={assignments[shiftKey]?.some(a => a.employee_id === emp.employee_id) || false} />
+                                                                        <ListItemText primary={emp.name} />
+                                                                    </MenuItem>
+                                                                ))}
+                                                            </Select>
+                                                        </FormControl>
+                                                        <Typography variant="caption" display="block" sx={{ mt: 1 }}>
+                                                            Assigned: {assignments[shiftKey]?.length || 0}/{shift.quantity}
+                                                        </Typography>
+                                                    </TableCell>
+                                                </TableRow>
+                                            );
+                                        });
+                                    })}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+
+                        {/* Loading Indicator Overlay */}
+                        {loading && (
+                            <Box
+                                sx={{
+                                    position: 'fixed',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    bgcolor: 'rgba(0, 0, 0, 0.5)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    zIndex: 1300,
+                                }}
+                            >
+                                <CircularProgress color="inherit" size={80} />
+                            </Box>
+                        )}
+                    </Container>
+                </Grid>
+            </Grid>
         </Container>
     );
 };

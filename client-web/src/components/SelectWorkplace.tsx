@@ -74,7 +74,7 @@ const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) 
 
 
     return (
-        <Grid item xs={12} md={4}>
+        <>
             <Typography variant="h5" gutterBottom>
                 Workplaces
             </Typography>
@@ -103,7 +103,7 @@ const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) 
                     </List>
                 )}
             </Card>
-        </Grid>
+        </>
 
     );
 };

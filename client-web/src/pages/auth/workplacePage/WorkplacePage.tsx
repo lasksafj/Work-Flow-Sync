@@ -17,6 +17,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar } from '../../../components/Avatar';
 import SelectWorkplace from '../../../components/SelectWorkplace';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 
 // Define structure for an Employee object with optional avatar property
@@ -50,6 +52,7 @@ const WorkplacePage: React.FC = () => {
     const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
 
     const [selectedWorkplace, setSelectedWorkplace] = useState<Workplace | null>(null);
+
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [isAddingWorkplace, setIsAddingWorkplace] = useState(false);
     const [name, setName] = useState('');
@@ -74,9 +77,12 @@ const WorkplacePage: React.FC = () => {
     const [loadingEmployees, setLoadingEmployees] = useState(false);
     const [roleList, setRoleList] = useState<Role[]>([]);
 
+    const organization = useSelector((state: RootState) => state.organization);
+
     // Initial fetch of workplaces when the component mounts
     useEffect(() => {
         fetchWorkplaces();
+        handleSelectWorkplace(organization);
     }, []);
 
     // Function to fetch workplace data from the API
@@ -295,9 +301,11 @@ const WorkplacePage: React.FC = () => {
 
             <Container>
                 <Grid container spacing={3}>
-                    <SelectWorkplace
-                        onSelectWorkplace={handleSelectWorkplace}
-                    />
+                    <Grid item xs={12} md={4}>
+                        <SelectWorkplace
+                            onSelectWorkplace={handleSelectWorkplace}
+                        />
+                    </Grid>
                     {/* Workplace Details Section */}
                     <Grid item xs={12} md={8}>
                         {selectedWorkplace ? (
