@@ -40,7 +40,7 @@ const NotificationsPage: React.FC = () => {
     const [totalPages, setTotalPages] = useState(1);
     const pageSize = 10;
 
-    
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -132,7 +132,7 @@ const NotificationsPage: React.FC = () => {
     };
 
     return (
-        <div style={{ paddingTop: 20 }}>
+        <div>
             <Container>
                 <Grid container spacing={3}>
                     <Grid item xs={3} md={3}>
