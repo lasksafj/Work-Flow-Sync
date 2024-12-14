@@ -19,7 +19,7 @@ import { logout } from "@/apis/authorize/login"; // Import logout API
 import { userLogout } from "@/store/slices/userSlice"; // Import Redux action to update user state
 import { router } from "expo-router"; // Import Expo router for navigation
 import { updateOrganization } from "@/store/slices/organizationSlice"; // Import Redux action for organization state
-
+import { ThemedText } from '@/components/ThemedText';
 
 // Define the tabs for days of the week
 const tabs = [
@@ -322,16 +322,33 @@ export default function DashboardScreen() {
                     </View>
                 </View>
 
-
-                {/* Logout Button */}
-                <Button
-                    title="Logout"
-                    onPress={() => {
-                        logout(); // Call logout API
-                        dispatch(userLogout()); // Update Redux state
-                        router.dismissAll(); // Navigate back to the login screen
-                    }}
-                />
+                <View style={styles.actionContainer}>
+                    <TouchableOpacity
+                        style={styles.primaryButton}
+                        onPress={() => {
+                            router.push('/auth/dashboard/ClockInOutScreen');
+                        }}
+                    >
+                        <View style={styles.buttonContent}>
+                            <Icon name="clock-o" size={20} color="white" />
+                            <ThemedText style={styles.buttonText}>Timeclock</ThemedText>
+                        </View>
+                    </TouchableOpacity>
+    
+                    <TouchableOpacity
+                        style={styles.secondaryButton}
+                        onPress={() => {
+                            logout(); // Call logout API
+                            dispatch(userLogout()); // Update Redux state
+                            router.dismissAll(); // Navigate back to the login screen
+                        }}
+                    >
+                        <View style={styles.buttonContent}>
+                            <Icon name="sign-out" size={20} color="#333" />
+                            <ThemedText style={styles.secondaryButtonText}>Logout</ThemedText>
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </ScrollView>
 
 
@@ -457,6 +474,56 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 16,
         fontWeight: "bold",
+    },
+    actionContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 30,
+        marginHorizontal: 16,
+        paddingBottom: 20,
+    },
+    primaryButton: {
+        flex: 1,
+        backgroundColor: '#FF6347',
+        paddingVertical: 15,
+        borderRadius: 30,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 8,
+        marginRight: 8,
+    },
+    secondaryButton: {
+        flex: 1,
+        backgroundColor: '#f0f0f0',
+        paddingVertical: 15,
+        borderRadius: 30,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 8,
+        marginLeft: 8,
+    },
+    buttonText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginLeft: 10,
+    },
+    secondaryButtonText: {
+        color: '#333',
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginLeft: 10,
+    },
+    buttonContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     modalBackground: {
         flex: 1,

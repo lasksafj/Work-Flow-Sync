@@ -5,6 +5,7 @@ import { AuthProvider } from './AuthContext';
 import PrivateRoute from './PrivateRoute';
 import Dashboard from './pages/auth/Dashboard';
 import Profile from './pages/auth/Profile';
+import NotificationPage from './pages/auth/notification/NotificationsPage';
 import Login from './pages/unauth/Login';
 import Register from './pages/unauth/Register';
 import NavBar from './pages/NavBar';
@@ -28,6 +29,7 @@ const App: React.FC = () => {
                     <Route path='/shift' element={<PrivateRoute component={ShiftAssignment} />} />
 
 
+                    <Route path="/notification" element={<PrivateRoute component={NotificationPage} />} />
                     <Route path="/logout" element={<PrivateRoute component={() => null} />} />
 
                     {/* Public Routes */}

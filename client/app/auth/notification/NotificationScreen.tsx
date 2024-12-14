@@ -126,7 +126,7 @@ const NotificationScreen = () => {
                 onPress={() => {
                     // Navigate to notification detail screen with item as parameters
                     router.push({
-                        pathname: "auth/notification/NotificationDetail",
+                        pathname: "/auth/notification/NotificationDetail",
                         params: item,
                     });
                 }}
