@@ -138,7 +138,7 @@ const ProfileScreen = () => {
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity
-                    onPress={() => {
+                    onPressIn={() => {
                         setEditProfileVisible(true);
                     }}
                 >

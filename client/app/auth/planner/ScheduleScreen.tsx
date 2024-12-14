@@ -4,6 +4,13 @@ import WeekDays from './schedule/Weekdays';
 import ScheduleDetail from './schedule/ScheduleDetail';
 import moment from 'moment';
 
+// Monday is the first day of the week
+moment.updateLocale('en', {
+    week: {
+        dow: 1, 
+    },
+});
+
 const ScheduleScreen: React.FC = () => {
     const [date, setDate] = useState(moment().format('YYYY-MM-DD'));
     const [expandedDate, setExpandedDate] = useState<string | null>(null);

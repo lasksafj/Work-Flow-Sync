@@ -9,6 +9,7 @@ exports.getOrg = async (req, res) => {
             `SELECT DISTINCT e.org_abbreviation as abbreviation, o.name
                 FROM employees e
                 INNER JOIN users u ON e.user_id = u.id
+                
                 INNER JOIN roles ro USING(org_abbreviation)
                 INNER JOIN organizations o ON o.abbreviation = ro.org_abbreviation
                 WHERE u.id = $1`,
@@ -142,15 +143,7 @@ exports.updateSwapShifts = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-const { error } = require("winston");
-const db = require("../config/db");
 
-/**
- * Controller function to create a drop shift request.
- * This function handles the creation of a request to drop a scheduled shift.
- * It ensures that the user provides a reason for the drop and that no existing request
- * for the same shift already exists.
- */
 exports.createDropRequest = async (req, res) => {
     try {
         // Destructure required fields from the request body
