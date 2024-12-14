@@ -446,15 +446,7 @@ const ShiftAssignment: React.FC = () => {
     };
 
     return (
-        <div>
-            <AppBar position="static" sx={{ marginBottom: 2 }}>
-                <Toolbar>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                        Shift Assignments
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-
+        <div style={{ paddingTop: 20 }}>
             <Container>
                 <Grid container spacing={3}>
                     <Grid item xs={3} md={3}>
