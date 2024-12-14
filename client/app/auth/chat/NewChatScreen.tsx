@@ -164,7 +164,7 @@ const NewChatScreen = () => {
                     backgroundColor: Colors.background,
                 }}
                 renderCustomItem={(item: any) => (
-                    <>
+                    <View>
                         <TouchableOpacity style={styles.listItemContainer}
                             onPress={() => addParticipant({ name: item.value, email: item.email })}
                         >
@@ -182,7 +182,7 @@ const NewChatScreen = () => {
                             </View>
                         </TouchableOpacity>
                         <View style={[defaultStyles.separator, { marginLeft: 50 }]} />
-                    </>
+                    </View>
                 )}
                 renderCustomSectionHeader={(section) => (
                     <View style={styles.sectionHeaderContainer}>
