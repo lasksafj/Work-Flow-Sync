@@ -3,6 +3,11 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import LogoutButton from './unauth/Logout';
 import { AuthContext } from '../AuthContext';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
 const NavBar: React.FC = () => {
     const authContext = useContext(AuthContext);
@@ -14,24 +19,70 @@ const NavBar: React.FC = () => {
     const { isAuthenticated } = authContext;
 
     return (
-        <nav>
-            {isAuthenticated ? (
-                <>
+        <AppBar position="static" color="primary">
+            <Toolbar>
+                {/* Logo or Title */}
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    Workflow Sync
+                </Typography>
 
-                    <Link to="/">Dashboard</Link> | <Link to="/profile">Profile</Link> |
-                    <Link to="/workplace">Manage Workplace</Link> | {' '}
+                {/* Navigation Links */}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    {isAuthenticated ? (
+                        <>
+                            <Button
+                                component={Link}
+                                to="/"
+                                color="inherit"
+                            >
+                                Dashboard
+                            </Button>
+                            <Button
+                                component={Link}
+                                to="/profile"
+                                color="inherit"
+                            >
+                                Profile
+                            </Button>
+                            <Button
+                                component={Link}
+                                to="/workplace"
+                                color="inherit"
+                            >
+                                Manage Workplace
+                            </Button>
+                            <Button
+                                component={Link}
+                                to="/shift"
+                                color="inherit"
+                            >
+                                Shift Assignment
+                            </Button>
 
-                    <Link to="/">Dashboard</Link> | <Link to="/profile">Profile</Link> |{' '}
-                    <Link to="/shift">Shift Assignment</Link> |{' '}
-
-                    <LogoutButton />
-                </>
-            ) : (
-                <>
-                    <Link to="/login">Login</Link> | <Link to="/register">Register</Link>
-                </>
-            )}
-        </nav>
+                            {/* Logout Button */}
+                            <LogoutButton />
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                component={Link}
+                                to="/login"
+                                color="inherit"
+                            >
+                                Login
+                            </Button>
+                            <Button
+                                component={Link}
+                                to="/register"
+                                color="inherit"
+                            >
+                                Register
+                            </Button>
+                        </>
+                    )}
+                </Box>
+            </Toolbar>
+        </AppBar>
     );
 };
 

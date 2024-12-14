@@ -282,7 +282,12 @@ const WorkplacePage: React.FC = () => {
     return (
         <div>
             {/* AppBar for navigation and adding a new workplace */}
-            <AppBar position="static" sx={{ marginBottom: 2 }}>
+            <AppBar
+                position="static"
+                sx={{
+                    width: '100%', marginBottom: 2, backgroundColor: 'green',
+                }}
+            >
                 <Toolbar>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Workplace Management
