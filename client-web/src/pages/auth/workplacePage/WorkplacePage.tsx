@@ -282,28 +282,21 @@ const WorkplacePage: React.FC = () => {
     return (
         <div>
             {/* AppBar for navigation and adding a new workplace */}
-            <AppBar
-                position="static"
-                sx={{
-                    width: '100%', marginBottom: 2, backgroundColor: 'green',
-                }}
-            >
-                <Toolbar>
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                        Workplace Management
-                    </Typography>
-                    <Button
-                        color="inherit"
-                        startIcon={<AddIcon />}
-                        onClick={() => {
-                            setIsAddingWorkplace(true);
-                            setIsEditingRole(false);
-                        }}
-                    >
-                        Add Workplace
-                    </Button>
-                </Toolbar>
-            </AppBar>
+            <Toolbar>
+                <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    {/* Workplace Management */}
+                </Typography>
+                <Button
+                    color="inherit"
+                    startIcon={<AddIcon />}
+                    onClick={() => {
+                        setIsAddingWorkplace(true);
+                        setIsEditingRole(false);
+                    }}
+                >
+                    Add Workplace
+                </Button>
+            </Toolbar>
 
             <Container>
                 <Grid container spacing={3}>
