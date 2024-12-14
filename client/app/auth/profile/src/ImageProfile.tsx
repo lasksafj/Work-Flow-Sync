@@ -47,7 +47,7 @@ const ImageProfile = () => {
     
             // Get the download URL
             const downloadURL = await getDownloadURL(snapshot.ref);
-            console.log(downloadURL);
+
             // Update the database with the download URL
             await saveImageToDatabase(downloadURL);
             

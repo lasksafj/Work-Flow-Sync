@@ -3,11 +3,20 @@ import DropShift from './DropShift';
 import SwapShift from './SwapShift';
 import '../css/request.css';
 import api from '../../../apis/api';
+import SelectWorkplace from '../../../components/SelectWorkplace';
+import { Container, Grid } from '@mui/material';
 
 // Define the interface for organization properties
 interface AllOrgsProps {
     abbreviation: string,
     name: string,
+}
+
+// Define structure for a Workplace object
+interface Workplace {
+    abbreviation: string;
+    name: string;
+    address: string;
 }
 
 // Define the Request component
@@ -47,72 +56,57 @@ const Request: React.FC = () => {
         fetchData();
     }, []);
 
-    // Function to handle the change in selected workplace
-    const onChange = (event: any) => {
-        const selectedIndex = event.target.value;
-        const selected = allOrgs[selectedIndex].abbreviation;
-        setAbbreviation(selected);
-
+    // Function to select a workplace and fetch its associated employees
+    const handleSelectWorkplace = (workplace: Workplace) => {
+        setAbbreviation(workplace.abbreviation);
     };
-
+    
     // Render the component
     return (
-        <>
-            <div className='container1'>
-                {/* Display a loader while data is being fetched */}
-                {isLoading ? (
-                    <div className="loader" aria-live="polite">
-                        Loading workplaces...
-                    </div>
-                ) : (
-                    // Dropdown to select a workplace
-                    <select
-                        className="form-select custom-select"
-                        aria-label="Select a workplace"
-                        onChange={onChange}
-                    >
-                        <option value='' disabled selected>
-                            Select a workplace
-                        </option>
+        <div>
+            <Container>
+                <Grid container spacing={3}>
+                    <Grid item xs={3} md={3}>
+                        <SelectWorkplace
+                            onSelectWorkplace={handleSelectWorkplace}
+                        />
+                    </Grid>
 
-                        {/* Map over the organizations and create dropdown options */}
-                        {allOrgs.map((org, index) => (
-                            <option key={index} value={index}>
-                                {org.name}
-                            </option>
-                        ))}
-                    </select>
-                )}
+                    <Grid item xs={9} md={9}>
+                        <div className='container1'>
 
-                {/* Tab buttons to toggle between Swap Shifts and Drop Shifts */}
-                <div className="bloc-tab">
-                    <button
-                        className={`tabs ${toggle === 1 ? 'active' : ''}`}
-                        onClick={() => updateToggle(1)}
-                        role="tab"
-                        aria-selected={toggle === 1}
-                    >
-                        <span className="tab-icon">🔄</span> Swap Shifts
-                    </button>
-                    <button
-                        className={`tabs ${toggle === 2 ? 'active' : ''}`}
-                        onClick={() => updateToggle(2)}
-                        role="tab"
-                        aria-selected={toggle === 2}
-                    >
-                        <span className="tab-icon">❌</span> Drop Shifts
-                    </button>
-                </div>
+                            {/* Tab buttons to toggle between Swap Shifts and Drop Shifts */}
+                            <div className="bloc-tab">
+                                <button
+                                    className={`tabs ${toggle === 1 ? 'active' : ''}`}
+                                    onClick={() => updateToggle(1)}
+                                    role="tab"
+                                    aria-selected={toggle === 1}
+                                >
+                                    <span className="tab-icon">🔄</span> Swap Shifts
+                                </button>
+                                <button
+                                    className={`tabs ${toggle === 2 ? 'active' : ''}`}
+                                    onClick={() => updateToggle(2)}
+                                    role="tab"
+                                    aria-selected={toggle === 2}
+                                >
+                                    <span className="tab-icon">❌</span> Drop Shifts
+                                </button>
+                            </div>
 
-                <div className='content-wrapper'>
-                    <div className={'content  show-content'}>
-                        {/* Render the content based on the active tab */}
-                        {renderTabContent()}
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+                            <div className='content-wrapper'>
+                                <div className={'content  show-content'}>
+                                    {/* Render the content based on the active tab */}
+                                    {renderTabContent()}
+                                </div>
+                            </div>
+                        </div>
+                    </Grid>
+                </Grid>
+            </Container>
+        </div>
+    );
 };
 
 export default Request;

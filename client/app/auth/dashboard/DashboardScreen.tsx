@@ -19,6 +19,8 @@ import { logout } from "@/apis/authorize/login"; // Import logout API
 import { userLogout } from "@/store/slices/userSlice"; // Import Redux action to update user state
 import { router } from "expo-router"; // Import Expo router for navigation
 import { updateOrganization } from "@/store/slices/organizationSlice"; // Import Redux action for organization state
+import FirstOrg from "./FirstOrg";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // Define the tabs for days of the week
@@ -183,9 +185,31 @@ export default function DashboardScreen() {
         fetchShiftDetails();
     };
 
+    const [firstOrgVisible, setFirstOrgVisible] = useState(false);
+    const [workplaces, setWorkplaces] = React.useState<
+        {
+            id: string;
+            abbreviation: string;
+            name: string;
+            address: string;
+        }[]
+    >([]);
+
+    useEffect(() => {
+        api.get("/api/profile/profile-getOrg")
+            .then((response) => {
+                const data = response.data;
+                setWorkplaces(data);
+            })
+            .catch((error) => {
+                alert(error);
+            });
+
+      }, []);
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
+            <FirstOrg firstOrgVisible={firstOrgVisible} setFirstOrgVisible={setFirstOrgVisible} />
             <ScrollView
                 refreshControl={
                     <RefreshControl
