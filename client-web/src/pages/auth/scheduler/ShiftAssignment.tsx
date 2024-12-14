@@ -37,12 +37,9 @@ import {
     ListItemText,
     OutlinedInput,
     SelectChangeEvent,
-    AppBar,
-    Toolbar,
 } from '@mui/material';
 import SelectWorkplace from '../../../components/SelectWorkplace';
 import { useAppSelector } from '../../../store/hooks';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
 
 // Define structure for a Workplace object
@@ -108,7 +105,7 @@ const ShiftAssignment: React.FC = () => {
         quantity: 1,
     });
 
-    const organization = useSelector((state: RootState) => state.organization);
+    const organization = useAppSelector((state: RootState) => state.organization);
     const [organizationAbbreviation, setOrganizationAbbreviation] = useState<string>(organization.abbreviation); // Default value or user-selected value
 
     useEffect(() => {
@@ -446,7 +443,7 @@ const ShiftAssignment: React.FC = () => {
     };
 
     return (
-        <div style={{ paddingTop: 20 }}>
+        <div>
             <Container>
                 <Grid container spacing={3}>
                     <Grid item xs={3} md={3}>

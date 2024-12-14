@@ -1,24 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../../apis/api'; // Custom API for making HTTP requests
 import {
-    AppBar, Toolbar, Typography, Button, TextField, Select, MenuItem,
+    Typography, Button, TextField, Select, MenuItem,
     InputLabel, FormControl, Card, CardContent,
     Dialog, DialogTitle, DialogContent, DialogActions,
     Snackbar, IconButton, Container, Box, Divider, CircularProgress
 } from '@mui/material'; // Material-UI components
 import Grid from '@mui/material/Grid'; // Grid layout system from Material-UI
 import CloseIcon from '@mui/icons-material/Close'; // Icons for UI actions
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import { Avatar } from '../../../components/Avatar';
 import SelectWorkplace from '../../../components/SelectWorkplace';
-import { useSelector } from 'react-redux';
 import { RootState } from '../../../store/store';
+import { useAppSelector } from '../../../store/hooks';
 
 
 // Define structure for an Employee object with optional avatar property
@@ -49,17 +47,10 @@ interface Role {
 // Main component for managing workplaces and employees
 const WorkplacePage: React.FC = () => {
     // State hooks for managing workplaces, employees, and form inputs
-    const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
-
     const [selectedWorkplace, setSelectedWorkplace] = useState<Workplace | null>(null);
 
     const [employees, setEmployees] = useState<Employee[]>([]);
-    const [isAddingWorkplace, setIsAddingWorkplace] = useState(false);
-    const [name, setName] = useState('');
-    const [abbreviation, setAbbreviation] = useState('');
-    const [address, setAddress] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const [startDate, setStartDate] = useState('');
 
     // State hooks for employee addition form
     const [isAddingEmployee, setIsAddingEmployee] = useState(false);
@@ -73,17 +64,16 @@ const WorkplacePage: React.FC = () => {
     const [isEditingRole, setIsEditingRole] = useState(false);
     const [roles, setRoles] = useState<{ [key: string]: string }>({});
     const [snackbarOpen, setSnackbarOpen] = useState(false);
-    const [loadingWorkplaces, setLoadingWorkplaces] = useState(false);
     const [loadingEmployees, setLoadingEmployees] = useState(false);
     const [roleList, setRoleList] = useState<Role[]>([]);
 
-    const organization = useSelector((state: RootState) => state.organization);
+    const organization = useAppSelector((state: RootState) => state.organization);
 
     // Initial fetch of workplaces when the component mounts
     useEffect(() => {
-        fetchWorkplaces();
         if (organization.abbreviation)
             handleSelectWorkplace(organization);
+        // eslint-disable-next-line 
     }, []);
 
     // Function to fetch workplace data from the API
@@ -95,22 +85,9 @@ const WorkplacePage: React.FC = () => {
             })
             .catch((err) => {
                 setError(err.response?.data?.error || err.message);
-                setLoadingWorkplaces(false);
             });
     };
 
-    const fetchWorkplaces = () => {
-        setLoadingWorkplaces(true);
-        api.get('/api/workplace/get-org')
-            .then((res) => {
-                setWorkplaces(res.data);
-                setLoadingWorkplaces(false);
-            })
-            .catch((err) => {
-                setError(err.response?.data?.error || err.message);
-                setLoadingWorkplaces(false);
-            });
-    };
 
 
     // Function to select a workplace and fetch its associated employees
@@ -140,33 +117,6 @@ const WorkplacePage: React.FC = () => {
             });
     };
 
-    // Add a new workplace, ensuring all fields are filled before submission
-    const addWorkplace = () => {
-        if (!name || !abbreviation || !address || !startDate) {
-            setError('All fields are required.');
-            return;
-        }
-        api.post(`/api/workplace/add-workplace`, { name, abbreviation, address, startDate })
-            .then((res) => {
-                setWorkplaces((prevWorkplaces) => [...prevWorkplaces, res.data]);
-                setIsAddingWorkplace(false);
-                resetForm();
-                setError(null);
-                setSnackbarOpen(true);
-            })
-            .catch((err) => {
-                setError(err.response?.data?.error || 'An unexpected error occurred');
-            });
-    };
-
-    // Resets the input fields in the workplace form
-    const resetForm = () => {
-        setName('');
-        setAbbreviation('');
-        setAddress('');
-        setStartDate('');
-        setError(null);
-    };
 
     // Search for an employee by phone number in the selected workplace
     const handleAddEmployee = () => {
@@ -282,21 +232,6 @@ const WorkplacePage: React.FC = () => {
     return (
         <div>
             {/* AppBar for navigation and adding a new workplace */}
-            <Toolbar>
-                <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    {/* Workplace Management */}
-                </Typography>
-                <Button
-                    color="inherit"
-                    startIcon={<AddIcon />}
-                    onClick={() => {
-                        setIsAddingWorkplace(true);
-                        setIsEditingRole(false);
-                    }}
-                >
-                    Add Workplace
-                </Button>
-            </Toolbar>
 
             <Container>
                 <Grid container spacing={3}>
@@ -468,93 +403,6 @@ const WorkplacePage: React.FC = () => {
                 </Grid>
             </Container>
 
-            {/* Dialog for Adding a New Workplace */}
-            <Dialog
-                open={isAddingWorkplace}
-                onClose={resetForm}
-                fullWidth
-                maxWidth="sm"
-            >
-                <DialogTitle>Add New Workplace</DialogTitle>
-                <DialogContent>
-
-                    {error && (
-                        <Typography color="error" sx={{ marginBottom: 1 }}>
-                            {error}
-                        </Typography>
-                    )}
-                    {/* Input fields for adding workplace details */}
-                    <TextField
-                        label="Name"
-                        fullWidth
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        sx={{
-                            marginBottom: 1,
-                            "& .MuiInputLabel-root": {
-                                transform: "translate(14px, 12px) scale(1)",
-                            },
-                            "& .MuiInputLabel-shrink": {
-                                transform: "translate(14px, -4px) scale(0.75)",
-                            },
-                        }}
-                    />
-                    <TextField
-                        label="Abbreviation"
-                        fullWidth
-                        value={abbreviation}
-                        onChange={(e) => setAbbreviation(e.target.value)}
-                        sx={{ marginBottom: 1 }}
-                    />
-                    <TextField
-                        label="Address"
-                        fullWidth
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        sx={{ marginBottom: 1 }}
-                    />
-                    <TextField
-                        label="Start Date"
-                        fullWidth
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                    />
-                </DialogContent>
-                <DialogActions>
-                    {/* Buttons to submit, reset, or cancel workplace addition */}
-                    <Button
-                        onClick={addWorkplace}
-                        color="primary"
-                        variant="contained"
-                        startIcon={<SaveIcon />}
-                    >
-                        Submit
-                    </Button>
-                    <Button
-                        onClick={resetForm}
-                        startIcon={<RefreshIcon />}
-                        variant="contained"
-                        style={{
-                            backgroundColor: '#5dbea3',
-                            color: 'white',
-                        }}
-                        aria-label="Reset Form"
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        onClick={() => setIsAddingWorkplace(false)}
-                        startIcon={<CancelIcon />}
-                        variant="contained"
-                        style={{
-                            backgroundColor: 'red',
-                            color: 'white',
-                        }}
-                    >
-                        Cancel
-                    </Button>
-                </DialogActions>
-            </Dialog>
 
             {/* Dialog for Adding an Employee */}
             <Dialog
