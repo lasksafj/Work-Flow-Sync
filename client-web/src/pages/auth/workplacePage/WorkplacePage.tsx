@@ -82,7 +82,8 @@ const WorkplacePage: React.FC = () => {
     // Initial fetch of workplaces when the component mounts
     useEffect(() => {
         fetchWorkplaces();
-        handleSelectWorkplace(organization);
+        if (organization.abbreviation)
+            handleSelectWorkplace(organization);
     }, []);
 
     // Function to fetch workplace data from the API
@@ -301,13 +302,13 @@ const WorkplacePage: React.FC = () => {
 
             <Container>
                 <Grid container spacing={3}>
-                    <Grid item xs={12} md={4}>
+                    <Grid item xs={12} md={3}>
                         <SelectWorkplace
                             onSelectWorkplace={handleSelectWorkplace}
                         />
                     </Grid>
                     {/* Workplace Details Section */}
-                    <Grid item xs={12} md={8}>
+                    <Grid item xs={12} md={9}>
                         {selectedWorkplace ? (
                             <div>
                                 {/* Display selected workplace details */}
