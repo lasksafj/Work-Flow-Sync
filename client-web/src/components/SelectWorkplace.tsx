@@ -2,34 +2,34 @@ import React, { useEffect, useState } from 'react';
 import api from '../apis/api';
 import {
     Typography,
-    Card, List, ListItem,
+    Card,
+    List,
+    ListItem,
     ListItemButton,
-    Box, CircularProgress, ListItemText
-} from '@mui/material'; // Material-UI components
-import Grid from '@mui/material/Grid'; // Grid layout system from Material-UI
+    Box,
+    CircularProgress,
+    ListItemText,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Snackbar,
+    Alert,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { useAppDispatch } from '../store/hooks';
 import { updateOrganization } from '../store/slices/organizationSlice';
 
-// Define structure for an Employee object with optional avatar property
-interface Employee {
-    role_name: string;
-    email: string;
-    last_name: string;
-    first_name: string;
-    phone_number: string;
-    date_of_birth: string;
-    avatar?: string;
-}
 
-// Define structure for a Workplace object
 interface Workplace {
     abbreviation: string;
     name: string;
     address: string;
-}
-
-interface Role {
-    name: string;
 }
 
 interface SelectWorkplaceProps {
@@ -37,14 +37,17 @@ interface SelectWorkplaceProps {
 }
 
 const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) => {
-
-    // State hooks for managing workplaces, employees, and form inputs
     const [workplaces, setWorkplaces] = useState<Workplace[]>([]);
     const [selectedWorkplace, setSelectedWorkplace] = useState<Workplace | null>(null);
     const [error, setError] = useState<string | null>(null);
-
-    // State for editing roles, notifications, and loading states
     const [loadingWorkplaces, setLoadingWorkplaces] = useState(false);
+    const [isAddingWorkplace, setIsAddingWorkplace] = useState(false);
+
+    const [name, setName] = useState('');
+    const [abbreviation, setAbbreviation] = useState('');
+    const [address, setAddress] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const dispatch = useAppDispatch();
 
@@ -65,6 +68,31 @@ const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) 
             });
     };
 
+    const addWorkplace = () => {
+        if (!name || !abbreviation || !address || !startDate) {
+            setError('All fields are required.');
+            return;
+        }
+        api.post(`/api/workplace/add-workplace`, { name, abbreviation, address, startDate })
+            .then((res) => {
+                setWorkplaces((prevWorkplaces) => [...prevWorkplaces, res.data]);
+                setIsAddingWorkplace(false);
+                resetForm();
+                setError(null);
+                setSnackbarOpen(true);
+            })
+            .catch((err) => {
+                setError(err.response?.data?.error || 'An unexpected error occurred');
+            });
+    };
+
+    const resetForm = () => {
+        setName('');
+        setAbbreviation('');
+        setAddress('');
+        setStartDate('');
+        setError(null);
+    };
 
     const handleSelectWorkplace = (workplace: Workplace) => {
         dispatch(updateOrganization(workplace));
@@ -72,12 +100,24 @@ const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) 
         setSelectedWorkplace(workplace);
     };
 
+    const handleCloseSnackbar = () => {
+        setSnackbarOpen(false);
+    };
 
     return (
-        <Grid item xs={12} md={4}>
+        <>
             <Typography variant="h5" gutterBottom>
                 Workplaces
             </Typography>
+
+            <Button
+                color="inherit"
+                startIcon={<AddIcon />}
+                onClick={() => setIsAddingWorkplace(true)}
+            >
+                Add Workplace
+            </Button>
+
             <Card variant="outlined">
                 {loadingWorkplaces ? (
                     <Box display="flex" justifyContent="center" alignItems="center" sx={{ p: 2 }}>
@@ -91,7 +131,7 @@ const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) 
                                     selected={
                                         selectedWorkplace?.abbreviation === workplace.abbreviation
                                     }
-                                    onClick={() => { handleSelectWorkplace(workplace) }}
+                                    onClick={() => handleSelectWorkplace(workplace)}
                                 >
                                     <ListItemText
                                         primary={workplace.name}
@@ -103,10 +143,105 @@ const SelectWorkplace: React.FC<SelectWorkplaceProps> = ({ onSelectWorkplace }) 
                     </List>
                 )}
             </Card>
-        </Grid>
 
+            <Dialog
+                open={isAddingWorkplace}
+                onClose={resetForm}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>Add New Workplace</DialogTitle>
+                <DialogContent>
+
+                    {error && (
+                        <Typography color="error" sx={{ marginBottom: 1 }}>
+                            {error}
+                        </Typography>
+                    )}
+                    {/* Input fields for adding workplace details */}
+                    <TextField
+                        label="Name"
+                        fullWidth
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        sx={{
+                            marginBottom: 1,
+                            "& .MuiInputLabel-root": {
+                                transform: "translate(14px, 12px) scale(1)",
+                            },
+                            "& .MuiInputLabel-shrink": {
+                                transform: "translate(14px, -4px) scale(0.75)",
+                            },
+                        }}
+                    />
+                    <TextField
+                        label="Abbreviation"
+                        fullWidth
+                        value={abbreviation}
+                        onChange={(e) => setAbbreviation(e.target.value)}
+                        sx={{ marginBottom: 1 }}
+                    />
+                    <TextField
+                        label="Address"
+                        fullWidth
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        sx={{ marginBottom: 1 }}
+                    />
+                    <TextField
+                        label="Start Date"
+                        fullWidth
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    {/* Buttons to submit, reset, or cancel workplace addition */}
+                    <Button
+                        onClick={addWorkplace}
+                        color="primary"
+                        variant="contained"
+                        startIcon={<SaveIcon />}
+                    >
+                        Submit
+                    </Button>
+                    <Button
+                        onClick={resetForm}
+                        startIcon={<RefreshIcon />}
+                        variant="contained"
+                        style={{
+                            backgroundColor: '#5dbea3',
+                            color: 'white',
+                        }}
+                        aria-label="Reset Form"
+                    >
+                        Reset
+                    </Button>
+                    <Button
+                        onClick={() => setIsAddingWorkplace(false)}
+                        startIcon={<CancelIcon />}
+                        variant="contained"
+                        style={{
+                            backgroundColor: 'red',
+                            color: 'white',
+                        }}
+                    >
+                        Cancel
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={4000}
+                onClose={handleCloseSnackbar}
+            >
+                <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+                    Workplace added successfully!
+                </Alert>
+            </Snackbar>
+        </>
     );
 };
 
 export default SelectWorkplace;
-
