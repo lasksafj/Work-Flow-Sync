@@ -11,6 +11,8 @@ npm-debug.*
 web-build/
 %ProgramData%
 .config/
+package.json
+package-lock.json
 
 # macOS
 .DS_Store

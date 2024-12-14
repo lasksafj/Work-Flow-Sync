@@ -12,6 +12,8 @@ export default function ClockInOutScreen() {
     const [scanned, setScanned] = useState(false); // Scan state
     const cameraRef = useRef(null);
 
+    let scannedState = false;
+
     const organization = useAppSelector(
         (state: RootState) => state.organization
     ); // Get organization data from Redux store
@@ -26,9 +28,13 @@ export default function ClockInOutScreen() {
 
     // Handler for when a barcode is scanned
     const handleBarCodeScanned = async ({ type, data }: any) => {
-        setScanned(true);
-
+        // setScanned(true);
+        if (scannedState) {
+            return;
+        }
+        scannedState = true;
         // Verify that the scanned data matches the organization's abbreviation
+        
         if (organization.abbreviation !== data) {
             Alert.alert('Error', 'You are not authorized for this organization. Please try again.');
             setScanned(false);
@@ -51,7 +57,7 @@ export default function ClockInOutScreen() {
                 isClockedIn ? 'Clock Out' : 'Clock In',
                 `Are you sure you want to ${isClockedIn ? 'clock out from' : 'clock in to'} ${organizationName}?`,
                 [
-                    { text: 'Cancel', style: 'cancel', onPress: () => { setScanned(false); } },
+                    { text: 'Cancel', style: 'cancel' },
                     { text: 'OK', onPress: async () => {
                         try {
                             // Send POST request to clock in/out
@@ -65,9 +71,6 @@ export default function ClockInOutScreen() {
                         } catch (error: any) {
                             Alert.alert('Error', error.response?.data?.error || 'An error occurred');
                         }
-    
-                        router.back();
-                        setScanned(false);
                     } },
                 ],
                 { cancelable: false }
@@ -77,9 +80,7 @@ export default function ClockInOutScreen() {
             Alert.alert('Error', error.response?.data?.error || 'An error occurred');
         }
 
-        // Navigate back after handling the scan
         router.back();
-        setScanned(false);
     };
 
     // Render different views based on camera permission status

@@ -3,6 +3,8 @@ import React, { useContext } from 'react';
 import { AuthContext } from '../../AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../apis/authorize/login';
+import Button from '@mui/material/Button';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Logout: React.FC = () => {
     const authContext = useContext(AuthContext);
@@ -24,7 +26,26 @@ const Logout: React.FC = () => {
         }
     };
 
-    return <button onClick={handleLogout}>Logout</button>;
+    return (
+        <Button
+            onClick={handleLogout}
+            variant="outlined"
+            color="secondary"
+            startIcon={<LogoutIcon />}
+            sx={{
+                fontWeight: 'bold',
+                borderRadius: 2,
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    borderColor: 'white',
+                },
+            }}
+        >
+            Logout
+        </Button>
+    );
 };
 
 export default Logout;

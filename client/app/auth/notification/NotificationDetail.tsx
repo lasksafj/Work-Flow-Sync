@@ -96,9 +96,14 @@ const styles = StyleSheet.create({
         color: "#999", 
     },
     contentBox: {
-        padding: 15, 
-        backgroundColor: "#fff", 
-        borderRadius: 5, 
+        padding: 15,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     content: {
         fontSize: 16, 
