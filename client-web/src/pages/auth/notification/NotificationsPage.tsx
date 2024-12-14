@@ -1,9 +1,11 @@
 import api from "../../../apis/api";
 import React, { useState, useEffect } from 'react';
-import OrganizationList from './OrganizationList';
-import OrganizationDetails from './OrganizationDetails'; // Import the new component
 import NotificationList from './NotificationList';
 import CreateNotification from './CreateNotification';
+import SelectWorkplace from '../../../components/SelectWorkplace';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
+import { Alert, Box, CircularProgress, Container, Grid, Snackbar, Typography } from '@mui/material';
 
 interface Notification {
     id: number;
@@ -19,57 +21,52 @@ interface Employee {
     last_name: string;
 }
 
-interface Organization {
+interface Workplace {
     abbreviation: string;
     name: string;
     address: string;
-    start_date: string;
-}
-
-interface OrganizationDetailsType {
-    organization: Organization;
-    employeeCount: number;
-    roleCount: number;
-    shiftCount: number;
-    roles: {
-        name: string;
-        description: string;
-    }[];
-    recentNotifications: {
-        id: number;
-        content: string;
-        created_date: string;
-    }[];
 }
 
 const NotificationsPage: React.FC = () => {
-    const [organizations, setOrganizations] = useState<Organization[]>([]);
-    const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
-    const [organizationDetails, setOrganizationDetails] = useState<OrganizationDetailsType | null>(null);
-    const [loadingOrganizations, setLoadingOrganizations] = useState(false);
+    const organization = useSelector((state: RootState) => state.organization);
+    const [organizationAbbreviation, setOrganizationAbbreviation] = useState<string>(organization.abbreviation); // Default value or user-selected value
+    const [loading, setLoading] = useState(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [employeeId, setEmployeeId] = useState<number | null>(null);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const pageSize = 10;
 
-    useEffect(() => {
-        fetchOrganizations();
-    }, []);
+    
 
-    const fetchOrganizations = () => {
-        setLoadingOrganizations(true);
-        api.get('/api/notification/organizations-fetch')
-            .then((res) => {
-                setOrganizations(res.data);
-                setLoadingOrganizations(false);
-            })
-            .catch((err) => {
-                setError(err.response?.data?.error || err.message);
-                setLoadingOrganizations(false);
-            });
+    useEffect(() => {
+        const fetchData = async () => {
+            setLoading(true);
+
+            try {
+                fetchEmployees(organizationAbbreviation);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError('Please select an organization to view and create notifications.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (organizationAbbreviation)
+            fetchData();
+    }, [organizationAbbreviation]);
+
+    useEffect(() => {
+        loadNotifications(page, organizationAbbreviation);
+    }, [page, organizationAbbreviation]);
+    
+    // Function to select a workplace and fetch its associated employees
+    const handleSelectWorkplace = (workplace: Workplace) => {
+        setOrganizationAbbreviation(workplace.abbreviation);
+        setPage(1); // Reset pagination to the first page
     };
 
     const fetchEmployees = (orgAbbreviation: string) => {
@@ -89,22 +86,8 @@ const NotificationsPage: React.FC = () => {
             });
     };
 
-    const fetchOrganizationDetails = (orgAbbreviation: string) => {
-        api.get('/api/notification/organization-details-fetch', {
-            params: { org: orgAbbreviation }
-        })
-            .then((res) => {
-                setOrganizationDetails(res.data);
-            })
-            .catch((err) => {
-                setError('Failed to fetch organization details.');
-                console.log(err);
-            });
-    };
-
-    const loadNotifications = (pageNumber: number, orgAbbreviation: string | null, empId: number | null) => {
-        if (!orgAbbreviation || !empId) {
-            setError("Please select an organization and ensure your employee ID is available.");
+    const loadNotifications = (pageNumber: number, orgAbbreviation: string | null) => {
+        if (!orgAbbreviation) {
             return;
         }
 
@@ -113,7 +96,6 @@ const NotificationsPage: React.FC = () => {
                 offset: (pageNumber - 1) * pageSize,
                 limit: pageSize,
                 org: orgAbbreviation,
-                employeeId: empId
             }
         })
             .then((res) => {
@@ -126,51 +108,22 @@ const NotificationsPage: React.FC = () => {
             });
     };
 
-    const handleSelectOrganization = (organization: Organization) => {
-        setSelectedOrganization(organization);
-        setPage(1); // Reset pagination to the first page
-
-        if (organization.abbreviation) {
-            fetchOrganizationDetails(organization.abbreviation);
-            fetchEmployees(organization.abbreviation);
-            api.get("/api/notification/employee-id-fetch", {
-                params: { org: organization.abbreviation }
-            })
-                .then((res) => {
-                    setEmployeeId(res.data.employeeId);
-                    loadNotifications(1, organization.abbreviation, res.data.employeeId);
-                })
-                .catch((err) => {
-                    setError("Failed to fetch employee ID or load notifications.");
-                    console.log(err);
-                });
-        } else {
-            setError("Failed to load employees or notifications. Please try again later.");
-        }
-    };
-
     const handlePageChange = (pageNumber: number) => {
         setPage(pageNumber);
-        if (selectedOrganization && employeeId) {
-            loadNotifications(pageNumber, selectedOrganization.abbreviation, employeeId);
+        if (organization && employeeId) {
+            loadNotifications(pageNumber, organizationAbbreviation);
         }
     };
 
     const handleCreateNotification = (content: string, selectedEmployeeIds: number[]) => {
-        if (!employeeId) {
-            setError('Your employee ID is not available.');
-            return;
-        }
-
         api.post('/api/notification/notification-create', {
             content,
             receiver_ids: selectedEmployeeIds,
-            sender_id: employeeId,
+            org_abbr: organizationAbbreviation,
         })
             .then((res) => {
                 const newNotification = res.data;
                 setNotifications((prevNotifications) => [newNotification, ...prevNotifications]);
-                setError(null);
             })
             .catch((err) => {
                 setError('Failed to create notification.');
@@ -179,58 +132,89 @@ const NotificationsPage: React.FC = () => {
     };
 
     return (
-        <div className="container py-4">
-            <div className="row">
-                {/* Organization Selector */}
-                <OrganizationList
-                    organizations={organizations}
-                    selectedOrganization={selectedOrganization}
-                    onSelectOrganization={handleSelectOrganization}
-                    loading={loadingOrganizations}
-                />
+        <div style={{ paddingTop: 20 }}>
+            <Container>
+                <Grid container spacing={3}>
+                    <Grid item xs={3} md={3}>
+                        <SelectWorkplace
+                            onSelectWorkplace={handleSelectWorkplace}
+                        />
+                    </Grid>
+                    <Grid item xs={9} md={9}>
+                        {organizationAbbreviation ? (
+                            <Container maxWidth="lg" sx={{ py: 4 }}>
 
-                {/* Content Section */}
-                <div className="col-md-8">
-                    {!selectedOrganization ? (
-                        <div className="card">
-                            <div className="card-body text-center">
-                                <h5 className="text-muted">
-                                    Please select an organization to view and create notifications.
-                                </h5>
-                                <p className="text-muted">Click on an organization from the list to proceed.</p>
-                            </div>
-                        </div>
-                    ) : (
-                        <>
-                            {/* Organization Details */}
-                            {organizationDetails && (
-                                <OrganizationDetails
-                                    organization={organizationDetails.organization}
-                                    employeeCount={organizationDetails.employeeCount}
-                                    roles={organizationDetails.roles}
+                                {/* Snackbar for Success Messages */}
+                                <Snackbar
+                                    open={!!success}
+                                    autoHideDuration={6000}
+                                    onClose={() => setSuccess('')}
+                                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                                >
+                                    <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
+                                        {success}
+                                    </Alert>
+                                </Snackbar>
+
+                                {/* Snackbar for Error Messages */}
+                                <Snackbar
+                                    open={!!error}
+                                    autoHideDuration={6000}
+                                    onClose={() => setError('')}
+                                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                                >
+                                    <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+                                        {error}
+                                    </Alert>
+                                </Snackbar>
+
+                                {/* Create Notification Section */}
+                                <CreateNotification
+                                    employees={employees}
+                                    employeeId={employeeId}
+                                    onCreate={handleCreateNotification}
+                                    error={error}
                                 />
-                            )}
 
-                            {/* Create Notification Section */}
-                            <CreateNotification
-                                employees={employees}
-                                employeeId={employeeId}
-                                onCreate={handleCreateNotification}
-                                error={error}
-                            />
-
-                            {/* Notifications Section */}
-                            <h4 className="mt-4">Notifications</h4>
-                            <NotificationList
-                                notifications={notifications}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                                currentPage={page}
-                            />
-                        </>
-                    )}
-                </div>
-            </div>
+                                {/* Notifications Section */}
+                                <h4 className="mt-4">Notifications</h4>
+                                <NotificationList
+                                    notifications={notifications}
+                                    totalPages={totalPages}
+                                    onPageChange={handlePageChange}
+                                    currentPage={page}
+                                />
+                                {/* Loading Indicator Overlay */}
+                                {loading && (
+                                    <Box
+                                        sx={{
+                                            position: 'fixed',
+                                            top: 0,
+                                            left: 0,
+                                            width: '100%',
+                                            height: '100%',
+                                            bgcolor: 'rgba(0, 0, 0, 0.5)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            zIndex: 1300,
+                                        }}
+                                    >
+                                        <CircularProgress color="inherit" size={80} />
+                                    </Box>
+                                )}
+                            </Container>
+                        )
+                            :
+                            (
+                                <Typography variant="h6">
+                                    Please select a workplace to view details.
+                                </Typography>
+                            )
+                        }
+                    </Grid>
+                </Grid>
+            </Container>
         </div>
     );
 };
