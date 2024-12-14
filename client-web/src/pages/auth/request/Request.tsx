@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import DropShift from './DropShift';
 import SwapShift from './SwapShift';
-import '../css/request.css';
 import api from '../../../apis/api';
 import SelectWorkplace from '../../../components/SelectWorkplace';
 import { Container, Grid } from '@mui/material';
+import './Request.css';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store/store';
 
 // Define the interface for organization properties
 interface AllOrgsProps {
@@ -21,10 +23,9 @@ interface Workplace {
 
 // Define the Request component
 const Request: React.FC = () => {
-    const [allOrgs, setAllOrgs] = useState<AllOrgsProps[]>([]);
+    const organization = useSelector((state: RootState) => state.organization);
     const [toggle, setToggle] = useState(1);
-    const [abbreviation, setAbbreviation] = useState('');
-    const [isLoading, setIsLoading] = useState(true);
+    const [abbreviation, setAbbreviation] = useState(organization.abbreviation);
 
     // Function to update the active tab
     function updateToggle(id: number) {
@@ -39,22 +40,6 @@ const Request: React.FC = () => {
             default: return null;
         }
     }
-
-    // Fetch organization data from the API
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const res = await api.get(`/api/request/get-org`);
-                setAllOrgs(res.data);
-            } catch (error) {
-                alert(error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, []);
 
     // Function to select a workplace and fetch its associated employees
     const handleSelectWorkplace = (workplace: Workplace) => {

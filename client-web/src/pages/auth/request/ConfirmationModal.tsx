@@ -1,5 +1,5 @@
 import React from 'react';
-import '../css/request.css';
+import './Request.css';
 import { Modal, Button } from 'react-bootstrap';
 
 // Define the interface for the ConfirmationModal component

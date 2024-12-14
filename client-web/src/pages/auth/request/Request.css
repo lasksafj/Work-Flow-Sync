@@ -99,7 +99,7 @@
 }
 
 .card {
-    background-color: #ade1cb !important;
+    /* background-color: #ade1cb !important; */
     box-shadow: 0 4px 8px rgba(49, 160, 114, 0.1);
     border: none;
     border-radius: 8px;

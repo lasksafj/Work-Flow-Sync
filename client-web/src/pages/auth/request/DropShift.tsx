@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import '../css/request.css';
+import './Request.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { format } from 'date-fns';
 import ConfirmationModal from './ConfirmationModal';
