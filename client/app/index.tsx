@@ -21,7 +21,7 @@ export default function Welcome() {
     const dispatch = useAppDispatch();
 
     const handleButton = async () => {
-        router.push('unauth/login');
+        router.push('/unauth/login');
     };
 
     useEffect(() => {
@@ -32,7 +32,7 @@ export default function Welcome() {
 
             if (response.status) {
                 dispatch(userLogin(response.data));
-                router.push('auth');
+                router.push('/auth');
             }
             await SplashScreen.hideAsync();
         }
@@ -57,7 +57,7 @@ export default function Welcome() {
                         <TouchableOpacity
                             style={styles.secondaryButton}
                             onPress={() => {
-                                router.push('unauth/register');
+                                router.push('/unauth/register');
                             }}>
                             <Text style={styles.secondaryButtonText}>Create an Account</Text>
                         </TouchableOpacity>
