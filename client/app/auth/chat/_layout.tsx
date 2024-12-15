@@ -49,7 +49,7 @@ export default function ChatLayout() {
                 }}
             />
 
-            <Stack.Screen name="NewChatScreen" />
+            <Stack.Screen name="NewChatScreen" options={{ headerTitle: 'New Chat' }} />
 
 
             {/* <Stack.Screen

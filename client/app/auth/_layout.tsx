@@ -150,15 +150,6 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
-                name="profile"
-                options={{
-                    title: "Profile",
-                    tabBarIcon: ({ color, size }) => (
-                        <MaterialCommunityIcons name="account" color={color} size={size} />
-                    ),
-                }}
-            />
-            <Tabs.Screen
                 name="chat"
                 options={{
                     title: 'Chat',
@@ -182,6 +173,15 @@ export default function TabLayout() {
                     title: 'Notifications',
                     tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="bell" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    title: "Profile",
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="account" color={color} size={size} />
                     ),
                 }}
             />
