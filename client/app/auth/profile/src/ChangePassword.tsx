@@ -65,7 +65,7 @@ const ChangePassword = ({
                 if (res.status === 200) {
                     setChangePasswordVisible(false);
                     router.dismissAll();
-                    router.push("/auth");
+                    router.push("/auth/dashboard/DashboardScreen");
                 }
             })
             .catch((error) => {
@@ -91,7 +91,7 @@ const ChangePassword = ({
 
             </TouchableOpacity>
             <Text style={styles.title}>Change Password</Text>
-            <Text style={styles.spacer} />
+            <View style={styles.spacer} />
         </View>
     );
 
@@ -111,7 +111,7 @@ const ChangePassword = ({
             }}
         >
             <SafeAreaView style={{ flex: 1 }}>
-                <Header /> {/* Render the header component */}
+                <Header />
 
                 <View style={styles.section}>
                     <View>

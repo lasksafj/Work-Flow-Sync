@@ -79,7 +79,7 @@ const EmployeeList = ({
                 />
             </TouchableOpacity>
             <Text style={styles.title}>Employee List</Text>
-            <Text style={styles.spacer} />
+            <View style={styles.spacer} />
         </View>
     );
 
@@ -101,8 +101,6 @@ const EmployeeList = ({
         />
     );
 
-
-
     return (
         <Modal
             animationType="slide"
@@ -113,8 +111,8 @@ const EmployeeList = ({
             }}
         >
             <SafeAreaView style={{ flex: 1 }}>
-                <Header /> {/* Render header */}
-                <SearchBar /> {/* Render search bar */}
+                <Header />
+                <SearchBar />
                 <AlphabetList
                     data={filteredEmployees}
                     stickySectionHeadersEnabled

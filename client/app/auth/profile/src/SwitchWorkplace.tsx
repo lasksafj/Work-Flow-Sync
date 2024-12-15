@@ -78,7 +78,7 @@ const SwitchWorkplace = ({
                         })
                     );
                     setSwitchWorkplaceVisible(false);
-                    router.replace('auth/dashboard');
+                    router.replace('/auth/dashboard/DashboardScreen');
                 }}
             >
                 <View>

@@ -207,7 +207,6 @@ export default function DashboardScreen() {
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
-            <FirstOrg firstOrgVisible={firstOrgVisible} setFirstOrgVisible={setFirstOrgVisible} />
             <ScrollView
                 refreshControl={
                     <RefreshControl

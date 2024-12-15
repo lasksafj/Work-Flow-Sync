@@ -42,7 +42,7 @@ const Logout = ({
                             onPress={async () => {
                                 setLogOutVisible(false);
                                 await logout();
-                                router.replace('');
+                                router.dismissAll();
                                 dispatch(userLogout());
                             }}
                         />
