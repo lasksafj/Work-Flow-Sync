@@ -233,175 +233,173 @@ const WorkplacePage: React.FC = () => {
         <div>
             {/* AppBar for navigation and adding a new workplace */}
 
-            <Container>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={3}>
-                        <SelectWorkplace
-                            onSelectWorkplace={handleSelectWorkplace}
-                        />
-                    </Grid>
-                    {/* Workplace Details Section */}
-                    <Grid item xs={12} md={9}>
-                        {selectedWorkplace ? (
-                            <div>
-                                {/* Display selected workplace details */}
-                                <Typography variant="h4">{selectedWorkplace.name}</Typography>
-                                <Typography variant="subtitle1" color="textSecondary">
-                                    Address: {selectedWorkplace.address}
-                                </Typography>
-                                <Typography variant="subtitle2" sx={{ marginTop: 1 }}>
-                                    Total Employees: {employees.length}
-                                </Typography>
+            <Grid container spacing={3} style={{ padding: 10 }}>
+                <Grid item xs={12} md={3}>
+                    <SelectWorkplace
+                        onSelectWorkplace={handleSelectWorkplace}
+                    />
+                </Grid>
+                {/* Workplace Details Section */}
+                <Grid item xs={12} md={9}>
+                    {selectedWorkplace ? (
+                        <div>
+                            {/* Display selected workplace details */}
+                            <Typography variant="h4">{selectedWorkplace.name}</Typography>
+                            <Typography variant="subtitle1" color="textSecondary">
+                                Address: {selectedWorkplace.address}
+                            </Typography>
+                            <Typography variant="subtitle2" sx={{ marginTop: 1 }}>
+                                Total Employees: {employees.length}
+                            </Typography>
 
-                                {/* Buttons to edit roles or add employees */}
-                                <Box display="flex" justifyContent="flex-end" sx={{ gap: 1, marginTop: 2 }}>
-                                    {isEditingRole ? (
-                                        <>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                startIcon={<SaveIcon />}
-                                                onClick={handleSaveRole}
-                                            >
-                                                Save
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                startIcon={<CancelIcon />}
-                                                style={{
-                                                    backgroundColor: 'red',
-                                                    color: 'white',
-                                                }}
-                                                onClick={() => setIsEditingRole(false)}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </>
-                                    ) : (
+                            {/* Buttons to edit roles or add employees */}
+                            <Box display="flex" justifyContent="flex-end" sx={{ gap: 1, marginTop: 2 }}>
+                                {isEditingRole ? (
+                                    <>
                                         <Button
                                             variant="contained"
                                             color="primary"
-                                            startIcon={<EditIcon />}
-                                            onClick={() => setIsEditingRole(true)}
+                                            startIcon={<SaveIcon />}
+                                            onClick={handleSaveRole}
                                         >
-                                            Edit Roles
+                                            Save
                                         </Button>
-                                    )}
-                                    {/* Button to open the Add Employee dialog */}
+                                        <Button
+                                            variant="contained"
+                                            startIcon={<CancelIcon />}
+                                            style={{
+                                                backgroundColor: 'red',
+                                                color: 'white',
+                                            }}
+                                            onClick={() => setIsEditingRole(false)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                    </>
+                                ) : (
                                     <Button
                                         variant="contained"
-                                        color="secondary"
-                                        startIcon={<PersonAddIcon />}
-                                        onClick={() => {
-                                            setIsAddingEmployee(true);
-                                            setIsEditingRole(false);
-                                        }}
+                                        color="primary"
+                                        startIcon={<EditIcon />}
+                                        onClick={() => setIsEditingRole(true)}
                                     >
-                                        Add Employee
+                                        Edit Roles
                                     </Button>
-                                </Box>
-
-                                {loadingEmployees ? (
-                                    // Show loading spinner if employees are loading
-                                    <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
-                                        <CircularProgress />
-                                    </Box>
-                                ) : employees.length === 0 ? (
-                                    // Show message if no employees are found
-                                    <Typography variant="body1" sx={{ marginTop: 2 }}>
-                                        No employees found for this workplace.
-                                    </Typography>
-                                ) : (
-                                    // Display a grid of employee cards
-                                    <Grid container spacing={2} sx={{ marginTop: 2 }}>
-                                        {employees.map((employee) => (
-                                            <Grid item xs={12} sm={6} md={4} key={employee.phone_number}>
-                                                <Card elevation={3} sx={{ minHeight: 220 }}>
-                                                    <CardContent>
-                                                        <Box
-                                                            display="flex"
-                                                            alignItems="center"
-                                                            flexDirection="column"
-                                                        >
-                                                            {/* Employee Avatar */}
-                                                            <Avatar
-                                                                size={80}
-                                                                img={employee.avatar}
-                                                                name={employee.first_name + ' ' + employee.last_name}
-                                                            />
-                                                            {/* Employee name and contact details */}
-                                                            <Typography variant="h6" align="center">
-                                                                {employee.first_name} {employee.last_name}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                color="textSecondary"
-                                                                align="center"
-                                                                sx={{ wordBreak: "break-word" }}
-                                                            >
-                                                                Email: {employee.email}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                color="textSecondary"
-                                                                align="center"
-                                                                sx={{ wordBreak: "break-word" }}
-                                                            >
-                                                                Phone number: {employee.phone_number}
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="body2"
-                                                                color="textSecondary"
-                                                                align="center"
-                                                                sx={{ wordBreak: "break-word" }}
-                                                            >
-                                                                DOB: {new Date(employee.date_of_birth).toLocaleDateString()}
-                                                            </Typography>
-                                                            {isEditingRole ? (
-                                                                // Role selection dropdown for editing
-                                                                <FormControl fullWidth sx={{ marginTop: 2 }}>
-                                                                    <Select
-                                                                        value={roles[employee.phone_number]}
-                                                                        onChange={(e) =>
-                                                                            handleRoleChange(
-                                                                                employee.phone_number,
-                                                                                e.target.value as string
-                                                                            )
-                                                                        }
-                                                                    >
-                                                                        {roleList.map((role) => (
-                                                                            <MenuItem key={role.name} value={role.name}>
-                                                                                {role.name}
-                                                                            </MenuItem>
-                                                                        ))}
-                                                                    </Select>
-                                                                </FormControl>
-                                                            ) : (
-                                                                // Display current role when not editing
-                                                                <Typography
-                                                                    variant="body2"
-                                                                    sx={{ marginTop: 1 }}
-                                                                    color="textSecondary"
-                                                                >
-                                                                    <strong>{employee.role_name}</strong>
-                                                                </Typography>
-                                                            )}
-                                                        </Box>
-                                                    </CardContent>
-                                                </Card>
-                                            </Grid>
-                                        ))}
-                                    </Grid>
                                 )}
-                            </div>
-                        ) : (
-                            <Typography variant="h6">
-                                Please select a workplace to view details.
-                            </Typography>
-                        )}
-                    </Grid>
+                                {/* Button to open the Add Employee dialog */}
+                                <Button
+                                    variant="contained"
+                                    color="secondary"
+                                    startIcon={<PersonAddIcon />}
+                                    onClick={() => {
+                                        setIsAddingEmployee(true);
+                                        setIsEditingRole(false);
+                                    }}
+                                >
+                                    Add Employee
+                                </Button>
+                            </Box>
+
+                            {loadingEmployees ? (
+                                // Show loading spinner if employees are loading
+                                <Box display="flex" justifyContent="center" alignItems="center" sx={{ marginTop: 4 }}>
+                                    <CircularProgress />
+                                </Box>
+                            ) : employees.length === 0 ? (
+                                // Show message if no employees are found
+                                <Typography variant="body1" sx={{ marginTop: 2 }}>
+                                    No employees found for this workplace.
+                                </Typography>
+                            ) : (
+                                // Display a grid of employee cards
+                                <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                                    {employees.map((employee) => (
+                                        <Grid item xs={12} sm={6} md={4} key={employee.phone_number}>
+                                            <Card elevation={3} sx={{ minHeight: 220 }}>
+                                                <CardContent>
+                                                    <Box
+                                                        display="flex"
+                                                        alignItems="center"
+                                                        flexDirection="column"
+                                                    >
+                                                        {/* Employee Avatar */}
+                                                        <Avatar
+                                                            size={80}
+                                                            img={employee.avatar}
+                                                            name={employee.first_name + ' ' + employee.last_name}
+                                                        />
+                                                        {/* Employee name and contact details */}
+                                                        <Typography variant="h6" align="center">
+                                                            {employee.first_name} {employee.last_name}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="textSecondary"
+                                                            align="center"
+                                                            sx={{ wordBreak: "break-word" }}
+                                                        >
+                                                            Email: {employee.email}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="textSecondary"
+                                                            align="center"
+                                                            sx={{ wordBreak: "break-word" }}
+                                                        >
+                                                            Phone number: {employee.phone_number}
+                                                        </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            color="textSecondary"
+                                                            align="center"
+                                                            sx={{ wordBreak: "break-word" }}
+                                                        >
+                                                            DOB: {new Date(employee.date_of_birth).toLocaleDateString()}
+                                                        </Typography>
+                                                        {isEditingRole ? (
+                                                            // Role selection dropdown for editing
+                                                            <FormControl fullWidth sx={{ marginTop: 2 }}>
+                                                                <Select
+                                                                    value={roles[employee.phone_number]}
+                                                                    onChange={(e) =>
+                                                                        handleRoleChange(
+                                                                            employee.phone_number,
+                                                                            e.target.value as string
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    {roleList.map((role) => (
+                                                                        <MenuItem key={role.name} value={role.name}>
+                                                                            {role.name}
+                                                                        </MenuItem>
+                                                                    ))}
+                                                                </Select>
+                                                            </FormControl>
+                                                        ) : (
+                                                            // Display current role when not editing
+                                                            <Typography
+                                                                variant="body2"
+                                                                sx={{ marginTop: 1 }}
+                                                                color="textSecondary"
+                                                            >
+                                                                <strong>{employee.role_name}</strong>
+                                                            </Typography>
+                                                        )}
+                                                    </Box>
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    ))}
+                                </Grid>
+                            )}
+                        </div>
+                    ) : (
+                        <Typography variant="h6">
+                            Please select a workplace to view details.
+                        </Typography>
+                    )}
                 </Grid>
-            </Container>
+            </Grid>
 
 
             {/* Dialog for Adding an Employee */}

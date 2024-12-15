@@ -45,51 +45,49 @@ const Request: React.FC = () => {
     const handleSelectWorkplace = (workplace: Workplace) => {
         setAbbreviation(workplace.abbreviation);
     };
-    
+
     // Render the component
     return (
         <div>
-            <Container>
-                <Grid container spacing={3}>
-                    <Grid item xs={3} md={3}>
-                        <SelectWorkplace
-                            onSelectWorkplace={handleSelectWorkplace}
-                        />
-                    </Grid>
+            <Grid container spacing={3} style={{ padding: 10 }}>
+                <Grid item xs={3} md={3}>
+                    <SelectWorkplace
+                        onSelectWorkplace={handleSelectWorkplace}
+                    />
+                </Grid>
 
-                    <Grid item xs={9} md={9}>
-                        <div className='container1'>
+                <Grid item xs={9} md={9}>
+                    <div className='container1'>
 
-                            {/* Tab buttons to toggle between Swap Shifts and Drop Shifts */}
-                            <div className="bloc-tab">
-                                <button
-                                    className={`tabs ${toggle === 1 ? 'active' : ''}`}
-                                    onClick={() => updateToggle(1)}
-                                    role="tab"
-                                    aria-selected={toggle === 1}
-                                >
-                                    <span className="tab-icon">🔄</span> Swap Shifts
-                                </button>
-                                <button
-                                    className={`tabs ${toggle === 2 ? 'active' : ''}`}
-                                    onClick={() => updateToggle(2)}
-                                    role="tab"
-                                    aria-selected={toggle === 2}
-                                >
-                                    <span className="tab-icon">❌</span> Drop Shifts
-                                </button>
-                            </div>
+                        {/* Tab buttons to toggle between Swap Shifts and Drop Shifts */}
+                        <div className="bloc-tab">
+                            <button
+                                className={`tabs ${toggle === 1 ? 'active' : ''}`}
+                                onClick={() => updateToggle(1)}
+                                role="tab"
+                                aria-selected={toggle === 1}
+                            >
+                                <span className="tab-icon">🔄</span> Swap Shifts
+                            </button>
+                            <button
+                                className={`tabs ${toggle === 2 ? 'active' : ''}`}
+                                onClick={() => updateToggle(2)}
+                                role="tab"
+                                aria-selected={toggle === 2}
+                            >
+                                <span className="tab-icon">❌</span> Drop Shifts
+                            </button>
+                        </div>
 
-                            <div className='content-wrapper'>
-                                <div className={'content  show-content'}>
-                                    {/* Render the content based on the active tab */}
-                                    {renderTabContent()}
-                                </div>
+                        <div className='content-wrapper'>
+                            <div className={'content  show-content'}>
+                                {/* Render the content based on the active tab */}
+                                {renderTabContent()}
                             </div>
                         </div>
-                    </Grid>
+                    </div>
                 </Grid>
-            </Container>
+            </Grid>
         </div>
     );
 };

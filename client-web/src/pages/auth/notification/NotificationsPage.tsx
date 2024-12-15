@@ -62,7 +62,7 @@ const NotificationsPage: React.FC = () => {
     useEffect(() => {
         loadNotifications(page, organizationAbbreviation);
     }, [page, organizationAbbreviation]);
-    
+
     // Function to select a workplace and fetch its associated employees
     const handleSelectWorkplace = (workplace: Workplace) => {
         setOrganizationAbbreviation(workplace.abbreviation);
@@ -133,88 +133,86 @@ const NotificationsPage: React.FC = () => {
 
     return (
         <div>
-            <Container>
-                <Grid container spacing={3}>
-                    <Grid item xs={3} md={3}>
-                        <SelectWorkplace
-                            onSelectWorkplace={handleSelectWorkplace}
-                        />
-                    </Grid>
-                    <Grid item xs={9} md={9}>
-                        {organizationAbbreviation ? (
-                            <Container maxWidth="lg" sx={{ py: 4 }}>
-
-                                {/* Snackbar for Success Messages */}
-                                <Snackbar
-                                    open={!!success}
-                                    autoHideDuration={6000}
-                                    onClose={() => setSuccess('')}
-                                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                                >
-                                    <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
-                                        {success}
-                                    </Alert>
-                                </Snackbar>
-
-                                {/* Snackbar for Error Messages */}
-                                <Snackbar
-                                    open={!!error}
-                                    autoHideDuration={6000}
-                                    onClose={() => setError('')}
-                                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                                >
-                                    <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
-                                        {error}
-                                    </Alert>
-                                </Snackbar>
-
-                                {/* Create Notification Section */}
-                                <CreateNotification
-                                    employees={employees}
-                                    employeeId={employeeId}
-                                    onCreate={handleCreateNotification}
-                                    error={error}
-                                />
-
-                                {/* Notifications Section */}
-                                <h4 className="mt-4">Notifications</h4>
-                                <NotificationList
-                                    notifications={notifications}
-                                    totalPages={totalPages}
-                                    onPageChange={handlePageChange}
-                                    currentPage={page}
-                                />
-                                {/* Loading Indicator Overlay */}
-                                {loading && (
-                                    <Box
-                                        sx={{
-                                            position: 'fixed',
-                                            top: 0,
-                                            left: 0,
-                                            width: '100%',
-                                            height: '100%',
-                                            bgcolor: 'rgba(0, 0, 0, 0.5)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            zIndex: 1300,
-                                        }}
-                                    >
-                                        <CircularProgress color="inherit" size={80} />
-                                    </Box>
-                                )}
-                            </Container>
-                        )
-                            :
-                            (
-                                <Typography variant="h6">
-                                    Please select a workplace to view details.
-                                </Typography>
-                            )
-                        }
-                    </Grid>
+            <Grid container spacing={3} style={{ padding: 10 }}>
+                <Grid item xs={3} md={3}>
+                    <SelectWorkplace
+                        onSelectWorkplace={handleSelectWorkplace}
+                    />
                 </Grid>
-            </Container>
+                <Grid item xs={9} md={9}>
+                    {organizationAbbreviation ? (
+                        <Container maxWidth="lg" sx={{ py: 4 }}>
+
+                            {/* Snackbar for Success Messages */}
+                            <Snackbar
+                                open={!!success}
+                                autoHideDuration={6000}
+                                onClose={() => setSuccess('')}
+                                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                            >
+                                <Alert onClose={() => setSuccess('')} severity="success" sx={{ width: '100%' }}>
+                                    {success}
+                                </Alert>
+                            </Snackbar>
+
+                            {/* Snackbar for Error Messages */}
+                            <Snackbar
+                                open={!!error}
+                                autoHideDuration={6000}
+                                onClose={() => setError('')}
+                                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                            >
+                                <Alert onClose={() => setError('')} severity="error" sx={{ width: '100%' }}>
+                                    {error}
+                                </Alert>
+                            </Snackbar>
+
+                            {/* Create Notification Section */}
+                            <CreateNotification
+                                employees={employees}
+                                employeeId={employeeId}
+                                onCreate={handleCreateNotification}
+                                error={error}
+                            />
+
+                            {/* Notifications Section */}
+                            <h4 className="mt-4">Notifications</h4>
+                            <NotificationList
+                                notifications={notifications}
+                                totalPages={totalPages}
+                                onPageChange={handlePageChange}
+                                currentPage={page}
+                            />
+                            {/* Loading Indicator Overlay */}
+                            {loading && (
+                                <Box
+                                    sx={{
+                                        position: 'fixed',
+                                        top: 0,
+                                        left: 0,
+                                        width: '100%',
+                                        height: '100%',
+                                        bgcolor: 'rgba(0, 0, 0, 0.5)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        zIndex: 1300,
+                                    }}
+                                >
+                                    <CircularProgress color="inherit" size={80} />
+                                </Box>
+                            )}
+                        </Container>
+                    )
+                        :
+                        (
+                            <Typography variant="h6">
+                                Please select a workplace to view details.
+                            </Typography>
+                        )
+                    }
+                </Grid>
+            </Grid>
         </div>
     );
 };
