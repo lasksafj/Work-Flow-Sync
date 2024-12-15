@@ -22,10 +22,10 @@ const App: React.FC = () => {
                 <NavBar />
                 <Routes>
                     {/* Protected Routes */}
-                    <Route path="/" element={<PrivateRoute component={Dashboard} />} />
-                    <Route path="/profile" element={<PrivateRoute component={Profile} />} />
+                    {/* <Route path="/" element={<PrivateRoute component={Dashboard} />} /> */}
 
-                    <Route path="/workplace" element={<PrivateRoute component={WorkplacePage} />} />
+                    <Route path="/" element={<PrivateRoute component={WorkplacePage} />} />
+                    <Route path="/profile" element={<PrivateRoute component={Profile} />} />
 
                     <Route path='/shift' element={<PrivateRoute component={ShiftAssignment} />} />
                     <Route path="/request" element={<PrivateRoute component={Request} />} />

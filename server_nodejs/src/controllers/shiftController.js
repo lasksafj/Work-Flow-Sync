@@ -300,9 +300,9 @@ exports.assignShifts = async (req, res) => {
 
             // Insert into schedules table if it doesn't exist
             await db.query(
-                `INSERT INTO schedules (shift_id, emp_id, start_time, end_time, create_at)
+                `INSERT INTO schedules (shift_id, emp_id, start_time, end_time, role, status, create_at)
                  VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
-                [shift_id, employee_id, start_time, end_time]
+                [shift_id, employee_id, start_time, end_time, role, 'Assigned']
             );
         }
 

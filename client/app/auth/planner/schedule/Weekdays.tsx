@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Animated, ScrollView, Easing,
 import { Calendar, DateData } from 'react-native-calendars';
 import moment from 'moment';
 import Constants from 'expo-constants';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 
 const itemWidth = Dimensions.get('window').width / 9;
 const WeekDays = (props: any) => {
@@ -29,6 +30,7 @@ const WeekDays = (props: any) => {
 
     const panResponder = useRef(
         PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: (_, gestureState) => Math.abs(gestureState.dy) >= 10,
             onPanResponderRelease: (_, gestureState) => {
                 if (gestureState.dy > 10) {
@@ -42,11 +44,11 @@ const WeekDays = (props: any) => {
 
     const calendarHeight = animationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, 350],
+        outputRange: [0, 320],
     });
 
     return (
-        <View style={styles.container}>
+        <View>
             <Animated.View style={{ overflow: 'hidden', height: calendarHeight }}>
                 <Calendar onDayPress={handleDayPress} selectedDay={props.selectedDay} />
             </Animated.View>
@@ -56,7 +58,11 @@ const WeekDays = (props: any) => {
                     selectedDay={props.selectedDay}
                     onDayPress={handleSelectDay}
                 />
+                <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                    <AntDesign name='down' size={15} />
+                </View>
             </View>
+
         </View>
     );
 };
@@ -118,21 +124,21 @@ const styles = StyleSheet.create({
     },
     dayButton: {
         alignItems: 'center',
-        paddingVertical: 8,
+        // paddingVertical: 8,
         paddingHorizontal: 4,
-        backgroundColor: '#F5F5F5',
+        // backgroundColor: '#F5F5F5',
         borderRadius: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 2,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 1 },
+        // shadowOpacity: 0.3,
+        // shadowRadius: 2,
+        // elevation: 2,
     },
     selectedDayButton: {
         borderColor: '#5ce65c',
         borderWidth: 2,
         borderRadius: 5,
-        padding: 4,
+        // padding: 4,
     },
     dayText: {
         color: '#2C3E50',
@@ -150,11 +156,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         width: itemWidth,
-        backgroundColor: '#F5F5F5',
-        borderColor: '#E5E7EB',
-        borderRadius: 10,
+        // backgroundColor: '#F5F5F5',
+        // borderColor: '#E5E7EB',
+        // borderRadius: 10,
         height: 50,
-        elevation: 3,
+        // elevation: 3,
     }
 });
 

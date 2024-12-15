@@ -7,7 +7,7 @@ import moment from 'moment';
 // Monday is the first day of the week
 moment.updateLocale('en', {
     week: {
-        dow: 1, 
+        dow: 1,
     },
 });
 
@@ -41,6 +41,7 @@ const ScheduleScreen: React.FC = () => {
 
     return (
         <View style={styles.container}>
+            <WeekDays selectedDay={date} setSelectedDay={setDate} daysOfWeek={daysOfWeek} />
             <FlatList
                 data={week}
                 keyExtractor={(item) => item}
@@ -53,11 +54,6 @@ const ScheduleScreen: React.FC = () => {
                         />
                     </View>
                 )}
-                ListHeaderComponent={
-                    <View style={styles.calendar}>
-                        <WeekDays selectedDay={date} setSelectedDay={setDate} daysOfWeek={daysOfWeek} />
-                    </View>
-                }
             />
         </View>
     );

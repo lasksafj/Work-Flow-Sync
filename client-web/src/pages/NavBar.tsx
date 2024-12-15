@@ -44,18 +44,7 @@ const NavBar: React.FC = () => {
                                         fontWeight: isActive('/') ? 'bold' : 'normal',
                                     }}
                                 >
-                                    Dashboard
-                                </Button>
-                                <Button
-                                    component={Link}
-                                    to="/profile"
-                                    color="inherit"
-                                    sx={{
-                                        borderBottom: isActive('/profile') ? '2px solid white' : 'none',
-                                        fontWeight: isActive('/profile') ? 'bold' : 'normal',
-                                    }}
-                                >
-                                    Profile
+                                    Manage Employee
                                 </Button>
                                 <Button
                                     component={Link}
@@ -68,17 +57,7 @@ const NavBar: React.FC = () => {
                                 >
                                     Notification
                                 </Button>
-                                <Button
-                                    component={Link}
-                                    to="/workplace"
-                                    color="inherit"
-                                    sx={{
-                                        borderBottom: isActive('/workplace') ? '2px solid white' : 'none',
-                                        fontWeight: isActive('/workplace') ? 'bold' : 'normal',
-                                    }}
-                                >
-                                    Manage Workplace
-                                </Button>
+
                                 <Button
                                     component={Link}
                                     to="/shift"
@@ -99,7 +78,7 @@ const NavBar: React.FC = () => {
                                         fontWeight: isActive('/request') ? 'bold' : 'normal',
                                     }}
                                 >
-                                   Request
+                                    Request
                                 </Button>
 
                                 {/* Logout Button */}
