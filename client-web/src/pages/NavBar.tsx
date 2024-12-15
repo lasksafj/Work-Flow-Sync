@@ -90,6 +90,17 @@ const NavBar: React.FC = () => {
                                 >
                                     Shift Assignment
                                 </Button>
+                                <Button
+                                    component={Link}
+                                    to="/request"
+                                    color="inherit"
+                                    sx={{
+                                        borderBottom: isActive('/request') ? '2px solid white' : 'none',
+                                        fontWeight: isActive('/request') ? 'bold' : 'normal',
+                                    }}
+                                >
+                                   Request
+                                </Button>
 
                                 {/* Logout Button */}
                                 <LogoutButton />

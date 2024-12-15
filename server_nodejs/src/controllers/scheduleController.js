@@ -10,7 +10,7 @@ exports.scheduleGet = async (req, res) => {
         const formattedDate = moment(chosedate).format('YYYY-MM-DD');
 
         const data = await db.query(
-            `select u.id, u.first_name, u.last_name, e.id, e.employee_number, s.role, u.phone_number, s.id as schedule_id, 
+            `select u.id, u.first_name, u.last_name, e.id, e.employee_number, e.role_name, u.phone_number, s.id as schedule_id, 
             s.start_time, s.end_time, o.name, o.abbreviation, u.avatar 
             from employees as e
             inner join users as u on u.id = e.user_id

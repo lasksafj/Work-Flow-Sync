@@ -1,29 +1,23 @@
 import React, { useState } from "react";
-import {
-    Text,
-    StyleSheet,
-    View,
-    TouchableOpacity,
-    Modal,
-    TextInput,
-    Platform,
-} from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Modal, TextInput, Platform } from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import api from "@/apis/api";
 import { userLogin } from "@/store/slices/userSlice";
-import { useForm, Controller, Form } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { SafeAreaView } from "react-native";
 
+// Props type definition for the EditProfile component
 type EditProps = {
     editProfileVisible: boolean;
     setEditProfileVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+// Interface for form values
 interface FormValues {
     firstName: string;
     lastName: string;
@@ -62,14 +56,17 @@ const EditProfile = ({
     const user = useAppSelector((state: RootState) => state.user);
     const dispatch = useAppDispatch();
 
+    // Local state
     const [date, setDate] = useState(new Date());
     const [show, setShow] = useState(false);
 
+    // react-hook-form setup with yup validation resolver
     const {
         control,
         handleSubmit,
         formState: { errors },
         reset,
+        setValue,
     } = useForm<FormValues>({
         resolver: yupResolver(schema),
         defaultValues: {
@@ -81,8 +78,8 @@ const EditProfile = ({
         },
     });
 
+    // Function to reset form values to default
     const handleReset = () => {
-        console.log("RESET");
         reset({
             firstName: user.profile.firstName,
             lastName: user.profile.lastName,
@@ -92,10 +89,10 @@ const EditProfile = ({
         });
     };
 
+    // Function to handle form submission
     const onSubmit = (data: FormValues) => {
         api.put("/api/profile/profile-put", data)
             .then((res) => {
-                console.log("EDIT PROFILE", res.data);
                 let updatedData = {
                     profile: res.data,
                     accessToken: user.accessToken,
@@ -108,6 +105,7 @@ const EditProfile = ({
             });
     };
 
+    // Function to handle date change in DateTimePicker
     const onChangeDatePicker = (event: any, selectedDate?: Date) => {
         const currentDate = selectedDate || date;
         setShow(Platform.OS === "ios");
@@ -142,6 +140,7 @@ const EditProfile = ({
 
                 <View style={styles.section}>
                     <View>
+                        {/* First Name Input */}
                         <View style={styles.rowWraper}>
                             <View style={styles.row}>
                                 <Text style={styles.rowLabel}>First Name</Text>
@@ -170,6 +169,7 @@ const EditProfile = ({
                         </View>
                         <View style={styles.rowWraper}>
                             <View style={styles.row}>
+                                {/* Last Name Input */}
                                 <Text style={styles.rowLabel}>Last Name</Text>
                                 <View style={styles.rowSpacer} />
                                 <Controller
@@ -196,6 +196,7 @@ const EditProfile = ({
                         </View>
                         <View style={styles.rowWraper}>
                             <View style={styles.row}>
+                                {/* Email Input */}
                                 <Text style={styles.rowLabel}>Email</Text>
                                 <View style={styles.rowSpacer} />
                                 <Controller
@@ -222,6 +223,7 @@ const EditProfile = ({
                         </View>
                         <View style={styles.rowWraper}>
                             <View style={styles.row}>
+                                {/* Phone Number Input */}
                                 <Text style={styles.rowLabel}>Phone</Text>
                                 <View style={styles.rowSpacer} />
                                 <Controller
@@ -248,6 +250,7 @@ const EditProfile = ({
                         </View>
                         <View style={styles.rowWraper}>
                             <View style={styles.row}>
+                                {/* Date of Birth Input */}
                                 <Text style={styles.rowLabel}>
                                     Date Of Birth
                                 </Text>
@@ -262,6 +265,13 @@ const EditProfile = ({
                                             <TouchableOpacity
                                                 onPress={() => setShow(true)}
                                             >
+                                                <Text style={styles.rowValue}>
+                                                    {value
+                                                        ? moment(value).format(
+                                                            "YYYY-MM-DD"
+                                                        )
+                                                        : "Select Date"}
+                                                </Text>
                                                 {show && (
                                                     <DateTimePicker
                                                         testID="dateTimePicker"
@@ -274,13 +284,6 @@ const EditProfile = ({
                                                         maximumDate={new Date()}
                                                     />
                                                 )}
-                                                <Text style={styles.rowValue}>
-                                                    {value
-                                                        ? moment(value).format(
-                                                            "YYYY-MM-DD"
-                                                        )
-                                                        : "Select Date"}
-                                                </Text>
                                             </TouchableOpacity>
                                         </View>
                                     )}
@@ -295,12 +298,13 @@ const EditProfile = ({
                     </View>
                 </View>
             </SafeAreaView>
-        </Modal>
+        </Modal >
     );
 };
 
 export default EditProfile;
 
+// Style
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
@@ -325,23 +329,6 @@ const styles = StyleSheet.create({
     section: {
         // paddingTop: 12,
     },
-    sectionHeader: {
-        paddingHorizontal: 24,
-        paddingVertical: 8,
-        backgroundColor: "lightgray",
-    },
-    sectionHeaderText: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#a7a7a7",
-        textTransform: "uppercase",
-        letterSpacing: 1.2,
-    },
-    // sectionBody: {
-    //   paddingHorizontal: 24,
-    //   paddingVertical: 12,
-    // },
-    //make line for each row
     rowWraper: {
         paddingLeft: 24,
         borderTopWidth: 1,
@@ -369,29 +356,8 @@ const styles = StyleSheet.create({
         marginRight: 4,
         textAlign: "right",
     },
-    form: {
-        padding: 20,
-    },
-    input: {
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
-    },
     errorText: {
         color: "red",
         marginBottom: 10,
     },
 });
-function setDate(currentDate: Date | undefined) {
-    throw new Error("Function not implemented.");
-}
-
-function setValue(
-    arg0: string,
-    currentDate: Date | undefined,
-    arg2: { shouldValidate: boolean }
-) {
-    throw new Error("Function not implemented.");
-}

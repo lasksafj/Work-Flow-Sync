@@ -1,17 +1,65 @@
 import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { StyleSheet, View, TouchableOpacity, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Avatar } from "@/components/Avatar";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { doc, updateDoc } from "firebase/firestore";
+import { storage, db } from "@/.config/firebase";
+import api from "@/apis/api";
+import { userLogin } from "@/store/slices/userSlice";
 
 const ImageProfile = () => {
     const user = useAppSelector((state: RootState) => state.user);
+    const dispatch = useAppDispatch();
     const [selectedImage, setSelectedImage] = useState<string | null>(
         user.profile.avatar || null
     );
-    // console.log("selectedImage2222222222", selectedImage);
+
+    const saveImageToDatabase = (imageUri: string) => {
+        api.put("/api/profile/change-avatar", { avatar: imageUri })
+            .then((res) => {
+                let updatedData = {
+                    profile: res.data,
+                    accessToken: user.accessToken,
+                };
+                dispatch(userLogin(updatedData));
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+      };
+
+    const uploadImage = async (imageUri: string) => {
+        try {
+            // Convert URI to Blob
+            const response = await fetch(imageUri);
+            const blob = await response.blob();
+    
+            // Create a reference in Firebase Storage
+            const storageRef = ref(storage, `avatars/${user.profile.email}-${Date.now()}.jpg`);
+    
+            // Upload the file to Firebase Storage
+            const snapshot = await uploadBytes(storageRef, blob);
+    
+            // Get the download URL
+            const downloadURL = await getDownloadURL(snapshot.ref);
+
+            // Update the database with the download URL
+            await saveImageToDatabase(downloadURL);
+            
+            // Update local state
+            setSelectedImage(downloadURL);
+    
+            Alert.alert("Success", "Profile image updated successfully!");
+        } catch (error) {
+            console.error("Error uploading image:", error);
+            Alert.alert("Error", "Failed to upload image. Please try again.");
+        }
+    };
 
     const pickImage = async () => {
         // Request permission to access the library
@@ -27,11 +75,12 @@ const ImageProfile = () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
-            quality: 1,
+            quality: 0.00001,
         });
 
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            const imageUri = result.assets[0].uri;
+            await uploadImage(imageUri);
         }
     };
 
@@ -47,11 +96,12 @@ const ImageProfile = () => {
         const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
             aspect: [4, 3],
-            quality: 1,
+            quality: 0.00001,
         });
 
         if (!result.canceled) {
-            setSelectedImage(result.assets[0].uri);
+            const imageUri = result.assets[0].uri;
+            await uploadImage(imageUri);
         }
     };
 
@@ -67,7 +117,7 @@ const ImageProfile = () => {
             { cancelable: true }
         );
     };
-    // console.log("selectedImage3333333333333", selectedImage);
+
     return (
         <View style={styles.container}>
             <View style={styles.profile}>
@@ -77,6 +127,12 @@ const ImageProfile = () => {
                         " " +
                         user.profile.lastName
                     } size={100} />
+                    <MaterialCommunityIcons
+                        name="camera-outline"
+                        size={24}
+                        color="#000"
+                        style={styles.cameraIcon}
+                    />
                 </TouchableOpacity>
             </View>
         </View>
@@ -94,5 +150,13 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         backgroundColor: "#fff",
+    },
+    cameraIcon: {
+        position: 'absolute',
+        bottom: 0, // Adjust for position inside the circle
+        right: 0,  // Adjust for position inside the circle
+        backgroundColor: '#fff',
+        borderRadius: 12,
+        padding: 2, // Add padding for the background behind the icon
     },
 });

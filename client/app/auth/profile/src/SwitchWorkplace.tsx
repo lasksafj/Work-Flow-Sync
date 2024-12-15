@@ -1,14 +1,5 @@
 import React, { useEffect } from "react";
-import {
-    StyleSheet,
-    View,
-    Text,
-    Modal,
-    TouchableOpacity,
-    FlatList,
-    TextInput,
-    Dimensions,
-} from "react-native";
+import { StyleSheet, View, Text, Modal, TouchableOpacity, TextInput, Dimensions } from "react-native";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
@@ -26,10 +17,6 @@ const SwitchWorkplace = ({
     switchWorkplaceVisible,
     setSwitchWorkplaceVisible,
 }: SwitchProps) => {
-    const user = useAppSelector((state: RootState) => state.user);
-    const organization = useAppSelector(
-        (state: RootState) => state.organization
-    );
     const dispatch = useAppDispatch();
     const [text, onChangeText] = React.useState("");
     const [workplaces, setWorkplaces] = React.useState<
@@ -44,17 +31,14 @@ const SwitchWorkplace = ({
     useEffect(() => {
         api.get("/api/profile/profile-getOrg")
             .then((response) => {
-                let data = response.data;
-                data = data.filter((workplace: any) => workplace.abbreviation !== organization.abbreviation);
-                // console.log(data);
+                const data = response.data;
                 setWorkplaces(data);
             })
             .catch((error) => {
                 alert(error);
             });
-    }, []); // [] dieu kien chay tiep. [] thi chay 1 lan
+    }, []);
 
-    // console.log(workplaces);
     type ItemProps = {
         id: string;
         name: string;
@@ -94,7 +78,7 @@ const SwitchWorkplace = ({
                         })
                     );
                     setSwitchWorkplaceVisible(false);
-                    router.replace("auth");
+                    router.replace('/auth/dashboard/DashboardScreen');
                 }}
             >
                 <View>
