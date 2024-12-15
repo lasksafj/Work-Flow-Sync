@@ -89,7 +89,7 @@ const RegisterScreen = () => {
                 const loginRes = await loginLocal(email, password);
                 if (loginRes.status) {
                     dispatch(userLogin(loginRes.data));
-                    router.push('/auth');
+                    router.push('/auth/dashboard/DashboardScreen');
                 }
             }
         } catch (error: any) {
