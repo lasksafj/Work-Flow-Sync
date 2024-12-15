@@ -1,6 +1,6 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { store } from '@/store/store'

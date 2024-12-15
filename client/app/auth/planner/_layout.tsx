@@ -1,7 +1,8 @@
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import ScheduleScreen from './ScheduleScreen';
 import AvailabilityScreen from './AvailabilityScreen';
-import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Tab = createMaterialTopTabNavigator();
 
