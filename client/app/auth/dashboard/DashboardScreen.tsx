@@ -191,6 +191,27 @@ export default function DashboardScreen() {
         fetchShiftDetails();
     };
 
+    const [firstOrgVisible, setFirstOrgVisible] = useState(false);
+    const [workplaces, setWorkplaces] = React.useState<
+        {
+            id: string;
+            abbreviation: string;
+            name: string;
+            address: string;
+        }[]
+    >([]);
+
+    useEffect(() => {
+        api.get("/api/profile/profile-getOrg")
+            .then((response) => {
+                const data = response.data;
+                setWorkplaces(data);
+            })
+            .catch((error) => {
+                alert(error);
+            });
+
+      }, []);
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>

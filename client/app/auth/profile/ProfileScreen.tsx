@@ -1,33 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { useNavigation, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native";
-import {
-    ScrollView,
-    Text,
-    StyleSheet,
-    View,
-    TouchableOpacity,
-    SectionList,
-} from "react-native";
+import { useNavigation } from "expo-router";
+import { Alert, SafeAreaView } from "react-native";
+import { ScrollView, Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
-import { logout } from "@/apis/authorize/login";
-import { userLogout } from "@/store/slices/userSlice";
 import api from "@/apis/api";
 
+// Custom components
 import ImageProfile from "./src/ImageProfile";
-import Logout from "./src/Logout";
-import EditProfile from "./src/EditProfile";
 import SwitchWorkplace from "./src/SwitchWorkplace";
+import EditProfile from "./src/EditProfile";
 import EmployeeList from "./src/EmployeeList";
+import Logout from "./src/Logout";
+import ChangePassword from "./src/ChangePassword";
+import AlertPreference from "./src/AlertPreference";
 
+
+// Interface of Profile Items
 interface ItemProps {
     id: string;
     label: string;
     value: any;
 }
 
+// Interface of Link Items
 interface LinkProps {
     id: string;
     label: string;
@@ -35,30 +32,29 @@ interface LinkProps {
     type: string;
 }
 
+// Main component for the Profile screen
 const ProfileScreen = () => {
-    const router = useRouter();
+    // Navigation
     const navigation = useNavigation();
 
-
+    //Select user and organization data from Redux store
     const user = useAppSelector((state: RootState) => state.user);
     const organization = useAppSelector(
         (state: RootState) => state.organization
     );
-    const dispatch = useAppDispatch(); //luu du lieu vao store va refresh app xai du lieu do
-    // console.log("ProfileScreen", user.profile);
-    console.log("ProfileScreen", organization);
 
-    // format date
+    // Format Date of Birth
     const date = user.profile.dateOfBirth
         ? new Date(user.profile.dateOfBirth)
         : undefined;
 
     const [role, setRole] = useState<string>("");
 
+    // Profile and workplace information sections
     let section = [
         {
             header: "Profile Settings",
-            // use items for map, data for SectionList
+            // Profile data for display
             items: [
                 {
                     id: "name",
@@ -80,7 +76,7 @@ const ProfileScreen = () => {
         },
         {
             header: "Workplace",
-            // use items for map, data for SectionList
+            // Organization data for display
             items: [
                 { id: "namewp", label: "Name", value: organization.name },
                 {
@@ -97,16 +93,12 @@ const ProfileScreen = () => {
         },
     ];
 
+    // Link sections for utilities
     const LINKSECTIONS = [
         {
             header: "Utilities",
             items: [
-                {
-                    id: "request",
-                    label: "Request",
-                    icon: "archive" as const,
-                    type: "link",
-                },
+
                 {
                     id: "switchworkplace",
                     label: "Switch Workplace",
@@ -120,6 +112,18 @@ const ProfileScreen = () => {
                     type: "link",
                 },
                 {
+                    id: "alertpreference",
+                    label: "Alert Preferences",
+                    icon: "alert-triangle" as const,
+                    type: "link",
+                },
+                {
+                    id: "changepassword",
+                    label: "Change Password",
+                    icon: "lock" as const,
+                    type: "trigger",
+                },
+                {
                     id: "logout",
                     label: "Log Out",
                     icon: "log-out" as const,
@@ -129,11 +133,12 @@ const ProfileScreen = () => {
         },
     ];
 
+    // Set header title and edit button
     useEffect(() => {
         navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity
-                    onPress={() => {
+                    onPressIn={() => {
                         setEditProfileVisible(true);
                     }}
                 >
@@ -144,12 +149,12 @@ const ProfileScreen = () => {
         });
     }, []);
 
+    // Get user role in organization
     useEffect(() => {
         let org = organization.abbreviation; // Organization ID
         api.get("/api/profile/profile-getRole?org=" + org)
             .then((response) => {
                 const data = response.data;
-                console.log(data);
                 setRole(data.role);
             })
             .catch((error) => {
@@ -157,20 +162,14 @@ const ProfileScreen = () => {
             });
     }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
 
-    // console.log("ProfileScreen", user.profile);
-    const [logOutVisible, setLogOutVisible] = useState(false);
-    const [editProfileVisible, setEditProfileVisible] = useState(false);
     const [switchWorkplaceVisible, setSwitchWorkplaceVisible] = useState(false);
+    const [editProfileVisible, setEditProfileVisible] = useState(false);
     const [employeeListVisible, setEmployeeListVisible] = useState(false);
+    const [logOutVisible, setLogOutVisible] = useState(false);
+    const [changePasswordVisible, setChangePasswordVisible] = useState(false);
+    const [alertVisible, setAlertVisible] = useState(false);
 
-    const handleLogout = () => {
-        setLogOutVisible(false);
-        logout();
-        dispatch(userLogout());
-        router.dismissAll();
-        // alert("Logged out!");
-    };
-
+    // Helper function to render section header
     const renderSectionHeader = ({
         section: { header },
     }: {
@@ -183,6 +182,7 @@ const ProfileScreen = () => {
         </View>
     );
 
+    // Helper function to render items
     const RenderItems = ({ id, label, value }: ItemProps, index: number) => (
         <View
             style={[styles.rowWraper, index === 0 && { borderBottomWidth: 0 }]}
@@ -196,6 +196,7 @@ const ProfileScreen = () => {
         </View>
     );
 
+    // Helper function to render link items
     const RenderLinkItems = ({ id, label, icon, type }: LinkProps, index: number) => (
         <View
             style={[styles.rowWraper, index === 0 && { borderBottomWidth: 0 },]}
@@ -203,15 +204,20 @@ const ProfileScreen = () => {
         >
             <TouchableOpacity
                 onPress={() => {
-                    if (id === "logout") {
-                        setLogOutVisible(true);
-                        // console.log("Logout Pressed!");
-                    }
                     if (id === "switchworkplace") {
                         setSwitchWorkplaceVisible(true);
                     }
+                    if (id === "logout") {
+                        setLogOutVisible(true);
+                    }
                     if (id === "employeelist") {
                         setEmployeeListVisible(true);
+                    }
+                    if (id === "changepassword") {
+                        setChangePasswordVisible(true);
+                    }
+                    if (id === "alertpreference") {
+                        setAlertVisible(true);
                     }
                 }}
             >
@@ -238,6 +244,7 @@ const ProfileScreen = () => {
         </View>
     );
 
+    // Render the Profile screen
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <ScrollView style={styles.container}>
@@ -266,29 +273,39 @@ const ProfileScreen = () => {
                 ))}
             </ScrollView>
 
-            <Logout
-                logOutVisible={logOutVisible}
-                setLogOutVisible={setLogOutVisible}
-                handleLogout={handleLogout}
+            {/* Switch Workplace Modal */}
+            <SwitchWorkplace
+                switchWorkplaceVisible={switchWorkplaceVisible}
+                setSwitchWorkplaceVisible={setSwitchWorkplaceVisible}
             />
             <EditProfile
                 editProfileVisible={editProfileVisible}
                 setEditProfileVisible={setEditProfileVisible}
             />
-            <SwitchWorkplace
-                switchWorkplaceVisible={switchWorkplaceVisible}
-                setSwitchWorkplaceVisible={setSwitchWorkplaceVisible}
-            />
             <EmployeeList
                 employeeListVisible={employeeListVisible}
                 setEmployeeListVisible={setEmployeeListVisible}
             />
+            <Logout
+                logOutVisible={logOutVisible}
+                setLogOutVisible={setLogOutVisible}
+            />
+            <ChangePassword
+                changePasswordVisible={changePasswordVisible}
+                setChangePasswordVisible={setChangePasswordVisible}
+            />
+            <AlertPreference
+                alertVisible={alertVisible}
+                setAlertVisible={setAlertVisible}
+            />
+
         </SafeAreaView>
     );
 };
 
 export default ProfileScreen;
 
+// Styles
 const styles = StyleSheet.create({
     container: {
 
@@ -325,11 +342,6 @@ const styles = StyleSheet.create({
         textTransform: "uppercase",
         letterSpacing: 1.2,
     },
-    // sectionBody: {
-    //   paddingHorizontal: 24,
-    //   paddingVertical: 12,
-    // },
-    //make line for each row
     rowWraper: {
         paddingLeft: 24,
         borderTopWidth: 1,

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, Text, Modal, TouchableOpacity } from "react-native";
+import { StyleSheet, View, Text, Modal, TouchableOpacity, TextInput } from "react-native";
 import { useAppSelector } from "@/store/hooks";
 import { RootState } from "@/store/store";
 import { Feather as FeatherIcon } from "@expo/vector-icons";
@@ -9,11 +9,13 @@ import { AlphabetList } from "react-native-section-alphabet-list";
 import { Colors } from "@/constants/Colors";
 import { Avatar } from "@/components/Avatar";
 
+// Define the props for EmployeeList component
 type EmployeeProps = {
     employeeListVisible: boolean;
     setEmployeeListVisible: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
+// EmployeeList component to display a list of employees
 const EmployeeList = ({
     employeeListVisible,
     setEmployeeListVisible,
@@ -21,12 +23,16 @@ const EmployeeList = ({
     const organization = useAppSelector(
         (state: RootState) => state.organization
     );
-    const [employees, setEmployees] = React.useState<any[]>([]);
 
+    // State variables to store employees, filtered employees, and the search query
+    const [employees, setEmployees] = React.useState<any[]>([]);
+    const [filteredEmployees, setFilteredEmployees] = React.useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = React.useState<string>("");
+
+    // Fetch all employees for the selected organization
     useEffect(() => {
         let org = organization.abbreviation;
 
-        // dung get.then.catch la thay the cho async await
         api.get("/api/profile/profile-getAllUsers?org=" + org)
             .then((response) => {
                 const res = response.data;
@@ -36,17 +42,28 @@ const EmployeeList = ({
                     email: contact.email,
                     key: `${index}`,
                 }));
-                console.log(data);
 
                 setEmployees(data);
+                setFilteredEmployees(data);
             })
             .catch((error) => {
                 alert(error);
             });
-    }, [organization]); // [] dieu kien chay tiep. [] thi chay 1 lan
+    }, [organization]);
 
-    // console.log("Phong test00000000000", employees);
+    // Update filtered employees based on search query
+    useEffect(() => {
+        if (searchQuery === "") {
+            setFilteredEmployees(employees); // Show all if search query is empty
+        } else {
+            const filtered = employees.filter((employee) =>
+                employee.value.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredEmployees(filtered);
+        }
+    }, [searchQuery, employees]);
 
+    // Header component with a back button and title
     const Header = () => (
         <View style={styles.header}>
             <TouchableOpacity
@@ -62,8 +79,26 @@ const EmployeeList = ({
                 />
             </TouchableOpacity>
             <Text style={styles.title}>Employee List</Text>
-            <Text style={styles.spacer} />
+            <View style={styles.spacer} />
         </View>
+    );
+
+    // Function to handle search input changes
+    const handleSearch = (text: string) => {
+        setSearchQuery(text); // Update searchQuery state correctly
+    };
+
+    // SearchBar component
+    const SearchBar = () => (
+        <TextInput
+            placeholder="Search Employees"
+            placeholderTextColor="#999"
+            clearButtonMode="always"
+            style={styles.searchBar}
+            value={searchQuery}
+            onChangeText={handleSearch}
+            autoFocus={true}
+        />
     );
 
     return (
@@ -77,8 +112,9 @@ const EmployeeList = ({
         >
             <SafeAreaView style={{ flex: 1 }}>
                 <Header />
+                <SearchBar />
                 <AlphabetList
-                    data={employees}
+                    data={filteredEmployees}
                     stickySectionHeadersEnabled
                     indexLetterStyle={{
                         color: Colors.primary,
@@ -88,6 +124,7 @@ const EmployeeList = ({
                         width: 24,
                         backgroundColor: Colors.background,
                     }}
+                    // Render each employee item with avatar and details
                     renderCustomItem={(item: any) => (
                         <View style={styles.listItemContainer}>
                             <Avatar img={item.avatar} name={item.value} size={30} />
@@ -106,6 +143,7 @@ const EmployeeList = ({
                             </View>
                         </View>
                     )}
+                    // Render section headers (alphabet letters)
                     renderCustomSectionHeader={(section) => (
                         <View style={styles.sectionHeaderContainer}>
                             <Text style={{ color: Colors.gray }}>
@@ -122,6 +160,7 @@ const EmployeeList = ({
 
 export default EmployeeList;
 
+//Style
 const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
@@ -131,6 +170,12 @@ const styles = StyleSheet.create({
         borderBottomColor: '#ccc',
         paddingVertical: 10,
         paddingHorizontal: 15,
+    },
+    searchBar: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderColor: "#ccc",
+        borderWidth: 1,
     },
     title: {
         fontSize: 20,
@@ -146,68 +191,6 @@ const styles = StyleSheet.create({
         marginTop: 12,
         paddingLeft: 24,
     },
-    sectionTitle: {
-        fontSize: 20,
-        fontWeight: "700",
-        color: "#000",
-    },
-    sectionItems: {
-        marginTop: 8,
-    },
-    card: {
-        paddingVertical: 14,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "flex-start",
-    },
-    cardWrapper: {
-        borderBottomWidth: 1,
-        borderColor: "#d6d6d6",
-    },
-    cardAvatar: {
-        width: 42,
-        height: 42,
-    },
-    cardBody: {
-        marginLeft: 12,
-        marginRight: "auto",
-    },
-    cardTitle: {
-        fontSize: 16,
-        fontWeight: "700",
-        color: "#000",
-    },
-    cardRole: {
-        fontSize: 15,
-        lineHeight: 20,
-        fontWeight: "500",
-        color: "#616d79",
-        marginTop: 3,
-    },
-    profile: {
-        padding: 16,
-        flexDirection: "column",
-        alignItems: "center",
-        backgroundColor: "#fff",
-    },
-    profileAvatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 9999,
-    },
-    initialsAvatar: {
-        width: 80,
-        height: 80,
-        borderRadius: 9999,
-        overflow: "hidden",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    list: {
-        flex: 1,
-    },
-    listItemImage: {},
-
     sectionHeaderContainer: {
         height: 30,
         backgroundColor: Colors.background,

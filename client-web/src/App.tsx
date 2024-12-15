@@ -5,6 +5,7 @@ import { AuthProvider } from './AuthContext';
 import PrivateRoute from './PrivateRoute';
 import Dashboard from './pages/auth/Dashboard';
 import Profile from './pages/auth/Profile';
+import Request from './pages/auth/request/Request';
 import NotificationPage from './pages/auth/notification/NotificationsPage';
 import Login from './pages/unauth/Login';
 import Register from './pages/unauth/Register';
@@ -27,6 +28,7 @@ const App: React.FC = () => {
                     <Route path="/workplace" element={<PrivateRoute component={WorkplacePage} />} />
 
                     <Route path='/shift' element={<PrivateRoute component={ShiftAssignment} />} />
+                    <Route path="/request" element={<PrivateRoute component={Request} />} />
 
 
                     <Route path="/notification" element={<PrivateRoute component={NotificationPage} />} />
