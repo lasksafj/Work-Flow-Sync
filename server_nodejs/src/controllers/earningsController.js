@@ -30,6 +30,7 @@ exports.getEarnings = async (req, res) => {
                 WHERE
                     e.user_id = $1
                     AND e.org_abbreviation = $2
+                    AND t.clock_out IS NOT NULL
             ),
             daily_hours AS (
                 SELECT

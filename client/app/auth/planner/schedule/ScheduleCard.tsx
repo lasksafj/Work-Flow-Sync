@@ -31,6 +31,7 @@ interface Employee {
     schedule_role: string;
     start_time: string;
     end_time: string;
+    schedule_id: number;
 }
 
 // ScheduleCard component definition
@@ -75,7 +76,7 @@ const ScheduleCard = (props: any) => {
         console.log(props.detail.abbreviation, date, props.detail.id);
         api.get(`/api/request/get-date-details?abbreviation=${props.detail.abbreviation}&date=${date}&employee_number=${props.detail.employee_number}`)
             .then((res) => {
-                console.log(res.data);
+                // console.log(res.data);
                 setDateDetails(res.data);
                 setModalSwapEmployees(true);
             })
@@ -216,6 +217,7 @@ const ScheduleCard = (props: any) => {
                 status: 'Pending',
                 reason: reasonText,
                 swapEmployeeId: selectedSwapEmployee?.id,
+                swap_schedule_id: selectedSwapEmployee?.schedule_id
             });
 
             const confrimNotification = res.data;
@@ -388,9 +390,6 @@ const ScheduleCard = (props: any) => {
                                                 <TouchableOpacity
                                                     style={styles.selectButton}
                                                     onPress={() => {
-                                                        console.log(`Selected Employee: ${item.first_name} ${item.last_name}`);
-                                                        console.log(`Selected Employee_Id: ${item.id}`);
-                                                        console.log(`Selected Roles: ${item.schedule_role}`);
                                                         setSelectedSwapEmployee(item); // Set the selected employee
                                                         setIsSwap(true); // Set to swap mode
                                                         setModalSwapEmployees(false); // Close the swap employees modal

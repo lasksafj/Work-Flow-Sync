@@ -11,9 +11,9 @@ exports.getNotifications = async (req, res) => {
         const result = await db.query(
             `SELECT u.last_name, u.first_name, u.avatar, n.id, n.content, n.created_date, n.sender_id
             FROM users u INNER JOIN employees e ON u.id = e.user_id 
-                INNER JOIN notifications n ON e.id = n.sender_id
-                INNER JOIN notification_receivers r ON n.id = r.notification_id
-            WHERE r.receiver_id = $1
+				INNER JOIN notification_receivers r ON e.id = r.receiver_id
+                INNER JOIN notifications n ON r.notification_id = n.id
+            WHERE u.id = $1
             ORDER BY created_date DESC
             LIMIT $2 OFFSET $3;`,
             [req.user.id, limit, offset] // Bind user's id, limit, and offset to the query

@@ -22,7 +22,7 @@ const WeekDays = (props: any) => {
     const toggleCalendarVisibility = (value: number) => {
         Animated.timing(animationValue, {
             toValue: value,
-            duration: 500,
+            duration: 200,
             easing: Easing.inOut(Easing.ease),
             useNativeDriver: false,
         }).start();

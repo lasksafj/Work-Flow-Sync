@@ -55,6 +55,7 @@ function useNotificationObserver() {
                     return;
                 }
                 redirect(response?.notification);
+                Notifications.clearLastNotificationResponseAsync()
             });
 
 

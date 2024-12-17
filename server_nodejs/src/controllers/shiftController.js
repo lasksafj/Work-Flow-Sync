@@ -289,8 +289,8 @@ exports.assignShifts = async (req, res) => {
             const result = await db.query(
                 `SELECT 1 FROM schedules 
                  WHERE shift_id = $1 AND emp_id = $2 AND start_time = $3 
-                   AND end_time = $4 AND role = $5`,
-                [shift_id, employee_id, start_time, end_time, role]
+                   AND end_time = $4`,
+                [shift_id, employee_id, start_time, end_time]
             );
 
             if (result.rows.length > 0) {
@@ -300,9 +300,9 @@ exports.assignShifts = async (req, res) => {
 
             // Insert into schedules table if it doesn't exist
             await db.query(
-                `INSERT INTO schedules (shift_id, emp_id, start_time, end_time, role, status, create_at)
-                 VALUES ($1, $2, $3, $4, $5, $6, NOW())`,
-                [shift_id, employee_id, start_time, end_time, role, 'Assigned']
+                `INSERT INTO schedules (shift_id, emp_id, start_time, end_time, create_at)
+                 VALUES ($1, $2, $3, $4, NOW())`,
+                [shift_id, employee_id, start_time, end_time]
             );
         }
 

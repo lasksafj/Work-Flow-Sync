@@ -121,9 +121,10 @@ exports.updateSwapShifts = async (req, res) => {
              WHERE id=$3`,
             [swapStatus, userId, requestId]
         );
+        console.log(scheduleId1, empid1, scheduleId2, empid2);
 
         // If the request is accepted, swap the employees assigned to the schedules
-        if (swapStatus === 'Accept') {
+        if (swapStatus == 'Accept') {
             await db.query(
                 `UPDATE schedules
                 SET emp_id = $2
@@ -223,7 +224,7 @@ exports.getDateDetails = async (req, res) => {
         // Destructure required query parameters
         const { abbreviation, date, employee_number } = req.query;
 
-        console.log('abbre: ', abbreviation, 'date', date);
+        // console.log('abbre: ', abbreviation, 'date', date);
 
         // Validate that all required query parameters are provided
         if (!abbreviation || !date || !employee_number) {
@@ -239,8 +240,9 @@ exports.getDateDetails = async (req, res) => {
                 u.first_name,
                 s.start_time,
                 s.end_time,
-                s.role AS schedule_role,
-                o.name AS organization_name
+                e.role_name AS schedule_role,
+                o.name AS organization_name,
+                s.id AS schedule_id
             FROM employees AS e
             INNER JOIN schedules AS s ON e.id = s.emp_id
             INNER JOIN organizations AS o ON o.abbreviation = e.org_abbreviation
@@ -268,9 +270,9 @@ exports.getDateDetails = async (req, res) => {
 exports.createSwapRequest = async (req, res) => {
     try {
         // Destructure required fields from the request body
-        const { schedule_id, status, reason, abbreviation, swapEmployeeId } = req.body;
+        const { schedule_id, status, reason, abbreviation, swapEmployeeId, swap_schedule_id } = req.body;
 
-        console.log('send to swap:', schedule_id, status, reason, abbreviation, swapEmployeeId);
+        // console.log('send to swap:', schedule_id, status, reason, abbreviation, swapEmployeeId);
 
         // Extract the user ID from the authenticated request
         const userId = req.user.id;
@@ -331,7 +333,7 @@ exports.createSwapRequest = async (req, res) => {
             [schedule_id, employeeID.rows[0].id]
         );
 
-        console.log(requestID);
+        // console.log(requestID);
 
         // Insert a new exchange record linking the swap request to the selected employee
         const resultSwap = await db.query(
@@ -341,7 +343,7 @@ exports.createSwapRequest = async (req, res) => {
                 employee_id
                 )
                 VALUES ($1, $2, $3) RETURNING *`,
-            [requestID.rows[0].id, schedule_id, swapEmployeeId]
+            [requestID.rows[0].id, swap_schedule_id, swapEmployeeId]
         );
 
         // Combine the request and exchange data for confirmation
@@ -350,7 +352,7 @@ exports.createSwapRequest = async (req, res) => {
             swap: resultSwap.rows[0]
         };
 
-        console.log(confrimNotification);
+        // console.log(confrimNotification);
 
         // Respond with the confirmation data
         res.status(201).json(confrimNotification);
