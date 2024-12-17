@@ -27,7 +27,7 @@ const Login = () => {
 
             if (response.status) {
                 dispatch(userLogin(response.data));
-                router.push('/auth/dashboard/DashboardScreen');
+                router.push('/unauth/SelectWorkplaceScreen');
             }
         } catch (err) {
             console.log('login screen failed', err);

@@ -6,6 +6,7 @@ export default function UnauthLayout() {
         <Stack>
             <Stack.Screen name='login' />
             <Stack.Screen name='register' />
+            <Stack.Screen name='SelectWorkplaceScreen' options={{ headerTitle: 'Workplace' }} />
         </Stack>
     )
 }

@@ -10,6 +10,7 @@ import {
     Modal,
     TextInput,
     ScrollView,
+    Platform,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker'; // Import DateTimePickerModal for date selection
@@ -152,7 +153,10 @@ const ScheduleCard = (props: any) => {
         console.log('Selected date:', formattedDate);
         setSelectedDate(formattedDate);
         setDatePickerVisibility(false);
-        handleEmployeesList(formattedDate);
+
+        setTimeout(() => {
+            handleEmployeesList(formattedDate);
+        }, 500);
     };
 
     /**
@@ -190,7 +194,6 @@ const ScheduleCard = (props: any) => {
             setReasonText(''); // Clear the reason text
             setReasonScreen(false); // Hide the reason input modal
         } catch (error: any) {
-            console.error(error);
             const errorMessage = error.response?.data?.error || 'An unexpected error occurred. Please try again.';
             Alert.alert('Submission Error', errorMessage);
         }
@@ -226,7 +229,6 @@ const ScheduleCard = (props: any) => {
             setReasonText(''); // Clear the reason text
             setReasonScreen(false); // Hide the reason input modal
         } catch (error: any) {
-            console.error(error);
             const errorMessage = error.response?.data?.error || 'An unexpected error occurred. Please try again.';
             Alert.alert('Submission Error', errorMessage);
         }
@@ -299,64 +301,12 @@ const ScheduleCard = (props: any) => {
                 </Animated.View>
             </TouchableOpacity>
 
-            {/* Modal for displaying employees available for swap on selected date */}
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={modalSwapEmployees}
-                onRequestClose={() => setModalSwapEmployees(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Employees List on {selectedDate}</Text>
-                        <ScrollView style={styles.table}>
-                            {dateDetails.length > 0 ? (
-                                dateDetails.map((item: Employee, index) => (
-                                    <View key={index} style={styles.tableRow}>
-                                        {/* Button to select an employee for swapping */}
-                                        <TouchableOpacity
-                                            style={styles.selectButton}
-                                            onPress={() => {
-                                                console.log(`Selected Employee: ${item.first_name} ${item.last_name}`);
-                                                console.log(`Selected Employee_Id: ${item.id}`);
-                                                console.log(`Selected Roles: ${item.schedule_role}`);
-                                                setSelectedSwapEmployee(item); // Set the selected employee
-                                                setIsSwap(true); // Set to swap mode
-                                                setReasonScreen(true); // Show reason input modal
-                                                setModalSwapEmployees(false); // Close the swap employees modal
-                                            }}
-                                        >
-                                            <Text style={styles.selectButtonText}>Select</Text>
-                                        </TouchableOpacity>
-                                        {/* Display employee details */}
-                                        <Text style={styles.tableCell}>
-                                            {item.first_name} {item.last_name}
-                                        </Text>
-                                        <Text style={styles.tableCell}>{item.schedule_role}</Text>
-                                        <Text style={styles.tableCell}>
-                                            {new Date(item.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(item.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </Text>
-                                    </View>
-                                ))
-                            ) : (
-                                <Text style={styles.loadingText}>No employees available for this date.</Text>
-                            )}
-                        </ScrollView>
-                        {/* Button to close the swap employees modal */}
-                        <TouchableOpacity
-                            onPress={() => setModalSwapEmployees(false)}
-                            style={styles.closeButton}
-                        >
-                            <Text style={styles.closeButtonText}>Close</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+
 
             {/* Modal for displaying shift details */}
             <Modal
                 animationType="slide"
-                transparent={false}
+                transparent={true}
                 visible={detailScreen}
                 onRequestClose={() => setDetailScreen(false)}
             >
@@ -405,6 +355,7 @@ const ScheduleCard = (props: any) => {
                                         <Text style={styles.closeButtonText}>Close</Text>
                                     </TouchableOpacity>
                                 </View>
+
                             </>
                         ) : (
                             // If the shift is in the past, only show the close button
@@ -418,70 +369,129 @@ const ScheduleCard = (props: any) => {
                             </View>
                         )}
                     </View>
-                </View>
-            </Modal>
 
-            {/* Modal for inputting reason for dropping or swapping a shift */}
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={reasonScreen}
-                onRequestClose={() => setReasonScreen(false)}
-            >
-                <View style={styles.reasonModalContainer}>
-                    <View style={styles.reasonModalContent}>
-                        <Text style={styles.modalTitle}>{isSwap ? 'Swap Shift Reason' : 'Drop Shift Reason'}</Text>
-                        {/* Text input for the reason */}
-                        <TextInput
-                            style={styles.reasonInput}
-                            multiline
-                            numberOfLines={4}
-                            onChangeText={(text) => setReasonText(text)}
-                            value={reasonText}
-                            placeholder="Type your reason here..."
-                            placeholderTextColor="#95A5A6"
-                        />
-                        <View style={styles.reasonButtonContainer}>
-                            {/* Submit button: changes based on whether it's a swap or drop */}
-                            {!isSwap ? (
+                    {/* Modal for displaying employees available for swap on selected date */}
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalSwapEmployees}
+                        onRequestClose={() => setModalSwapEmployees(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>Employees List on {selectedDate}</Text>
+                                <ScrollView style={styles.table}>
+                                    {dateDetails.length > 0 ? (
+                                        dateDetails.map((item: Employee, index) => (
+                                            <View key={index} style={styles.tableRow}>
+                                                {/* Button to select an employee for swapping */}
+                                                <TouchableOpacity
+                                                    style={styles.selectButton}
+                                                    onPress={() => {
+                                                        console.log(`Selected Employee: ${item.first_name} ${item.last_name}`);
+                                                        console.log(`Selected Employee_Id: ${item.id}`);
+                                                        console.log(`Selected Roles: ${item.schedule_role}`);
+                                                        setSelectedSwapEmployee(item); // Set the selected employee
+                                                        setIsSwap(true); // Set to swap mode
+                                                        setModalSwapEmployees(false); // Close the swap employees modal
+                                                        setReasonScreen(true); // Show reason input modal
+                                                    }}
+                                                >
+                                                    <Text style={styles.selectButtonText}>Select</Text>
+                                                </TouchableOpacity>
+                                                {/* Display employee details */}
+                                                <Text style={styles.tableCell}>
+                                                    {item.first_name} {item.last_name}
+                                                </Text>
+                                                <Text style={styles.tableCell}>{item.schedule_role}</Text>
+                                                <Text style={styles.tableCell}>
+                                                    {new Date(item.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(item.end_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </Text>
+                                            </View>
+                                        ))
+                                    ) : (
+                                        <Text style={styles.loadingText}>No employees available for this date.</Text>
+                                    )}
+                                </ScrollView>
+                                {/* Button to close the swap employees modal */}
                                 <TouchableOpacity
-                                    onPress={handleSubmitReasonDrop}
-                                    style={[styles.reasonModalButton, { backgroundColor: '#27AE60' }]}
+                                    onPress={() => setModalSwapEmployees(false)}
+                                    style={styles.closeButton}
                                 >
-                                    <Text style={styles.reasonModalButtonText}>
-                                        Submit Request
-                                    </Text>
+                                    <Text style={styles.closeButtonText}>Close</Text>
                                 </TouchableOpacity>
-                            ) : (
-                                <TouchableOpacity
-                                    onPress={handleSubmitSwapShift}
-                                    style={[styles.reasonModalButton, { backgroundColor: '#2980B9' }]}
-                                >
-                                    <Text style={styles.reasonModalButtonText}>
-                                        Request Swap
-                                    </Text>
-                                </TouchableOpacity>
-                            )}
+                            </View>
 
-                            {/* Cancel button to close the reason input modal */}
-                            <TouchableOpacity
-                                onPress={() => setReasonScreen(false)}
-                                style={[styles.reasonModalButton, { backgroundColor: '#E74C3C' }]}
-                            >
-                                <Text style={styles.reasonModalButtonText}>Cancel</Text>
-                            </TouchableOpacity>
                         </View>
-                    </View>
+                    </Modal>
+
+                    {/* Modal for inputting reason for dropping or swapping a shift */}
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={reasonScreen}
+                        onRequestClose={() => setReasonScreen(false)}
+                    >
+                        <View style={styles.reasonModalContainer}>
+                            <View style={styles.reasonModalContent}>
+                                <Text style={styles.modalTitle}>{isSwap ? 'Swap Shift Reason' : 'Drop Shift Reason'}</Text>
+                                {/* Text input for the reason */}
+                                <TextInput
+                                    style={styles.reasonInput}
+                                    multiline
+                                    numberOfLines={4}
+                                    onChangeText={(text) => setReasonText(text)}
+                                    value={reasonText}
+                                    placeholder="Type your reason here..."
+                                    placeholderTextColor="#95A5A6"
+                                />
+                                <View style={styles.reasonButtonContainer}>
+                                    {/* Submit button: changes based on whether it's a swap or drop */}
+                                    {!isSwap ? (
+                                        <TouchableOpacity
+                                            onPress={handleSubmitReasonDrop}
+                                            style={[styles.reasonModalButton, { backgroundColor: '#27AE60' }]}
+                                        >
+                                            <Text style={styles.reasonModalButtonText}>
+                                                Submit Request
+                                            </Text>
+                                        </TouchableOpacity>
+                                    ) : (
+                                        <TouchableOpacity
+                                            onPress={handleSubmitSwapShift}
+                                            style={[styles.reasonModalButton, { backgroundColor: '#2980B9' }]}
+                                        >
+                                            <Text style={styles.reasonModalButtonText}>
+                                                Request Swap
+                                            </Text>
+                                        </TouchableOpacity>
+                                    )}
+
+                                    {/* Cancel button to close the reason input modal */}
+                                    <TouchableOpacity
+                                        onPress={() => setReasonScreen(false)}
+                                        style={[styles.reasonModalButton, { backgroundColor: '#E74C3C' }]}
+                                    >
+                                        <Text style={styles.reasonModalButtonText}>Cancel</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+
+
+
+                        </View>
+                    </Modal>
+
+                    {/* Date Picker Modal for selecting a date to swap the shift */}
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        onConfirm={handleConfirm}
+                        onCancel={hideDatePicker}
+                    />
+
                 </View>
             </Modal>
-
-            {/* Date Picker Modal for selecting a date to swap the shift */}
-            <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleConfirm}
-                onCancel={hideDatePicker}
-            />
         </>
     )
 };

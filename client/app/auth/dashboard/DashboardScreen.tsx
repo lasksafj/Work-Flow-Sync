@@ -175,13 +175,6 @@ export default function DashboardScreen() {
     useEffect(() => {
         fetchShiftDetails();
 
-        // Data to simulate chosen organization
-        dispatch(updateOrganization({
-            abbreviation: 'ABC',
-            name: 'ABC Corporation',
-            address: '123 Main St'
-        }));
-
     }, []);
 
 
@@ -211,7 +204,7 @@ export default function DashboardScreen() {
                 alert(error);
             });
 
-      }, []);
+    }, []);
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>

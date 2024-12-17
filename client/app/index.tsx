@@ -32,7 +32,7 @@ export default function Welcome() {
 
             if (response.status) {
                 dispatch(userLogin(response.data));
-                router.push('/auth/dashboard/DashboardScreen');
+                router.push('/unauth/SelectWorkplaceScreen');
             }
             await SplashScreen.hideAsync();
         }

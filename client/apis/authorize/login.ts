@@ -116,6 +116,9 @@ const logout = async () => {
 
         await AsyncStorage.setItem('accessToken', '');
         await AsyncStorage.setItem('refreshToken', '');
+
+        // clear workplace
+        await AsyncStorage.setItem('selectedWorkplace', '');
     } catch (error) {
         console.log('LOGOUT ERROR', error);
     }
